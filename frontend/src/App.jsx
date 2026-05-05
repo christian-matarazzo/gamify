@@ -1,3 +1,6 @@
+import AppHeader from './components/AppHeader';
+import AppFooter from './components/AppFooter';
+
 function App() {
 const giochi=
 [{
@@ -18,8 +21,10 @@ const giochi=
 }
 ]
   return (
-  <>
-  </>
+    <>
+    <AppHeader />
+    <AppFooter />
+    </>
   )
 }
 
