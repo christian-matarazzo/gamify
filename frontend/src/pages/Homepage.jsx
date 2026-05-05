@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useGames } from "../context/GamesContext"; 
 
 export default function Homepage() {
 
-    const [games, setGames] = useState([]);
+    const { games, loading } = useGames();
 
-    useEffect(() => {
-        axios.get("http://localhost:3000/api/games")
-            .then(response => {
-                console.log(response.data);
-                setGames(response.data.results);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, []);
+    if (loading) {
+        return <h2>Loading games... Please wait!</h2>;
+    }
 
     return (
         <>
