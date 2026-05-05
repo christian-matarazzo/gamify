@@ -18,6 +18,10 @@ const giochi=
 {
   name: "Elden Ring",
   genre: "RPG",
+},
+{
+  name: "Cars",
+  genre: "Race",
 }
 ]
   return (
