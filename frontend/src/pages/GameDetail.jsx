@@ -45,7 +45,7 @@ const GameDetail = () => {
                     <li><strong>Prezzo:</strong> {game.base_price}€</li>
                     <li><strong>Description:</strong> {game.description}</li>
                     <li><strong>Data di uscita:</strong> {game.release_date || 'Disponibile'}</li>
-                    <li><stron>Genre: </stron>{game.genre}</li>
+                    <li><strong>Genre: </strong>{game.genre}</li>
                 </ul>
 
                 <div>
