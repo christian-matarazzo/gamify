@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+import { useGames } from '../context/GamesContext';
 export default function SearchPage() {
 
     const games = [
