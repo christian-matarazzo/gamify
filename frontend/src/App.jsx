@@ -16,9 +16,9 @@ function App() {
         <Routes>
           <Route element={<DefaultLayout />}>
             <Route path="/" element={<Homepage />} />
-            <Route path="/search" element={<SearchPage />} />
+            <Route path="/search" element={<SearchPage />} />            
+            <Route path="/games/:slug" element={<GameDetail />} />
             <Route path="/cart" element={<CartPage />} />
-            <Route path="/games/:id" element={<GameDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -13,10 +13,10 @@ function index(req, res) {
 }
 
 function show(req, res) {
-  const id = req.params.id;
-  const sql = 'Select * FROM games WHERE id=?';
+  const slug = req.params.slug;
+  const sql = 'Select * FROM games WHERE slug=?';
 
-  connection.query(sql, [id], (err, results) => {
+  connection.query(sql, [slug], (err, results) => {
     if (err) {
       console.error('Errore SQL:', err);
       return res.status(500).json({ error: 'Errore database', message: 'game not foun' });
