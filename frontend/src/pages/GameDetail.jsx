@@ -37,7 +37,7 @@ const GameDetail = () => {
 
 
                 {game.image_url && (
-                 <img src={`http://localhost:3000/image/${game.image_url}`}alt="test"/>
+                 <img src={`http://localhost:3000/image/${game.image_url}`}alt={game.title}/>
                 )}
 
                 <ul>

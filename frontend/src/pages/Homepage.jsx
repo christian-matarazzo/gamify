@@ -16,7 +16,7 @@ export default function Homepage() {
                 <ul>
                     {games.map((game) => (
                         <li key={game.id}>
-                            <img src={`http://localhost:3000/image/${game.image_url}`} alt="test" />
+                            <img src={`http://localhost:3000/image/${game.image_url}`}alt={game.title}/>
                         </li>
                     ))}
                 </ul>
