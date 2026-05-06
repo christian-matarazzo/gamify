@@ -12,7 +12,6 @@ export default function AppHeader() {
     ];
 
     function handleCartClick() {
-        console.log('Vai al carrello');
     }
 
     return (
