@@ -16,7 +16,7 @@ function App() {
           <Route element={<DefaultLayout />}>
             <Route path="/" element={<Homepage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/games/:id" element={<GameDetail />} />
+            <Route path="/games/:slug" element={<GameDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>
