@@ -34,11 +34,10 @@ const GameDetail = () => {
             <section>
                 <h1>{game.title}</h1>
 
+
+
                 {game.image_url && (
-                    <img
-                        src={game.image_url}
-                        alt={game.title}
-                    />
+                 <img src={`http://localhost:3000/image/${game.image_url}`}alt="test"/>
                 )}
 
                 <ul>
