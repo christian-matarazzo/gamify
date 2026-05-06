@@ -1,9 +1,25 @@
+import { useGames } from "../context/GamesContext"; 
+import Hero from "../components/Hero";
 
 export default function Homepage() {
 
+    const { games, loading } = useGames();
+
+    if (loading) {
+        return <h2>Loading games... Please wait!</h2>;
+    }
+
     return (
         <>
-            <h1>Homepage</h1>
+        <Hero/>
+        <main className="container py-4">
+            <ul>
+                {games.map((game) => (
+                    <li key={game.id}>{game.title}</li>
+                ))}
+            </ul>
+            </main>
+
         </>
     );
 }
