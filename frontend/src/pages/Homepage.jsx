@@ -1,5 +1,6 @@
 import { useGames } from "../context/GamesContext";
 import Hero from "../components/Hero";
+import { Link } from "react-router-dom";
 
 export default function Homepage() {
 
@@ -16,7 +17,9 @@ export default function Homepage() {
                 <ul>
                     {games.map((game) => (
                         <li key={game.id}>
-                            <img src={`http://localhost:3000/image/${game.image_url}`}alt={game.title}/>
+                            <Link to={`/games/${game.slug}`}>
+                                <img src={`http://localhost:3000/image/${game.image_url}`} alt={game.title} />
+                            </Link>
                         </li>
                     ))}
                 </ul>
