@@ -1,0 +1,92 @@
+.gamify-footer {
+  background: var(--bg-2);
+  border-top: 1px solid var(--bg-4);
+}
+
+.gamify-footer-brand {
+  color: var(--accent) !important;
+  font-weight: 500;
+}
+
+.gamify-footer-description {
+  font-size: 13px;
+  color: #5d7080 !important;
+  line-height: 1.7;
+}
+
+.gamify-footer-description strong {
+  color: #8a9bb0;
+  font-weight: 500;
+}
+
+.gamify-socials a {
+  color: #5d7080 !important;
+  transition: color 0.15s;
+}
+
+.gamify-social-link:hover {
+  color: var(--accent) !important;
+}
+
+.gamify-footer-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #d6e3f0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gamify-footer-links .nav-link {
+  font-size: 13px;
+  color: #5d7080 !important;
+  transition: color 0.15s;
+}
+
+.gamify-footer-links .nav-link:hover {
+  color: #d6e3f0 !important;
+}
+
+.gamify-newsletter-group {
+  display: flex;
+  gap: 8px;
+}
+
+.gamify-newsletter-group .form-control {
+  flex: 1;
+  background: var(--bg-3) !important;
+  border-color: var(--bg-4) !important;
+  color: #d6e3f0 !important;
+  border-radius: 8px !important;
+}
+
+.gamify-newsletter-group .form-control::placeholder {
+  color: #3d5165;
+}
+
+.gamify-newsletter-group .form-control:focus {
+  border-color: rgba(230, 240, 0, 0.35) !important;
+  box-shadow: 0 0 0 3px rgba(230, 240, 0, 0.06);
+}
+
+.gamify-btn-subscribe {
+  background: var(--accent) !important;
+  color: var(--bg-1) !important;
+  border: none !important;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+
+.gamify-btn-subscribe:hover {
+  opacity: 0.88;
+}
+
+.gamify-footer-divider {
+  border-color: var(--bg-4) !important;
+}
+
+.gamify-copyright {
+  font-size: 12px;
+  color: #3d5165;
+}

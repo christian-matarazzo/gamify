@@ -3,7 +3,7 @@ import '../styles/AppHeader.css';
 
 export default function AppHeader() {
 
-    const nav_links = [
+    const navLinks = [
         { text: 'Trending' },
         { text: 'Pre-orders' },
         { text: 'Blog' },
@@ -32,7 +32,7 @@ export default function AppHeader() {
 
                 <div className="collapse navbar-collapse justify-content-between" id="gamifyNavCollapse">
                     <ul className="navbar-nav mx-auto gap-1 gamify-links">
-                        {nav_links.map((link) => (
+                        {navLinks.map((link) => (
                             <li key={link.text} className="nav-item">
                                 <Link
                                     className="nav-link"
