@@ -5,6 +5,6 @@ const gamesController = require("../controllers/gamesControllers");
 
 router.get('/', gamesController.index);
 
-router.get('/:id', gamesController.show);
+router.get('/:slug', gamesController.show);
 
 module.exports = router;
