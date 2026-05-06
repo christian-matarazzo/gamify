@@ -1,4 +1,4 @@
-import { useGames } from "../context/GamesContext"; 
+import { useGames } from "../context/GamesContext";
 import Hero from "../components/Hero";
 
 export default function Homepage() {
@@ -11,18 +11,16 @@ export default function Homepage() {
 
     return (
         <>
-        <Hero/>
-        <main className="container py-4">
-     <ul>
+            <Hero />
+            <main className="container py-4">
+                <ul>
                     {games.map((game) => (
                         <li key={game.id}>
                             <img src={`http://localhost:3000/image/${game.image_url}`}alt={game.title}/>
                         </li>
                     ))}
                 </ul>
-            
             </main>
-
         </>
     );
 }

@@ -12,14 +12,14 @@ export default function AppHeader() {
     ];
 
     function handleCartClick() {
-    console.log('Vai al carrello');
+        console.log('Vai al carrello');
     }
 
     return (
         <header>
             <nav className="navbar navbar-expand-lg px-3 px-lg-4 gamify-navbar">
                 <Link className="navbar-brand d-flex align-items-center gap-2 gamify-brand" to="/">
-                    Gamify
+                    <img className="gamify-logo" src="/img/gamify-logo-main.png" alt="Gamify Logo" />
                 </Link>
 
                 <button
