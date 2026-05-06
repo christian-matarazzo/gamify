@@ -11,6 +11,10 @@ export default function AppHeader() {
         { text: 'Technical Support' },
     ];
 
+    function handleCartClick() {
+    console.log('Vai al carrello');
+    }
+
     return (
         <header>
             <nav className="navbar navbar-expand-lg px-3 px-lg-4 gamify-navbar">
@@ -50,11 +54,11 @@ export default function AppHeader() {
                         <button className="gamify-icon-btn" aria-label="Search">
                             <i className="bi bi-search"></i>
                         </button>
-
-                        <button className="gamify-icon-btn" aria-label="Cart">
-                            <i className="bi bi-cart"></i>
-                        </button>
-
+                        <Link to="/cart">
+                            <button className="gamify-icon-btn" aria-label="Cart" onClick={handleCartClick}>
+                                <i className="bi bi-cart"></i>
+                            </button>
+                        </Link>
                         <div className="gamify-divider d-none d-lg-block"></div>
                         <button className="gamify-btn-login">Log In</button>
                     </div>
