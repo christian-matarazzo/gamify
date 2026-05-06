@@ -13,11 +13,14 @@ export default function Homepage() {
         <>
         <Hero/>
         <main className="container py-4">
-            <ul>
-                {games.map((game) => (
-                    <li key={game.id}>{game.title}</li>
-                ))}
-            </ul>
+     <ul>
+                    {games.map((game) => (
+                        <li key={game.id}>
+                            <img src={`http://localhost:3000/image/${game.image_url}`}alt="test"/>
+                        </li>
+                    ))}
+                </ul>
+            
             </main>
 
         </>
