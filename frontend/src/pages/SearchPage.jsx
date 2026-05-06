@@ -14,11 +14,13 @@ export default function SearchPage() {
         game.title?.toLowerCase().includes(query.toLowerCase()
         ))
 
-    const orderedSearch = [...filtered].sort((a, b) => {
-        if (ordered === "price") return b.base_price - a.base_price
-        if (ordered === "year") return b.release_date - a.release_date
-        return a.title.localeCompare(b.title)
-    })
+   const orderedSearch = [...filtered].sort((a, b) => {
+    if (ordered === "price") return b.base_price - a.base_price;
+    if (ordered === "year") {
+        return b.release_date.localeCompare(a.release_date);
+    }
+    return a.title.localeCompare(b.title);
+});
 
 
     return (
