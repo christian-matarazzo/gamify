@@ -1,37 +1,17 @@
 import { useState } from 'react'
+import { useGames } from '../context/GamesContext';
+
 
 export default function SearchPage() {
-
-    const games = [
-        {
-            id: 1,
-            title: "The Legend of Zelda: Breath of the Wild",
-            genre: "Action-Adventure",
-            year: 2017,
-            price: 30.00
-        },
-        {
-            id: 2,
-            title: "Red Dead Redemption 2",
-            genre: "Open World",
-            year: 2018,
-            price: 23.50
-        },
-        {
-            id: 3,
-            title: "Hollow Knight",
-            genre: "Metroidvania",
-            year: 2017,
-            price: 49.70
-        }
-    ];
-
+    const { games, loading } = useGames();
 
     const [query, setQuery] = useState("");
     const [ordered, setOrdered] = useState("title");
 
+    if (loading) return <p>Caricamento in corso, attendere</p>;
+
     const filtered = games.filter(game =>
-        game.title.toLowerCase().includes(query.toLowerCase()
+        game.title?.toLowerCase().includes(query.toLowerCase()
         ))
 
     const orderedSearch = [...filtered].sort((a, b) => {

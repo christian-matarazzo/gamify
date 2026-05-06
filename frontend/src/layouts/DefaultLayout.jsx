@@ -7,10 +7,7 @@ export default function DefaultLayout() {
     return (
         <>
             <AppHeader />
-            <Hero />
-            <main className="container py-4">
                 <Outlet />
-            </main>
             <AppFooter />
         </>
     )

@@ -2,14 +2,30 @@ const connection = require('../config/db')
 
 function index(req, res) {
   const sql = 'SELECT * FROM games';
-  
+
   connection.query(sql, (err, results) => {
     if (err) {
       console.error('Errore SQL:', err);
       return res.status(500).json({ error: 'Errore database', message: err.message });
     }
-    res.json({ success: true,  results });
+    res.json({ success: true, results });
   });
 }
 
-module.exports = { index };
+function show(req, res) {
+  const id = req.params.id;
+  const sql = 'Select * FROM games WHERE id=?';
+
+  connection.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error('Errore SQL:', err);
+      return res.status(500).json({ error: 'Errore database', message: 'game not foun' });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Not Found', message: 'Gioco non trovato' });
+    }
+    res.json({ success: true, results: results[0] })
+  })
+}
+
+module.exports = { index, show };
