@@ -6,9 +6,13 @@ import { Outlet } from "react-router-dom"
 export default function DefaultLayout() {
     return (
         <>
-            <AppHeader />
-                <Outlet />
-            <AppFooter />
+            <div className="app-wrapper">
+                <AppHeader />
+                <main className="main-content">
+                    <Outlet />
+                </main>
+                <AppFooter />
+            </div>
         </>
     )
 }

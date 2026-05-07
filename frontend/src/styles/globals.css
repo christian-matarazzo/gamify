@@ -2,3 +2,22 @@ body {
   background: var(--bg-3);
   color: var(--text-primary);
 }
+
+html, body, #root {
+    height: 100%;
+    margin: 0;
+}
+
+.app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1 0 auto;
+}
+
+.gamify-footer {
+    flex-shrink: 0;
+}
