@@ -6,6 +6,7 @@ import Cart from "./pages/Cart";
 import { GamesProvider } from "./context/GamesContext";
 import GameDetail from "./pages/GameDetail";
 import { CartProvider } from "./context/CartContext"
+import WishListPage from "./pages/WishListPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/games/:slug" element={<GameDetail />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/wishlist" element={<WishListPage/>} />
             </Route>
           </Routes>
         </BrowserRouter>
