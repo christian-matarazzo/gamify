@@ -3,16 +3,15 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const GameDetail = () => {
-    const { id } = useParams();
-    console.log("ID del gioco:", id);
+    const { slug } = useParams();
 
 
     const [game, setGame] = useState(null);
 
 
     useEffect(() => {
-        console.log("Chiamo l'API per l'ID:", id);
-        axios.get(`http://localhost:3000/api/games/${id}`)
+       
+        axios.get(`http://localhost:3000/api/games/${slug}`)
             .then(response => {
                 console.log("Dati ricevuti:", response.data)
                 setGame(response.data.results)
@@ -21,7 +20,7 @@ const GameDetail = () => {
                 console.error("Cannot find any game", error)
                 setGame(null);
             });
-    }, [id]);
+    }, [slug]);
 
     if (!game) return <h2>Prodotto non trovato</h2>;
 
@@ -35,11 +34,10 @@ const GameDetail = () => {
             <section>
                 <h1>{game.title}</h1>
 
+
+
                 {game.image_url && (
-                    <img
-                        src={game.image_url}
-                        alt={game.title}
-                    />
+                 <img src={`http://localhost:3000/image/${game.image_url}`}alt={game.title}/>
                 )}
 
                 <ul>

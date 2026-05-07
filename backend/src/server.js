@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const gamesRoute = require('./routes/games'); // Importa la route
+const gamesRoute = require('./routes/games'); 
 const app = express();
 const port = 3000;
 
+app.use(express.static('public'))
 app.use(cors());
 app.use(express.json());
 

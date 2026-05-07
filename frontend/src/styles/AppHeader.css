@@ -61,3 +61,16 @@
 .gamify-btn-login:hover {
   opacity: 0.88;
 }
+
+.gamify-logo {
+  height: 40px;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .gamify-logo {
+    content: url('img/gamify-logo-small.png');
+    height: 35px;
+    margin: 0;
+  }
+}

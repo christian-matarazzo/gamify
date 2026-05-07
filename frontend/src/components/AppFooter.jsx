@@ -21,7 +21,7 @@ export default function AppFooter() {
                 <div className="row gy-4">
                     <div className="col-lg-4 col-md-12">
                         <Link className="navbar-brand d-flex align-items-center gap-2 gamify-footer-brand fs-3 fw-bold text-decoration-none mb-3" to="/">
-                            Gamify
+                            <img className="gamify-logo-footer" src="/img/gamify-logo-bw.png" alt="Gamify Logo" />
                         </Link>
                         <p className="gamify-footer-description">
                             Your ultimate gateway to the <strong>gaming world</strong>. From epic AAA blockbusters to hidden indie gems, find your next adventure across every platform.

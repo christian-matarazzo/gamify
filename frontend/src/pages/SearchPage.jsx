@@ -14,11 +14,13 @@ export default function SearchPage() {
         game.title?.toLowerCase().includes(query.toLowerCase()
         ))
 
-    const orderedSearch = [...filtered].sort((a, b) => {
-        if (ordered === "price") return b.price - a.price
-        if (ordered === "year") return b.year - a.year
-        return a.title.localeCompare(b.title)
-    })
+   const orderedSearch = [...filtered].sort((a, b) => {
+    if (ordered === "price") return b.base_price - a.base_price;
+    if (ordered === "year") {
+        return b.release_date.localeCompare(a.release_date);
+    }
+    return a.title.localeCompare(b.title);
+});
 
 
     return (
@@ -53,8 +55,8 @@ export default function SearchPage() {
                             <div key={game.id} className="result-card">
                                 <h3 className="result-title">{game.title}</h3>
                                 <p className="result-genre">{game.genre}</p>
-                                <p className="result-year">{game.year}</p>
-                                <p className="result-price">{game.price}</p>
+                                <p className="result-year">{game.release_date}</p>
+                                <p className="result-price">{game.base_price}</p>
                             </div>
                         ))
                     )}

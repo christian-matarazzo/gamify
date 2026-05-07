@@ -1,7 +1,7 @@
 const connection = require('../config/db')
 
 function index(req, res) {
-  const sql = 'SELECT * FROM games';
+ const sql = "SELECT *, DATE_FORMAT(release_date, '%Y-%m-%d') AS release_date FROM games";
 
   connection.query(sql, (err, results) => {
     if (err) {
@@ -13,10 +13,10 @@ function index(req, res) {
 }
 
 function show(req, res) {
-  const id = req.params.id;
-  const sql = 'Select * FROM games WHERE id=?';
+  const slug = req.params.slug;
+  const sql = "SELECT *, DATE_FORMAT(release_date, '%Y-%m-%d') AS release_date FROM games WHERE slug=?";
 
-  connection.query(sql, [id], (err, results) => {
+  connection.query(sql, [slug], (err, results) => {
     if (err) {
       console.error('Errore SQL:', err);
       return res.status(500).json({ error: 'Errore database', message: 'game not foun' });
