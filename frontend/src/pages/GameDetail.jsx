@@ -27,58 +27,51 @@ const GameDetail = () => {
     if (!game) return <h2>Prodotto non trovato</h2>;
 
     return (
+        <main className="container py-4">
+            <div>
+                <Link to="/">← Torna alla lista</Link>
+                <hr />
+                <section>
+                    <h1>{game.title}</h1>
 
-        <div>
-
-            <Link to="/">← Torna alla lista</Link>
-            <hr />
-
-            <section>
-                <h1>{game.title}</h1>
-
-                {game.image_url && (
-                    <img src={`http://localhost:3000/image/${game.image_url}`} alt={game.title} />
-                )}
-
-                <ul>
-                    <li><strong>Developer: </strong>{game.developer_name}</li>
-                    <li><strong>Prezzo:</strong> {game.base_price}€</li>
-                    <li><strong>Description:</strong> {game.description}</li>
-                    <li><strong>Data di uscita:</strong> {game.release_date || 'Disponibile'}</li>
-                    <li><strong>Genre: </strong>{game.genre}</li>
-                </ul>
-
-                <div className="d-flex align-items-center gap-3">
+                    {game.image_url && (
+                        <img src={`http://localhost:3000/image/${game.image_url}`} alt={game.title} />
+                    )}
+                    <ul>
+                        <li><strong>Developer: </strong>{game.developer_name}</li>
+                        <li><strong>Prezzo:</strong> {game.base_price}€</li>
+                        <li><strong>Description:</strong> {game.description}</li>
+                        <li><strong>Data di uscita:</strong> {game.release_date || 'Disponibile'}</li>
+                        <li><strong>Genre: </strong>{game.genre}</li>
+                    </ul>
+                    <div className="d-flex align-items-center gap-3">
+                        {cartItem && (
+                            <button
+                                className="btn btn-warning"
+                                onClick={() => decreaseQuantity(game.id)}
+                            >
+                                -
+                            </button>
+                        )}
+                        <span>{cartItem ? cartItem.quantity : 0} nel carrello</span>
+                        <button
+                            className="btn btn-success"
+                            onClick={() => addToCart(game)}
+                        >
+                            +
+                        </button>
+                    </div>
                     {cartItem && (
                         <button
-                            className="btn btn-warning"
-                            onClick={() => decreaseQuantity(game.id)}
+                            className="btn btn-outline-danger btn-sm mt-3"
+                            onClick={() => removeFromCart(game.id)}
                         >
-                            -
+                            Rimuovi tutti dal carrello
                         </button>
                     )}
-
-                    <span>{cartItem ? cartItem.quantity : 0} nel carrello</span>
-
-                    <button
-                        className="btn btn-success"
-                        onClick={() => addToCart(game)}
-                    >
-                        +
-                    </button>
-                </div>
-
-                {cartItem && (
-                    <button
-                        className="btn btn-outline-danger btn-sm mt-3"
-                        onClick={() => removeFromCart(game.id)}
-                    >
-                        Rimuovi tutti dal carrello
-                    </button>
-                )}
-
-            </section>
-        </div>
+                </section>
+            </div>
+        </main >
     );
 };
 
