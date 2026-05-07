@@ -10,16 +10,16 @@ export default function SearchPage() {
     if (loading) return <p>Caricamento in corso, attendere</p>;
 
     const filtered = games.filter(game =>
-        game.title?.toLowerCase().includes(query.toLowerCase()
+        game.title?.toLowerCase().includes(query.trim().toLowerCase()
         ))
 
-   const orderedSearch = [...filtered].sort((a, b) => {
-    if (ordered === "price") return b.base_price - a.base_price;
-    if (ordered === "year") {
-        return b.release_date.localeCompare(a.release_date);
-    }
-    return a.title.localeCompare(b.title);
-});
+    const orderedSearch = [...filtered].sort((a, b) => {
+        if (ordered === "price") return b.base_price - a.base_price;
+        if (ordered === "year") {
+            return b.release_date.localeCompare(a.release_date);
+        }
+        return a.title.localeCompare(b.title);
+    });
 
 
     return (
