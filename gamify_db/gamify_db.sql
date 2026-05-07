@@ -16,6 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `game_keys`
+--
+
+DROP TABLE IF EXISTS `game_keys`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `game_keys` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `game_id` int unsigned NOT NULL,
+  `license_key` varchar(255) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'available',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `license_key` (`license_key`),
+  KEY `game_id` (`game_id`),
+  CONSTRAINT `game_keys_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `game_keys`
+--
+
+LOCK TABLES `game_keys` WRITE;
+/*!40000 ALTER TABLE `game_keys` DISABLE KEYS */;
+/*!40000 ALTER TABLE `game_keys` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `games`
 --
 
@@ -48,31 +76,32 @@ INSERT INTO `games` VALUES (1,'Assassin\'s Creed Shadows','ac-shadows','Action r
 UNLOCK TABLES;
 
 --
--- Table structure for table `games_key`
+-- Table structure for table `order_items`
 --
 
-DROP TABLE IF EXISTS `games_key`;
+DROP TABLE IF EXISTS `order_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `games_key` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `game_id` int unsigned NOT NULL,
-  `license_key` varchar(255) NOT NULL,
-  `quantity` int NOT NULL,
-  `sell_price` decimal(6,2) NOT NULL,
+CREATE TABLE `order_items` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
+  `game_key_id` int NOT NULL,
+  `sold_price` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `game_key_game_id_unique` (`game_id`),
-  CONSTRAINT `game_key_game_id_foreign` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`)
+  UNIQUE KEY `game_key_id` (`game_key_id`),
+  KEY `order_id` (`order_id`),
+  CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+  CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`game_key_id`) REFERENCES `game_keys` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `games_key`
+-- Dumping data for table `order_items`
 --
 
-LOCK TABLES `games_key` WRITE;
-/*!40000 ALTER TABLE `games_key` DISABLE KEYS */;
-/*!40000 ALTER TABLE `games_key` ENABLE KEYS */;
+LOCK TABLES `order_items` WRITE;
+/*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
+/*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -83,8 +112,10 @@ DROP TABLE IF EXISTS `orders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `coupon_discount_amount` decimal(10,2) DEFAULT '0.00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -107,4 +138,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-07  9:56:32
+-- Dump completed on 2026-05-07 11:50:49
