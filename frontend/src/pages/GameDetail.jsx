@@ -10,7 +10,7 @@ const GameDetail = () => {
 
 
     useEffect(() => {
-       
+
         axios.get(`http://localhost:3000/api/games/${slug}`)
             .then(response => {
                 console.log("Dati ricevuti:", response.data)
@@ -26,8 +26,8 @@ const GameDetail = () => {
 
     return (
 
-        <div
-        >
+        <div>
+
             <Link to="/">← Torna alla lista</Link>
             <hr />
 
@@ -37,14 +37,15 @@ const GameDetail = () => {
 
 
                 {game.image_url && (
-                 <img src={`http://localhost:3000/image/${game.image_url}`}alt={game.title}/>
+                    <img src={`http://localhost:3000/image/${game.image_url}`} alt={game.title} />
                 )}
 
                 <ul>
-                    <li><strong>Piattaforma:</strong> {game.platform}</li>
-                    <li><strong>Prezzo:</strong> {game.price}€</li>
-                    <li><strong>Rating:</strong> {game.rating ? `${game.rating}/10` : 'N/A'}</li>
+                    <li><strong>Developer: </strong>{game.developer_name}</li>
+                    <li><strong>Prezzo:</strong> {game.base_price}€</li>
+                    <li><strong>Description:</strong> {game.description}</li>
                     <li><strong>Data di uscita:</strong> {game.release_date || 'Disponibile'}</li>
+                    <li><strong>Genre: </strong>{game.genre}</li>
                 </ul>
 
                 <div>
@@ -52,6 +53,7 @@ const GameDetail = () => {
                         Acquista ora
                     </button>
                 </div>
+
             </section>
         </div>
     );
