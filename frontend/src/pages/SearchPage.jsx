@@ -25,7 +25,6 @@ export default function SearchPage() {
     return (
         <>
             <div className="search-page">
-
                 <div className="search-bar">
                     <input
                         type="text"
@@ -60,7 +59,6 @@ export default function SearchPage() {
                         ))
                     )}
                 </div>
-
             </div>
         </>
     )

@@ -1,10 +1,11 @@
-.overlay{
+.overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,11 +13,104 @@
 }
 
 .popup {
-    background: rgba(0, 0, 0, 0.699);
-    padding: 20px;
-    border-radius: 10px;
-  }
+    background: var(--bg-3);
+    border: 1px solid var(--bg-4);
+    border-top: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 36px 40px 32px;
+    max-width: 420px;
+    width: 90%;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
 
-button{
-    background-color: rgba(255, 17, 0, 0.747)
+.popup h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.popup p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0 0 28px;
+}
+
+.popup-close-btn {
+    background: var(--accent);
+    color: var(--bg-1);
+    border: none;
+    border-radius: 6px;
+    padding: 11px 32px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: opacity 0.15s;
+}
+
+.popup-close-btn:hover {
+    opacity: 0.85;
+}
+
+.popup-x {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.popup-x:hover {
+    color: var(--text-primary);
+}
+
+.promo-code {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-4);
+    border: 1px dashed #3a5060;
+    border-radius: 6px;
+    vertical-align: middle;
+    margin: 8px 2px 0;
+    overflow: hidden;
+}
+
+.promo-code::before {
+    content: "PROMO";
+    background: var(--accent);
+    color: var(--bg-1);
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+
+.promo-code::after {
+    content: "";
+    width: 10px;
+    height: 20px;
+    background: var(--bg-3);
+    border-radius: 0 10px 10px 0;
+    border: 1px solid #3a5060;
+    border-left: none;
+}
+
+.promo-code-text {
+    color: var(--text-primary);
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-family: monospace;
 }
