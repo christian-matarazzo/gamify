@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `gamify_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `gamify_db`;
 -- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
 --
 -- Host: localhost    Database: gamify_db
@@ -28,7 +26,7 @@ CREATE TABLE `game_keys` (
   `id` int NOT NULL AUTO_INCREMENT,
   `game_id` int NOT NULL,
   `key_code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_sold` tinyint(1) DEFAULT '0',
+  `is_avaliable` tinyint(1) DEFAULT '0',
   `purchased_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `game_id` (`game_id`),
@@ -62,7 +60,11 @@ CREATE TABLE `games` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `release_date` date DEFAULT NULL,
   `rating` decimal(3,1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `about` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `slug` (`slug`),
+  KEY `idx_slug` (`slug`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -72,7 +74,7 @@ CREATE TABLE `games` (
 
 LOCK TABLES `games` WRITE;
 /*!40000 ALTER TABLE `games` DISABLE KEYS */;
-INSERT INTO `games` VALUES (1,'Cyberpunk 2077','steam',29.99,'https://via.placeholder.com/150','2026-05-05 14:21:26','2020-12-10',7.0),(2,'Elden Ring','steam',49.99,'https://via.placeholder.com/150','2026-05-05 14:21:26',NULL,NULL),(3,'Fortnite V-Bucks 1000','epic',9.99,NULL,'2026-05-05 14:21:26',NULL,NULL),(4,'FIFA 24','steam',59.99,'https://via.placeholder.com/150','2026-05-05 14:21:26',NULL,NULL),(5,'The Witcher 3','steam',19.99,'https://via.placeholder.com/150','2026-05-05 14:21:26',NULL,NULL);
+INSERT INTO `games` VALUES (1,'Cyberpunk 2077','steam',29.99,'https://via.placeholder.com/150','2026-05-05 14:21:26','2020-12-10',7.0,'cyberpunk-2077',NULL),(2,'Elden Ring','steam',49.99,'https://via.placeholder.com/150','2026-05-05 14:21:26',NULL,NULL,'elden-ring',NULL),(3,'Fortnite V-Bucks 1000','epic',9.99,NULL,'2026-05-05 14:21:26',NULL,NULL,'fortnite-v-bucks-1000',NULL),(4,'FIFA 24','steam',59.99,'https://via.placeholder.com/150','2026-05-05 14:21:26',NULL,NULL,'fifa-24',NULL),(5,'The Witcher 3','steam',19.99,'https://via.placeholder.com/150','2026-05-05 14:21:26',NULL,NULL,'the-witcher-3',NULL);
 /*!40000 ALTER TABLE `games` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,4 +149,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-05 18:46:46
+-- Dump completed on 2026-05-06 13:06:14
