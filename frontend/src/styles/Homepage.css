@@ -116,13 +116,22 @@
 }
 
 @keyframes gamify-shimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 /* MOBILE */
 @media (max-width: 480px) {
-  .gamify-section-title {
-    font-size: 15px;
-  }
+    .gamify-section-title {
+        font-size: 15px;
+    }
+
+    .gamify-preorders {
+        font-size: 15px;
+    }
 }

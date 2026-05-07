@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import "../styles/Hero.css";
 
 
-export default function Hero({ game }) {
+export default function Hero() {
   return (
     <section className="hero">
       <img
         src="/img/hero.webp"
-        alt="Hero"
+        alt="The Blood of Dawnwalker"
         className="hero_img"
       />
       <div className="hero_overlay d-flex align-items-center">
