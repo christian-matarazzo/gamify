@@ -3,12 +3,19 @@ import Hero from "../components/Hero";
 import GameCard from "../components/GameCard";
 import GhostCard from "../components/GhostCard";
 import "../styles/Homepage.css";
+import PopUp from "../components/PopUp"
+import { useState } from "react";
 
 export default function Homepage() {
+
+    const [showPopup, setShowPopup] = useState(true);
     const { games, loading } = useGames();
 
     return (
         <>
+        {showPopup && (
+                    <PopUp onClose={() => setShowPopup(false)} />
+        )}
             <Hero />
             <main className="container py-4">
                 <div className="row g-3">
