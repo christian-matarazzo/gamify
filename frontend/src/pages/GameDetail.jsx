@@ -5,11 +5,9 @@ import { useCart } from "../context/CartContext";
 
 const GameDetail = () => {
     const { slug } = useParams();
-
     const [game, setGame] = useState(null);
 
     useEffect(() => {
-
         axios.get(`http://localhost:3000/api/games/${slug}`)
             .then(response => {
                 setGame(response.data.results)
@@ -20,7 +18,6 @@ const GameDetail = () => {
     }, [slug]);
 
     const { addToCart, removeFromCart, decreaseQuantity, cart } = useCart();
-
     const isInCart = cart.find(item => item.id === game?.id);
     const cartItem = cart.find(item => item.id === game?.id);
 

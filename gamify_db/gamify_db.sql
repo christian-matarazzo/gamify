@@ -40,7 +40,7 @@ CREATE TABLE `game_keys` (
 
 LOCK TABLES `game_keys` WRITE;
 /*!40000 ALTER TABLE `game_keys` DISABLE KEYS */;
-INSERT INTO `game_keys` VALUES (1,1,'AC-SHADOW-KEY-001-TEST','available'),(2,1,'AC-SHADOW-KEY-002-TEST','available'),(3,1,'AC-SHADOW-KEY-003-TEST','available'),(4,1,'AC-SHADOW-KEY-004-TEST','available'),(5,1,'AC-SHADOW-KEY-005-TEST','available'),(6,2,'ALIEN-ISO-KEY-001-TEST','available'),(7,2,'ALIEN-ISO-KEY-002-TEST','available'),(8,2,'ALIEN-ISO-KEY-003-TEST','available');
+INSERT INTO `game_keys` VALUES (1,1,'AC-SHADOW-KEY-001-TEST','sold'),(2,1,'AC-SHADOW-KEY-002-TEST','available'),(3,1,'AC-SHADOW-KEY-003-TEST','available'),(4,1,'AC-SHADOW-KEY-004-TEST','available'),(5,1,'AC-SHADOW-KEY-005-TEST','available'),(6,2,'ALIEN-ISO-KEY-001-TEST','available'),(7,2,'ALIEN-ISO-KEY-002-TEST','available'),(8,2,'ALIEN-ISO-KEY-003-TEST','available');
 /*!40000 ALTER TABLE `game_keys` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +93,7 @@ CREATE TABLE `order_items` (
   KEY `order_id` (`order_id`),
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`game_key_id`) REFERENCES `game_keys` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,6 +102,7 @@ CREATE TABLE `order_items` (
 
 LOCK TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
+INSERT INTO `order_items` VALUES (1,1,1,59.80);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +119,7 @@ CREATE TABLE `orders` (
   `total_amount` decimal(10,2) NOT NULL,
   `coupon_discount_amount` decimal(10,2) DEFAULT '0.00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,6 +128,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES (1,'test@example.com',59.80,10.00);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -139,4 +141,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-07 13:21:05
+-- Dump completed on 2026-05-07 15:49:22
