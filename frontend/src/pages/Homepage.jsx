@@ -3,12 +3,31 @@ import Hero from "../components/Hero";
 import GameCard from "../components/GameCard";
 import GhostCard from "../components/GhostCard";
 import "../styles/Homepage.css";
+import PopUp from "../components/PopUp"
+import { useEffect, useState } from "react";
 
 export default function Homepage() {
+
+    const [showPopup, setShowPopup] = useState(false);
     const { games, loading } = useGames();
+
+    useEffect(() =>{
+        const firstVisit = sessionStorage.getItem("gamifyPopUp");
+        if (!firstVisit){
+            setShowPopup(true);
+            sessionStorage.setItem("gamifyPopUp", "true");
+        }
+    },[]);
+
+    const closePopUp = () => {
+        setShowPopup(false);
+    };
 
     return (
         <>
+        {showPopup && (
+                    <PopUp onClose={closePopUp} />
+        )}
             <Hero />
             <main className="container py-4">
                 <div className="row g-3">
