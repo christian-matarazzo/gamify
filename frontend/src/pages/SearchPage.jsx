@@ -8,11 +8,9 @@ export default function SearchPage() {
     const { games, loading } = useGames();
     const [query, setQuery] = useState("");
     const [ordered, setOrdered] = useState("title");
-
     const filtered = games.filter(game =>
         game.title?.toLowerCase().includes(query.trim().toLowerCase()
         ))
-
     const orderedSearch = [...filtered].sort((a, b) => {
         if (ordered === "price") return b.base_price - a.base_price;
         if (ordered === "year") {
