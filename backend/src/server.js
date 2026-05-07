@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const gamesRoute = require('./routes/games'); 
+const gamesRoute = require('./routes/games');
+const inventoryRoute = require('./routes/inventory') 
 const app = express();
 const port = 3000;
 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 
 app.use('/api/games', gamesRoute);
+app.use('/api/inventory', inventoryRoute);
 
 app.get('/', (req, res) => {
   res.send('Il mio server');
