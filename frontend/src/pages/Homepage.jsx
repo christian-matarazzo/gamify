@@ -1,28 +1,37 @@
 import { useGames } from "../context/GamesContext";
 import Hero from "../components/Hero";
-import { Link } from "react-router-dom";
+import GameCard from "../components/GameCard";
+import GhostCard from "../components/GhostCard";
+import "../styles/Homepage.css";
 
 export default function Homepage() {
-
     const { games, loading } = useGames();
-
-    if (loading) {
-        return <h2>Loading games... Please wait!</h2>;
-    }
 
     return (
         <>
             <Hero />
             <main className="container py-4">
-                <ul>
-                    {games.map((game) => (
-                        <li key={game.id}>
-                            <Link to={`/games/${game.slug}`}>
-                                <img src={`http://localhost:3000/image/${game.image_url}`} alt={game.title} />
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                <div className="row g-3">
+                    <h1 className="gamify-section-title"><span>Trending</span> Now!</h1>
+                    {loading ? (
+                        [...Array(6)].map((_, index) => <GhostCard key={index} />)
+                    ) : (
+                        games
+                            .filter((game) => game.tag !== "Preorder") 
+                            .map((game) => <GameCard key={game.id} game={game} />)
+                    )}
+                </div>
+
+                <div className="row g-3">
+                    <h1 className="gamify-preorders"><span>Preorder</span> Now!</h1>
+                    {loading ? (
+                        [...Array(6)].map((_, index) => <GhostCard key={index} />)
+                    ) : (
+                        games
+                            .filter((game) => game.tag === "Preorder") 
+                            .map((game) => <GameCard key={game.id} game={game} />)
+                    )}
+                </div>
             </main>
         </>
     );
