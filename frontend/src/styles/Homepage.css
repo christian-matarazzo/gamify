@@ -1,0 +1,128 @@
+.gamify-game-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-2);
+    border: 1px solid var(--bg-4);
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.gamify-game-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(252, 238, 9, 0.3);
+}
+
+.gamify-card-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+
+.gamify-card-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.2s;
+}
+
+.gamify-game-card:hover .gamify-card-thumbnail {
+    transform: scale(1.03);
+}
+
+.gamify-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+}
+
+.gamify-card-title {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.gamify-price-current {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    margin: 0;
+}
+
+.gamify-ghost-card {
+    background: var(--bg-2);
+    border: 1px solid var(--bg-4);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.gamify-ghost-thumb,
+.gamify-ghost-line {
+    background: linear-gradient(90deg, var(--bg-3) 25%, var(--bg-4) 50%, var(--bg-3) 75%);
+    background-size: 200% 100%;
+    animation: gamify-shimmer 1.4s infinite;
+}
+
+.gamify-ghost-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.gamify-ghost-line {
+    height: 12px;
+    border-radius: 4px;
+    margin: 12px 12px 4px;
+}
+
+.gamify-ghost-line-short {
+    width: 40%;
+    margin-bottom: 12px;
+}
+
+.gamify-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.gamify-preorders {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-top: 40px;
+}
+
+.gamify-section-title span {
+    color: var(--accent);
+}
+
+.gamify-preorders span {
+    color: var(--accent);
+}
+
+@keyframes gamify-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .gamify-section-title {
+    font-size: 15px;
+  }
+}
