@@ -29,9 +29,9 @@ CREATE TABLE `game_keys` (
   `status` varchar(50) NOT NULL DEFAULT 'available',
   PRIMARY KEY (`id`),
   UNIQUE KEY `license_key` (`license_key`),
-  KEY `game_id` (`game_id`),
+  KEY `idx_stato_gioco` (`game_id`,`status`),
   CONSTRAINT `game_keys_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,6 +40,7 @@ CREATE TABLE `game_keys` (
 
 LOCK TABLES `game_keys` WRITE;
 /*!40000 ALTER TABLE `game_keys` DISABLE KEYS */;
+INSERT INTO `game_keys` VALUES (1,1,'AC-SHADOW-KEY-001-TEST','available'),(2,1,'AC-SHADOW-KEY-002-TEST','available'),(3,1,'AC-SHADOW-KEY-003-TEST','available'),(4,1,'AC-SHADOW-KEY-004-TEST','available'),(5,1,'AC-SHADOW-KEY-005-TEST','available'),(6,2,'ALIEN-ISO-KEY-001-TEST','available'),(7,2,'ALIEN-ISO-KEY-002-TEST','available'),(8,2,'ALIEN-ISO-KEY-003-TEST','available');
 /*!40000 ALTER TABLE `game_keys` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,4 +139,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-07 11:50:49
+-- Dump completed on 2026-05-07 13:21:05

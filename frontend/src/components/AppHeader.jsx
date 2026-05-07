@@ -50,12 +50,19 @@ export default function AppHeader() {
                     </ul>
 
                     <div className="d-flex align-items-center gap-2 gamify-actions">
+                        <Link to="/search">
                         <button className="gamify-icon-btn" aria-label="Search">
                             <i className="bi bi-search"></i>
                         </button>
+                        </Link>
                         <Link to="/cart">
                             <button className="gamify-icon-btn" aria-label="Cart" onClick={handleCartClick}>
                                 <i className="bi bi-cart"></i>
+                            </button>
+                        </Link>
+                        <Link to="/">
+                            <button className="gamify-icon-btn" aria-label="Cart">
+                                <i class="bi bi-heart"></i>
                             </button>
                         </Link>
                         <div className="gamify-divider d-none d-lg-block"></div>
