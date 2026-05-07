@@ -1,26 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useCart } from "../context/CartContext";
 
 const GameDetail = () => {
     const { slug } = useParams();
 
-
     const [game, setGame] = useState(null);
-
 
     useEffect(() => {
 
         axios.get(`http://localhost:3000/api/games/${slug}`)
             .then(response => {
-                console.log("Dati ricevuti:", response.data)
                 setGame(response.data.results)
             })
             .catch(error => {
-                console.error("Cannot find any game", error)
                 setGame(null);
             });
     }, [slug]);
+
+    const { addToCart, removeFromCart, decreaseQuantity, cart } = useCart();
+
+    const isInCart = cart.find(item => item.id === game?.id);
+    const cartItem = cart.find(item => item.id === game?.id);
 
     if (!game) return <h2>Prodotto non trovato</h2>;
 
@@ -34,8 +36,6 @@ const GameDetail = () => {
             <section>
                 <h1>{game.title}</h1>
 
-
-
                 {game.image_url && (
                     <img src={`http://localhost:3000/image/${game.image_url}`} alt={game.title} />
                 )}
@@ -48,11 +48,34 @@ const GameDetail = () => {
                     <li><strong>Genre: </strong>{game.genre}</li>
                 </ul>
 
-                <div>
-                    <button onClick={() => alert(`Stai acquistando la chiave per ${game.title}`)}>
-                        Acquista ora
+                <div className="d-flex align-items-center gap-3">
+                    {cartItem && (
+                        <button
+                            className="btn btn-warning"
+                            onClick={() => decreaseQuantity(game.id)}
+                        >
+                            -
+                        </button>
+                    )}
+
+                    <span>{cartItem ? cartItem.quantity : 0} nel carrello</span>
+
+                    <button
+                        className="btn btn-success"
+                        onClick={() => addToCart(game)}
+                    >
+                        +
                     </button>
                 </div>
+
+                {cartItem && (
+                    <button
+                        className="btn btn-outline-danger btn-sm mt-3"
+                        onClick={() => removeFromCart(game.id)}
+                    >
+                        Rimuovi tutti dal carrello
+                    </button>
+                )}
 
             </section>
         </div>
