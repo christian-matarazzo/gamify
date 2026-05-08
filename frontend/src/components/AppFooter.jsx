@@ -1,18 +1,57 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/AppFooter.css';
 
 export default function AppFooter() {
+    const [newsletterStatus, setNewsletterStatus] = useState('idle');
+    const [newsletterMessage, setNewsletterMessage] = useState('');
+
     const footerLinks = {
         shop: [
-            { text: 'Trending', to: '/' },
-            { text: 'Pre-orders', to: '/' },
-            { text: 'New Releases', to: '/' },
+            { text: 'Home', path: '/' },
+            { text: 'Pre-orders', path: '/games/preorders' },
+            { text: 'New Releases', path: '/' },
         ],
         support: [
-            { text: 'Technical Support', to: '/' },
-            { text: 'Terms of Service', to: '/' },
-            { text: 'Privacy Policy', to: '/' },
+            { text: 'Technical Support', path: '/' },
+            { text: 'Terms of Service', path: '/' },
+            { text: 'Privacy Policy', path: '/' },
         ]
+    };
+
+    const handleNewsletterSubmit = async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+
+        setNewsletterStatus('loading');
+        setNewsletterMessage('');
+
+        try {
+            const response = await axios.post(
+                'http://localhost:3000/api/newsletter/subscribe',
+                { email }
+            );
+
+            if (response.data.success) {
+                setNewsletterStatus('success');
+                setNewsletterMessage('Thank you for subscribing!');
+                e.target.reset();
+            } else {
+                setNewsletterStatus('error');
+                setNewsletterMessage(response.data.message || 'Something went wrong');
+            }
+        } catch (error) {
+            console.error('Newsletter error:', error);
+
+            if (error.response?.status === 409) {
+                setNewsletterStatus('error');
+                setNewsletterMessage('This email is already registered');
+            } else {
+                setNewsletterStatus('error');
+                setNewsletterMessage('Something went wrong. Please try again.');
+            }
+        }
     };
 
     return (
@@ -47,7 +86,9 @@ export default function AppFooter() {
                         <ul className="nav flex-column gamify-footer-links">
                             {footerLinks.shop.map((link) => (
                                 <li key={link.text} className="nav-item mb-2">
-                                    <Link to={link.to} className="nav-link p-0">{link.text}</Link>
+                                    <NavLink to={link.path} className="nav-link p-0">
+                                        {link.text}
+                                    </NavLink>
                                 </li>
                             ))}
                         </ul>
@@ -58,7 +99,9 @@ export default function AppFooter() {
                         <ul className="nav flex-column gamify-footer-links">
                             {footerLinks.support.map((link) => (
                                 <li key={link.text} className="nav-item mb-2">
-                                    <Link to={link.to} className="nav-link p-0">{link.text}</Link>
+                                    <NavLink to={link.path} className="nav-link p-0">
+                                        {link.text}
+                                    </NavLink>
                                 </li>
                             ))}
                         </ul>
@@ -67,15 +110,39 @@ export default function AppFooter() {
                     <div className="col-lg-4 col-md-12">
                         <h5 className="gamify-footer-title mb-3">Subscribe to our newsletter!</h5>
                         <p className="small">Get updates on new releases and exclusive offers</p>
-                        <div className="gamify-newsletter-group mb-3">
-                            <input
-                                type="email"
-                                className="form-control"
-                                placeholder="Your mail goes here..."
-                                aria-label="Email"
-                            />
-                            <button className="gamify-btn-subscribe" type="button">Join</button>
-                        </div>
+
+                        <form onSubmit={handleNewsletterSubmit} className="gamify-newsletter-group mb-3">
+                            <div className="input-group">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="form-control"
+                                    placeholder="Your mail goes here..."
+                                    aria-label="Email"
+                                    required
+                                    disabled={newsletterStatus === 'loading'}
+                                />
+                                <button
+                                    className="gamify-btn-subscribe"
+                                    type="submit"
+                                    disabled={newsletterStatus === 'loading'}
+                                >
+                                    {newsletterStatus === 'loading' ? 'Joining...' : 'Join'}
+                                </button>
+                            </div>
+                        </form>
+
+                        {newsletterStatus === 'success' && (
+                            <p className="gamify-newsletter-success mb-0">
+                                <i class="bi bi-check-lg"></i> {newsletterMessage}
+                            </p>
+                        )}
+
+                        {newsletterStatus === 'error' && (
+                            <p className="gamify-newsletter-error mb-0">
+                                <i class="bi bi-x-lg"></i> {newsletterMessage}
+                            </p>
+                        )}
                     </div>
                 </div>
 

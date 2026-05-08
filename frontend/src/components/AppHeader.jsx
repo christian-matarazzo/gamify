@@ -18,6 +18,9 @@ export default function AppHeader() {
 
     function handleCartClick() {
     }
+    function handleWishClick(){
+
+    }
 
     return (
         <header>
@@ -64,7 +67,7 @@ export default function AppHeader() {
                                 <i className="bi bi-cart"></i>
                             </button>
                         </Link>
-                        <Link to="/">
+                        <Link to="/wishlist">
                             <button className="gamify-icon-btn" aria-label="Cart">
                                 <i className="bi bi-heart"></i>
                             </button>
