@@ -3,6 +3,8 @@ const cors = require('cors');
 const gamesRoute = require('./routes/games');
 const inventoryRoute = require('./routes/inventory');
 const ordersRoute = require('./routes/orders'); 
+const newsletterRoute = require('./routes/newsletter');
+
 
 const app = express();
 const port = 3000;
@@ -11,10 +13,12 @@ app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
 
-// Rotte API
+/* API ROUTES */
 app.use('/api/games', gamesRoute);
 app.use('/api/inventory', inventoryRoute);
-app.use('/api/orders', ordersRoute); // ← CORRETTO: solo il prefisso, plurale
+app.use('/api/orders', ordersRoute);
+app.use('/api/newsletter', newsletterRoute);
+
 
 app.get('/', (req, res) => {
   res.send('Il mio server');

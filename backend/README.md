@@ -3,3 +3,4 @@
 express
 mysql2
 cors
+nodemailer
