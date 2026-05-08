@@ -35,7 +35,7 @@ export default function AppFooter() {
 
             if (response.data.success) {
                 setNewsletterStatus('success');
-                setNewsletterMessage('Thank you for subscribing! 🎮');
+                setNewsletterMessage('Thank you for subscribing!');
                 e.target.reset();
             } else {
                 setNewsletterStatus('error');
@@ -43,7 +43,7 @@ export default function AppFooter() {
             }
         } catch (error) {
             console.error('Newsletter error:', error);
-            
+
             if (error.response?.status === 409) {
                 setNewsletterStatus('error');
                 setNewsletterMessage('This email is already registered');
@@ -58,7 +58,6 @@ export default function AppFooter() {
         <footer className="gamify-footer pt-5 pb-3">
             <div className="container">
                 <div className="row gy-4">
-                    {/* Brand + Social */}
                     <div className="col-lg-4 col-md-12">
                         <Link className="navbar-brand d-flex align-items-center gap-2 gamify-footer-brand fs-3 fw-bold text-decoration-none mb-3" to="/">
                             <img className="gamify-logo-footer" src="/img/gamify-logo-bw.png" alt="Gamify Logo" />
@@ -82,7 +81,6 @@ export default function AppFooter() {
                         </div>
                     </div>
 
-                    {/* Shop Links */}
                     <div className="col-lg-2 col-6">
                         <h5 className="gamify-footer-title mb-3">Shop</h5>
                         <ul className="nav flex-column gamify-footer-links">
@@ -94,7 +92,6 @@ export default function AppFooter() {
                         </ul>
                     </div>
 
-                    {/* Support Links */}
                     <div className="col-lg-2 col-6">
                         <h5 className="gamify-footer-title mb-3">Support</h5>
                         <ul className="nav flex-column gamify-footer-links">
@@ -106,11 +103,10 @@ export default function AppFooter() {
                         </ul>
                     </div>
 
-                    {/* Newsletter Form */}
                     <div className="col-lg-4 col-md-12">
                         <h5 className="gamify-footer-title mb-3">Subscribe to our newsletter!</h5>
                         <p className="small">Get updates on new releases and exclusive offers</p>
-                        
+
                         <form onSubmit={handleNewsletterSubmit} className="gamify-newsletter-group mb-3">
                             <div className="input-group">
                                 <input
@@ -122,8 +118,8 @@ export default function AppFooter() {
                                     required
                                     disabled={newsletterStatus === 'loading'}
                                 />
-                                <button 
-                                    className="gamify-btn-subscribe" 
+                                <button
+                                    className="gamify-btn-subscribe"
                                     type="submit"
                                     disabled={newsletterStatus === 'loading'}
                                 >
@@ -132,15 +128,15 @@ export default function AppFooter() {
                             </div>
                         </form>
 
-                        {/* Feedback messages */}
                         {newsletterStatus === 'success' && (
-                            <p className="small text-success fw-medium mb-0">
-                                ✅ {newsletterMessage}
+                            <p className="gamify-newsletter-success mb-0">
+                                <i class="bi bi-check-lg"></i> {newsletterMessage}
                             </p>
                         )}
+
                         {newsletterStatus === 'error' && (
-                            <p className="small text-danger mb-0">
-                                ❌ {newsletterMessage}
+                            <p className="gamify-newsletter-error mb-0">
+                                <i class="bi bi-x-lg"></i> {newsletterMessage}
                             </p>
                         )}
                     </div>
