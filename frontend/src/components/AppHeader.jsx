@@ -4,12 +4,18 @@ import '../styles/AppHeader.css';
 export default function AppHeader() {
 
     const navLinks = [
-        { text: 'Trending' },
-        { text: 'Pre-orders' },
-        { text: 'Blog' },
-        { text: 'New Releases' },
-        { text: 'Technical Support' },
+        { text: 'Trending', path: '/' },
+        { text: 'Pre-orders', path: '/games/preorders' },
+        { text: 'Blog', path: '/blog' },
+        { text: 'New Releases', path: '/new-releases' },
+        { text: 'Technical Support', path: '/support' },
     ];
+    
+    function handleNavClick() {
+        const element = document.getElementById('gamifyNavCollapse');
+        const bsCollapse = Collapse.getInstance(el);
+        if (bsCollapse) bsCollapse.hide();
+    }
 
     function handleCartClick() {
     }
@@ -37,23 +43,22 @@ export default function AppHeader() {
                     <ul className="navbar-nav mx-auto gap-1 gamify-links">
                         {navLinks.map((link) => (
                             <li key={link.text} className="nav-item">
-                                <Link
+                                <NavLink
                                     className="nav-link"
-                                    to="/"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target=".navbar-collapse.show"
+                                    to={link.path}
+                                    onClick={handleNavClick}
                                 >
                                     {link.text}
-                                </Link>
+                                </NavLink>
                             </li>
                         ))}
                     </ul>
 
                     <div className="d-flex align-items-center gap-2 gamify-actions">
                         <Link to="/search">
-                        <button className="gamify-icon-btn" aria-label="Search">
-                            <i className="bi bi-search"></i>
-                        </button>
+                            <button className="gamify-icon-btn" aria-label="Search">
+                                <i className="bi bi-search"></i>
+                            </button>
                         </Link>
                         <Link to="/cart">
                             <button className="gamify-icon-btn" aria-label="Cart" onClick={handleCartClick}>
@@ -62,7 +67,7 @@ export default function AppHeader() {
                         </Link>
                         <Link to="/">
                             <button className="gamify-icon-btn" aria-label="Cart">
-                                <i class="bi bi-heart"></i>
+                                <i className="bi bi-heart"></i>
                             </button>
                         </Link>
                         <div className="gamify-divider d-none d-lg-block"></div>

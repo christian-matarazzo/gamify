@@ -1,0 +1,53 @@
+.gamify-perks-banner {
+    background: var(--bg-2);
+    border: 0.5px solid var(--bg-4);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2rem;
+}
+
+.gamify-perks-title {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.gamify-perks-title span {
+    color: var(--accent);
+}
+
+.gamify-perk-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--bg-1);
+    border: 0.5px solid var(--bg-4);
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+
+.gamify-perk-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-top: 2px;
+    flex-shrink: 0;
+    color: var(--accent);
+}
+
+.gamify-single-perk {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.gamify-perk-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.5;
+}
