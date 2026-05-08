@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from "../context/CartContext";
+import {useWish} from "../context/WishlistContext"
 
 const GameDetail = () => {
     const { slug } = useParams();
     const [game, setGame] = useState(null);
-
+    const {wish,handleWish} =useWish();
+    console.log(wish[0]);
+    
     useEffect(() => {
         axios.get(`http://localhost:3000/api/games/${slug}`)
             .then(response => {
@@ -20,7 +23,8 @@ const GameDetail = () => {
     const { addToCart, removeFromCart, decreaseQuantity, cart } = useCart();
     const isInCart = cart.find(item => item.id === game?.id);
     const cartItem = cart.find(item => item.id === game?.id);
-
+    const controlWish = wish.includes(game?.id);
+   
     if (!game) return <h2>Prodotto non trovato</h2>;
 
     return (
@@ -40,6 +44,14 @@ const GameDetail = () => {
                         <li><strong>Description:</strong> {game.description}</li>
                         <li><strong>Data di uscita:</strong> {game.release_date || 'Disponibile'}</li>
                         <li><strong>Genre: </strong>{game.genre}</li>
+                        <button onClick={()=> handleWish(game.id)}>
+                            {controlWish ? (
+                                <i className="bi bi-balloon-heart-fill"></i>
+                            ) : (
+                                <i className="bi bi-balloon-heart"></i>
+                            )}
+                            
+                        </button>
                     </ul>
                     <div className="d-flex align-items-center gap-3">
                         {cartItem && (
@@ -66,6 +78,7 @@ const GameDetail = () => {
                             Rimuovi tutti dal carrello
                         </button>
                     )}
+                    
                 </section>
             </div>
         </main >
