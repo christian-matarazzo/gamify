@@ -6,7 +6,6 @@ export default function PopUp({ onClose }) {
         e.preventDefault()
         const email = e.target.email.value
         console.log(email)
-        onClose();
     }
 
     return (
@@ -32,6 +31,7 @@ export default function PopUp({ onClose }) {
                         name="email"
                         placeholder="Be part of our community!"
                         className="popup-input"
+                        required
                     />
 
                     <button
