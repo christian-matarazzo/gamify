@@ -9,6 +9,7 @@ import GameDetail from "./pages/GameDetail";
 import { CartProvider } from "./context/CartContext"
 import WishListPage from "./pages/WishListPage";
 import { WishlistProvider } from "./context/WishlistContext";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <CartProvider>
         <WishlistProvider>
           <BrowserRouter>
+          <ScrollToTop />
             <Routes>
               <Route element={<DefaultLayout />}>
                 <Route path="/" element={<Homepage />} />

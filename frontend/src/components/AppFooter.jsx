@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AppFooter.css';
 
 export default function AppFooter() {
-    const [newsletterStatus, setNewsletterStatus] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
+    const [newsletterStatus, setNewsletterStatus] = useState('idle');
     const [newsletterMessage, setNewsletterMessage] = useState('');
 
     const footerLinks = {
         shop: [
-            { text: 'Trending', to: '/' },
-            { text: 'Pre-orders', to: '/' },
-            { text: 'New Releases', to: '/' },
+            { text: 'Home', path: '/' },
+            { text: 'Pre-orders', path: '/games/preorders' },
+            { text: 'New Releases', path: '/' },
         ],
         support: [
-            { text: 'Technical Support', to: '/' },
-            { text: 'Terms of Service', to: '/' },
-            { text: 'Privacy Policy', to: '/' },
+            { text: 'Technical Support', path: '/' },
+            { text: 'Terms of Service', path: '/' },
+            { text: 'Privacy Policy', path: '/' },
         ]
     };
 
@@ -86,7 +86,9 @@ export default function AppFooter() {
                         <ul className="nav flex-column gamify-footer-links">
                             {footerLinks.shop.map((link) => (
                                 <li key={link.text} className="nav-item mb-2">
-                                    <Link to={link.to} className="nav-link p-0">{link.text}</Link>
+                                    <NavLink to={link.path} className="nav-link p-0">
+                                        {link.text}
+                                    </NavLink>
                                 </li>
                             ))}
                         </ul>
@@ -97,7 +99,9 @@ export default function AppFooter() {
                         <ul className="nav flex-column gamify-footer-links">
                             {footerLinks.support.map((link) => (
                                 <li key={link.text} className="nav-item mb-2">
-                                    <Link to={link.to} className="nav-link p-0">{link.text}</Link>
+                                    <NavLink to={link.path} className="nav-link p-0">
+                                        {link.text}
+                                    </NavLink>
                                 </li>
                             ))}
                         </ul>
