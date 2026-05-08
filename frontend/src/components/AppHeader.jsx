@@ -4,13 +4,12 @@ import '../styles/AppHeader.css';
 export default function AppHeader() {
 
     const navLinks = [
-        { text: 'Trending', path: '/' },
+        { text: 'Home', path: '/' },
         { text: 'Pre-orders', path: '/games/preorders' },
-        { text: 'Blog', path: '/blog' },
-        { text: 'New Releases', path: '/new-releases' },
-        { text: 'Technical Support', path: '/support' },
+        { text: 'Blog', path: '/' },
+        { text: 'Technical Support', path: '/' },
     ];
-    
+
     function handleNavClick() {
         const element = document.getElementById('gamifyNavCollapse');
         const bsCollapse = Collapse.getInstance(el);
