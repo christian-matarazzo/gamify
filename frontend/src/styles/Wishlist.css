@@ -1,0 +1,41 @@
+.wishTitle{
+    color: rgba(252, 238, 9);
+}
+
+.description{
+    color: rgba(93, 112, 128);
+}
+
+#top-container{
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+    padding: 23px;     
+    background-color: rgba(13, 20, 29);
+    border-bottom: solid 1px rgba(252, 238, 9);
+    
+}   
+
+#logo{
+    width: 90px;
+}
+
+@media(max-width:480px){
+    #logo{display: none;
+    }
+
+    #top-container{
+        justify-content: center;
+        text-align: center;
+    }
+
+    #text-container{
+        align-items: center;
+    }
+}
+
+.middle-container{
+    padding-left: 23px;
+    margin-top: 15px;
+
+}
