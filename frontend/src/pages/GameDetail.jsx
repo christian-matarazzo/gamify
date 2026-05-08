@@ -8,7 +8,8 @@ const GameDetail = () => {
     const { slug } = useParams();
     const [game, setGame] = useState(null);
     const {wish,handleWish} =useWish();
-    console.log(wish[0]);
+    const [gameKeys, setGameKeys] = useState(null)
+    
     
     useEffect(() => {
         axios.get(`http://localhost:3000/api/games/${slug}`)
@@ -19,6 +20,18 @@ const GameDetail = () => {
                 setGame(null);
             });
     }, [slug]);
+
+    useEffect(() => {
+        axios.get(`http://localhost:3000/api/inventory/`)
+            .then(response => {
+            const inventoryGame = response.data.data.find(item => item.slug === slug);
+            setGameKeys(inventoryGame);
+            })
+            .catch(error => {
+                setGameKeys(null);
+            });
+    }, [slug]);
+    
 
     const { addToCart, removeFromCart, decreaseQuantity, cart } = useCart();
     const isInCart = cart.find(item => item.id === game?.id);
@@ -78,6 +91,7 @@ const GameDetail = () => {
                             Rimuovi tutti dal carrello
                         </button>
                     )}
+                    <p>quantità chiavi disonibili: {gameKeys?.available_keys}</p>
                     
                 </section>
             </div>
