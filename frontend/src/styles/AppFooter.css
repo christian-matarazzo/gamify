@@ -93,3 +93,14 @@
 .gamify-logo-footer {
   height: 30px;
 }
+
+.gamify-newsletter-success {
+  color: var(--accent) !important;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.gamify-newsletter-error {
+  color: #ff4d4d;
+  font-size: 13px;
+}
