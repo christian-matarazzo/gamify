@@ -1,9 +1,11 @@
 body {
-  background: var(--bg-3);
-  color: var(--text-primary);
+    background: var(--bg-3);
+    color: var(--text-primary);
 }
 
-html, body, #root {
+html,
+body,
+#root {
     height: 100%;
     margin: 0;
 }
@@ -20,4 +22,26 @@ html, body, #root {
 
 .gamify-footer {
     flex-shrink: 0;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--accent);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--bg-2);
 }

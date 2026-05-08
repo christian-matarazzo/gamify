@@ -38,10 +38,10 @@
     font-size: 14px;
     color: var(--text-secondary);
     line-height: 1.7;
-    margin: 0 0 28px;
+    margin: 0 0 14px;
 }
 
-.popup-close-btn {
+.popup-submit-btn, .popup-skip {
     background: var(--accent);
     color: var(--bg-1);
     border: none;
@@ -55,7 +55,7 @@
     transition: opacity 0.15s;
 }
 
-.popup-close-btn:hover {
+.popup-submit-btn:hover, .popup-skip:hover {
     opacity: 0.85;
 }
 
@@ -114,3 +114,35 @@
     letter-spacing: 2px;
     font-family: monospace;
 }
+
+.popup form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.popup-input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--bg-4);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+
+.popup-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.popup-input:focus {
+    border-color: var(--accent);
+}
+
+.gamify-wantmore {
+    color: var(--accent);
+}
+
