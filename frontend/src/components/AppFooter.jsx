@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/AppFooter.css';
 
 export default function AppFooter() {
+    const [newsletterStatus, setNewsletterStatus] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
+    const [newsletterMessage, setNewsletterMessage] = useState('');
+
     const footerLinks = {
         shop: [
             { text: 'Trending', to: '/' },
@@ -15,10 +20,45 @@ export default function AppFooter() {
         ]
     };
 
+    const handleNewsletterSubmit = async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+
+        setNewsletterStatus('loading');
+        setNewsletterMessage('');
+
+        try {
+            const response = await axios.post(
+                'http://localhost:3000/api/newsletter/subscribe',
+                { email }
+            );
+
+            if (response.data.success) {
+                setNewsletterStatus('success');
+                setNewsletterMessage('Thank you for subscribing! 🎮');
+                e.target.reset(); // Pulisci il form
+            } else {
+                setNewsletterStatus('error');
+                setNewsletterMessage(response.data.message || 'Something went wrong');
+            }
+        } catch (error) {
+            console.error('Newsletter error:', error);
+            
+            if (error.response?.status === 409) {
+                setNewsletterStatus('error');
+                setNewsletterMessage('This email is already registered');
+            } else {
+                setNewsletterStatus('error');
+                setNewsletterMessage('Something went wrong. Please try again.');
+            }
+        }
+    };
+
     return (
         <footer className="gamify-footer pt-5 pb-3">
             <div className="container">
                 <div className="row gy-4">
+                    {/* Brand + Social */}
                     <div className="col-lg-4 col-md-12">
                         <Link className="navbar-brand d-flex align-items-center gap-2 gamify-footer-brand fs-3 fw-bold text-decoration-none mb-3" to="/">
                             <img className="gamify-logo-footer" src="/img/gamify-logo-bw.png" alt="Gamify Logo" />
@@ -42,6 +82,7 @@ export default function AppFooter() {
                         </div>
                     </div>
 
+                    {/* Shop Links */}
                     <div className="col-lg-2 col-6">
                         <h5 className="gamify-footer-title mb-3">Shop</h5>
                         <ul className="nav flex-column gamify-footer-links">
@@ -53,6 +94,7 @@ export default function AppFooter() {
                         </ul>
                     </div>
 
+                    {/* Support Links */}
                     <div className="col-lg-2 col-6">
                         <h5 className="gamify-footer-title mb-3">Support</h5>
                         <ul className="nav flex-column gamify-footer-links">
@@ -64,18 +106,43 @@ export default function AppFooter() {
                         </ul>
                     </div>
 
+                    {/* Newsletter Form */}
                     <div className="col-lg-4 col-md-12">
                         <h5 className="gamify-footer-title mb-3">Subscribe to our newsletter!</h5>
                         <p className="small">Get updates on new releases and exclusive offers</p>
-                        <div className="gamify-newsletter-group mb-3">
-                            <input
-                                type="email"
-                                className="form-control"
-                                placeholder="Your mail goes here..."
-                                aria-label="Email"
-                            />
-                            <button className="gamify-btn-subscribe" type="button">Join</button>
-                        </div>
+                        
+                        <form onSubmit={handleNewsletterSubmit} className="gamify-newsletter-group mb-3">
+                            <div className="input-group">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="form-control"
+                                    placeholder="Your mail goes here..."
+                                    aria-label="Email"
+                                    required
+                                    disabled={newsletterStatus === 'loading' || newsletterStatus === 'success'}
+                                />
+                                <button 
+                                    className="gamify-btn-subscribe" 
+                                    type="submit"
+                                    disabled={newsletterStatus === 'loading' || newsletterStatus === 'success'}
+                                >
+                                    {newsletterStatus === 'loading' ? 'Joining...' : 'Join'}
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Feedback messages */}
+                        {newsletterStatus === 'success' && (
+                            <p className="small text-success fw-medium mb-0">
+                                ✅ {newsletterMessage}
+                            </p>
+                        )}
+                        {newsletterStatus === 'error' && (
+                            <p className="small text-danger mb-0">
+                                ❌ {newsletterMessage}
+                            </p>
+                        )}
                     </div>
                 </div>
 
