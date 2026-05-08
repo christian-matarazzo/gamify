@@ -4,6 +4,7 @@ const gamesRoute = require('./routes/games');
 const inventoryRoute = require('./routes/inventory');
 const ordersRoute = require('./routes/orders'); 
 const newsletterRoute = require('./routes/newsletter');
+const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 
 const app = express();
@@ -28,6 +29,9 @@ app.post('/try', (req, res) => {
   console.log("Richiesta mandata con successo");
   res.status(200).json({ success: true, message: 'Funziono' });
 });
+
+app.use(notFound)
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`Il tuo server è sulla porta http://localhost:${port}`);
