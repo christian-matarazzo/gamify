@@ -20,9 +20,10 @@ function App() {
               <Route element={<DefaultLayout />}>
                 <Route path="/" element={<Homepage />} />
                 <Route path="/search" element={<SearchPage />} />
+                <Route path="/games/preorders" element={<Preorders />} />
                 <Route path="/games/:slug" element={<GameDetail />} />
                 <Route path="/cart" element={<Cart />} />
-                <Route path="/wishlist" element={<WishListPage/>} />
+                <Route path="/wishlist" element={<WishListPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
