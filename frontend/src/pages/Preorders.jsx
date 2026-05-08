@@ -10,7 +10,7 @@ export default function Preorders() {
     return (
         <main className="container py-4">
             <h1 className="gamify-preorders">
-                <span>Preorder</span> Now!
+                Be the first to the <span>Frontline</span>, play before the rest!
             </h1>
 
             <p className="gamify-preorder-description">
