@@ -22,9 +22,15 @@ export default function SearchPage() {
     return (
         <>
             <main className="container py-4">
-                <h1 className="gamify-section-title mb-4">
-                    <span>Search</span> Games
-                </h1>
+                <div className="d-flex justify-content-between align-items-baseline mb-4">
+                    <h1 className="gamify-section-title mb-0">
+                        <span>Search</span> Games
+                    </h1>
+
+                    <h1 className="gamify-section-title mb-0">
+                        <span>Filter</span> By
+                    </h1>
+                </div>
 
                 <div className="gamify-search-bar mb-4">
                     <div className="gamify-search-input-wrapper">
