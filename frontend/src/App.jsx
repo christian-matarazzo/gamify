@@ -8,23 +8,25 @@ import { GamesProvider } from "./context/GamesContext";
 import GameDetail from "./pages/GameDetail";
 import { CartProvider } from "./context/CartContext"
 import WishListPage from "./pages/WishListPage";
+import { WishlistProvider } from "./context/WishlistContext";
 
 function App() {
   return (
     <GamesProvider>
       <CartProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<DefaultLayout />}>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/games/:slug" element={<GameDetail />} />
-              <Route path="/games/preorders" element={<Preorders />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/wishlist" element={<WishListPage/>} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+        <WishlistProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<DefaultLayout />}>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/games/:slug" element={<GameDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/wishlist" element={<WishListPage/>} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </WishlistProvider>
       </CartProvider>
     </GamesProvider>
   )
