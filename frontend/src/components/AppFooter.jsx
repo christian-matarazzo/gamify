@@ -4,7 +4,7 @@ import axios from 'axios';
 import '../styles/AppFooter.css';
 
 export default function AppFooter() {
-    const [newsletterStatus, setNewsletterStatus] = useState('idle');
+    const [newsletterStatus, setNewsletterStatus] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
     const [newsletterMessage, setNewsletterMessage] = useState('');
 
     const footerLinks = {
@@ -120,12 +120,12 @@ export default function AppFooter() {
                                     placeholder="Your mail goes here..."
                                     aria-label="Email"
                                     required
-                                    disabled={newsletterStatus === 'loading' || newsletterStatus === 'success'}
+                                    disabled={newsletterStatus === 'loading'}
                                 />
                                 <button
                                     className="gamify-btn-subscribe"
                                     type="submit"
-                                    disabled={newsletterStatus === 'loading' || newsletterStatus === 'success'}
+                                    disabled={newsletterStatus === 'loading'}
                                 >
                                     {newsletterStatus === 'loading' ? 'Joining...' : 'Join'}
                                 </button>
