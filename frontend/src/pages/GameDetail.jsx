@@ -2,100 +2,152 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from "../context/CartContext";
-import {useWish} from "../context/WishlistContext"
+import { useWish } from "../context/WishlistContext";
+import "../styles/GameDetail.css";
 
 const GameDetail = () => {
     const { slug } = useParams();
     const [game, setGame] = useState(null);
-    const {wish,handleWish} =useWish();
-    const [gameKeys, setGameKeys] = useState(null)
-    
-    
+    const [gameKeys, setGameKeys] = useState(null);
+    const [error, setError] = useState(null);
+
+    const { addToCart, removeFromCart, decreaseQuantity, cart } = useCart();
+    const { wish, handleWish } = useWish();
+
+    const cartItem = cart.find(item => item.id === game?.id);
+    const isInWishlist = wish.includes(game?.id);
+    const availableKeys = gameKeys?.available_keys ?? 0;
+    const isOutOfStock = cartItem
+        ? cartItem.quantity >= availableKeys
+        : availableKeys === 0;
+
+    useEffect(() => {
+        setError(isOutOfStock ? "Product ran out of keys!" : null);
+    }, [isOutOfStock]);
+
     useEffect(() => {
         axios.get(`http://localhost:3000/api/games/${slug}`)
-            .then(response => {
-                setGame(response.data.results)
-            })
-            .catch(error => {
-                setGame(null);
-            });
+            .then(response => setGame(response.data.results))
+            .catch(() => setGame(null));
     }, [slug]);
 
     useEffect(() => {
         axios.get(`http://localhost:3000/api/inventory/`)
             .then(response => {
-            const inventoryGame = response.data.data.find(item => item.slug === slug);
-            setGameKeys(inventoryGame);
+                const inventoryGame = response.data.data.find(item => item.slug === slug);
+                setGameKeys(inventoryGame);
             })
-            .catch(error => {
-                setGameKeys(null);
-            });
+            .catch(() => setGameKeys(null));
     }, [slug]);
-    
 
-    const { addToCart, removeFromCart, decreaseQuantity, cart } = useCart();
-    const isInCart = cart.find(item => item.id === game?.id);
-    const cartItem = cart.find(item => item.id === game?.id);
-    const controlWish = wish.includes(game?.id);
-   
-    if (!game) return <h2>Prodotto non trovato</h2>;
+    const handleAddToCart = () => {
+        addToCart({ ...game, stock: availableKeys });
+    };
+
+    if (!game) return (
+        <main className="container py-4 text-center">
+            <i className="bi bi-controller" style={{ fontSize: "48px", color: "var(--accent)" }}></i>
+            <h2 style={{ color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Product not found
+            </h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: "13px" }}>
+                This game doesn't exist or has been removed.
+            </p>
+            <Link to="/" className="gamify-detail-back-btn mt-3">
+                <i className="bi bi-arrow-left"></i> Back to Homepage
+            </Link>
+        </main>
+    );
 
     return (
         <main className="container py-4">
             <div>
-                <Link to="/">← Torna alla lista</Link>
+                <Link to="/" className="gamify-detail-back-btn">
+                    <i className="bi bi-arrow-left"></i> Back to Homepage
+                </Link>
                 <hr />
-                <section>
-                    <h1>{game.title}</h1>
 
-                    {game.image_url && (
-                        <img src={`http://localhost:3000/image/${game.image_url}`} alt={game.title} />
-                    )}
-                    <ul>
-                        <li><strong>Developer: </strong>{game.developer_name}</li>
-                        <li><strong>Prezzo:</strong> {game.base_price}€</li>
-                        <li><strong>Description:</strong> {game.description}</li>
-                        <li><strong>Data di uscita:</strong> {game.release_date || 'Disponibile'}</li>
-                        <li><strong>Genre: </strong>{game.genre}</li>
-                        <button onClick={()=> handleWish(game.id)}>
-                            {controlWish ? (
-                                <i className="bi bi-balloon-heart-fill"></i>
-                            ) : (
-                                <i className="bi bi-balloon-heart"></i>
+                <section className="row g-4">
+                    <div className="col-12 col-md-6">
+                        <div className="gamify-detail-cover-wrap">
+                            {game.image_url && (
+                                <img
+                                    src={`http://localhost:3000/image/${game.image_url}`}
+                                    alt={game.title}
+                                    className="gamify-detail-cover-img"
+                                />
                             )}
-                            
-                        </button>
-                    </ul>
-                    <div className="d-flex align-items-center gap-3">
+                            <button
+                                className={`gamify-detail-wish-btn${isInWishlist ? ' active' : ''}`}
+                                onClick={() => handleWish(game.id)}
+                                aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                            >
+                                <i className={`bi bi-heart${isInWishlist ? '-fill' : ''}`}></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="col-12 col-md-6 d-flex gamify-detail-info-panel flex-column gap-2">
+                        <h1 className="gamify-detail-title">{game.title}</h1>
+
+                        <div className="gamify-detail-meta-group">
+                            <p><strong>Developer: </strong>{game.developer_name}</p>
+                            <p><strong>Genre: </strong>{game.genre}</p>
+                            <p><strong>Release date:</strong> {game.release_date || 'Available'}</p>
+                        </div>
+
+                        <p className="gamify-detail-description">{game.description}</p>
+                        <hr className="my-1" />
+
+                        <div className="gamify-detail-price-section">
+                            <p className="gamify-detail-price">{game.base_price}€</p>
+                            <span className="gamify-detail-keys-badge">
+                                <i className="bi bi-key me-1"></i>
+                                {availableKeys} keys left!
+                            </span>
+                        </div>
+
+                        <div className="d-flex align-items-center gap-2">
+                            <button
+                                className="gamify-btn-sq gamify-btn-minus"
+                                onClick={() => decreaseQuantity(game.id)}
+                                disabled={!cartItem || cartItem.quantity === 0}
+                                aria-label="Decrease quantity"
+                            >
+                                <i className="bi bi-dash-lg"></i>
+                            </button>
+                            <span className={`gamify-detail-qty-count${cartItem ? ' active' : ''}`}>
+                                {cartItem ? `${cartItem.quantity} in cart` : '0 in cart'}
+                            </span>
+                            <button
+                                className="gamify-btn-sq gamify-btn-plus"
+                                onClick={handleAddToCart}
+                                disabled={isOutOfStock}
+                                aria-label="Add to cart"
+                            >
+                                <i className="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+
                         {cartItem && (
                             <button
-                                className="btn btn-warning"
-                                onClick={() => decreaseQuantity(game.id)}
+                                className="gamify-detail-remove-btn"
+                                onClick={() => removeFromCart(game.id)}
                             >
-                                -
+                                Remove all from cart
                             </button>
                         )}
-                        <span>{cartItem ? cartItem.quantity : 0} nel carrello</span>
-                        <button
-                            className="btn btn-success"
-                            onClick={() => addToCart(game)}
-                        >
-                            +
-                        </button>
+
+                                                {error && (
+                            <div className="gamify-detail-alert p-2 mb-3">
+                                <i className="bi bi-exclamation-circle me-2"></i>
+                                {error}
+                            </div>
+                        )}
                     </div>
-                    {cartItem && (
-                        <button
-                            className="btn btn-outline-danger btn-sm mt-3"
-                            onClick={() => removeFromCart(game.id)}
-                        >
-                            Rimuovi tutti dal carrello
-                        </button>
-                    )}
-                    <p>quantità chiavi disonibili: {gameKeys?.available_keys}</p>
-                    
                 </section>
             </div>
-        </main >
+        </main>
     );
 };
 

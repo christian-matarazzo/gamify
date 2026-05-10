@@ -2,7 +2,6 @@ import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
 
 export default function CartPage() {
-   
     const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
 
     const total = cart.reduce(
@@ -28,52 +27,63 @@ export default function CartPage() {
             <div className="row">
                 <div className="col-md-8">
 
-                    {cart.map(item => (
-                        <div
-                            key={item.id}
-                            className="p-3 mb-3 border rounded bg-dark d-flex justify-content-between align-items-center"
-                        >
-                            <div className="d-flex align-items-center gap-3">
-                                <img
-                                    src={`http://localhost:3000/image/${item.image_url}`}
-                                    alt={item.title}
-                                    width="80"
-                                    height="80"
-                                    style={{ objectFit: "cover", borderRadius: "6px" }}
-                                />
+                    {cart.map(item => {
+                        const isOutOfStock = item.quantity >= (item.stock ?? 0);
 
-                                <div>
-                                    <h5 className="mb-1">{item.title}</h5>
-                                    <p className="mb-1">Prezzo: €{item.base_price}</p>
+                        return (
+                            <div key={item.id} className="mb-3">
+                                <div className="p-3 border rounded bg-dark d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center gap-3">
+                                        <img
+                                            src={`http://localhost:3000/image/${item.image_url}`}
+                                            alt={item.title}
+                                            width="80"
+                                            height="80"
+                                            style={{ objectFit: "cover", borderRadius: "6px" }}
+                                        />
 
-                                    <div className="d-flex align-items-center gap-2">
-                                        <button
-                                            className="btn btn-warning btn-sm"
-                                            onClick={() => decreaseQuantity(item.id)}
-                                        >
-                                            -
-                                        </button>
+                                        <div>
+                                            <h5 className="mb-1">{item.title}</h5>
+                                            <p className="mb-1">Prezzo: €{item.base_price}</p>
 
-                                        <span>{item.quantity}</span>
+                                            <div className="d-flex align-items-center gap-2">
+                                                <button
+                                                    className="btn btn-warning btn-sm"
+                                                    onClick={() => decreaseQuantity(item.id)}
+                                                >
+                                                    -
+                                                </button>
 
-                                        <button
-                                            className="btn btn-success btn-sm"
-                                            onClick={() => addToCart(item)}
-                                        >
-                                            +
-                                        </button>
+                                                <span>{item.quantity}</span>
+
+                                                <button
+                                                    className={`btn btn-sm ${isOutOfStock ? 'btn-secondary' : 'btn-success'}`}
+                                                    onClick={() => addToCart(item)}
+                                                    disabled={isOutOfStock}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <button
-                                className="btn btn-outline-danger btn-sm"
-                                onClick={() => removeFromCart(item.id)}
-                            >
-                                Rimuovi
-                            </button>
-                        </div>
-                    ))}
+                                    <button
+                                        className="btn btn-outline-danger btn-sm"
+                                        onClick={() => removeFromCart(item.id)}
+                                    >
+                                        Rimuovi
+                                    </button>
+                                </div>
+                                
+                                {isOutOfStock && (
+                                    <div className="alert alert-danger py-2 mt-1">
+                                        <i className="bi bi-exclamation-circle me-2"></i>
+                                        Product ran out of keys!
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
 
                     <button className="btn btn-danger mt-3" onClick={clearCart}>
                         Svuota carrello
