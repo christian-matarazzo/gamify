@@ -8,8 +8,14 @@ export const CartProvider = ({ children }) => {
 
     const addToCart = (product) => {
         setCart((prevCart) => {
+            const itemIndex = prevCart.findIndex((item) => item.id === product.id);
+            const currentQuantity = itemIndex !== -1 ? prevCart[itemIndex].quantity : 0;
+
+            if (currentQuantity >= product.stock) {
+                return prevCart;
+            }
+
             let newCart;
-            const itemIndex = prevCart.findIndex((item) => item.id === product.id)
             if (itemIndex !== -1) {
                 newCart = [...prevCart];
                 newCart[itemIndex] = {
@@ -19,7 +25,6 @@ export const CartProvider = ({ children }) => {
             } else {
                 newCart = [...prevCart, { ...product, quantity: 1 }];
             }
-            console.log("🛒 Carrello aggiornato:", newCart);
             return newCart;
         });
     };
@@ -35,7 +40,6 @@ export const CartProvider = ({ children }) => {
                         ...item,
                         quantity: item.quantity - 1
                     };
-                    console.log("🛒 Quantità diminuita:", newCart);
                     return newCart;
                 } else {
                     return prevCart.filter((i) => i.id !== productId);
@@ -57,4 +61,5 @@ export const CartProvider = ({ children }) => {
         </CartContext.Provider>
     )
 }
+
 export const useCart = () => useContext(CartContext);
