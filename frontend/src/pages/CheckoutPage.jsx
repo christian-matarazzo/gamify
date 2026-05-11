@@ -59,10 +59,12 @@ export default function CheckoutPage() {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col">
                             <div className="card">
-                                
-                            </div>
+                                <h3>Metodo di pagamento:</h3>
+                                <p>Apple Pay</p>
+                                <p>Revolut</p>
+                                <p>Visa Card</p>
+                                <p>Paypal</p>
                         </div>
                     </div>
                 </div>
