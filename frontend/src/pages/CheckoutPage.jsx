@@ -72,31 +72,58 @@ export default function CheckoutPage() {
     return null;
   };
 
-  const handlePurchase = async (event) => {
+const handlePurchase = async function(event) {
     event.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
 
-    try {
-      const response = await axios.post('http://localhost:3000/api/orders/purchase', {
-        email: customerEmail,
-        items: cartItems.map(item => ({
-          game_id: item.id,
-          quantity: item.quantity || 1
-        })),
-        coupon: couponCode.trim() || null
-      });
 
-      if (response.data.success) {
-        setOrderResult(response.data);
-        localStorage.removeItem('gamify_cart');
-      }
-    } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'Purchase failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+    const stockCheck = await checkStockAvailability(cartItems);
+    
+    if (!stockCheck.success) {
+
+        if (stockCheck.unavailable && stockCheck.unavailable.length > 0) {
+            const unavailableNames = stockCheck.unavailable.map(function(unavailableItem) {
+                if (unavailableItem.title) {
+                    return `"${unavailableItem.title}"`;
+                }
+                return `Product #${unavailableItem.game_id}`;
+            });
+            
+            const userMessage = `The following item(s) are no longer available: ${unavailableNames.join(', ')}. Please remove them from your cart and try again.`;
+            setErrorMessage(userMessage);
+        } else {
+            setErrorMessage(stockCheck.message || 'Some items are no longer available. Please refresh and try again.');
+        }
+        
+
+        setIsLoading(false);
+        return;
     }
-  };
+
+
+    try {
+        const response = await axios.post('http://localhost:3000/api/orders/purchase', {
+            email: customerEmail,
+            items: cartItems.map(function(item) {
+                return {
+                    game_id: item.id,
+                    quantity: item.quantity || 1
+                };
+            }),
+            coupon: couponCode.trim() || null
+        });
+
+        if (response.data.success) {
+            setOrderResult(response.data);
+            localStorage.removeItem('gamify_cart');
+        }
+    } catch (purchaseError) {
+        setErrorMessage(purchaseError.response?.data?.message || 'Purchase failed. Please try again.');
+    } finally {
+        setIsLoading(false);
+    }
+};
 
   if (orderResult?.success) {
     return (
@@ -180,6 +207,28 @@ export default function CheckoutPage() {
     return sum + (item.base_price * quantity);
   }, 0);
   const totalSavings = originalTotal - calculatedTotal;
+
+  const checkStockAvailability = async function (items) {
+    try {
+      const response = await axios.post('http://localhost:3000/api/stock/check', {
+        items: items.map(function (item) {
+          return {
+            game_id: item.id,
+            quantity: item.quantity || 1
+          };
+        })
+      });
+      return response.data;
+    } catch (networkError) {
+      console.error('Errore di rete durante il controllo stock:', networkError);
+      return {
+        success: false,
+        message: 'Unable to verify item availability. Please check your connection and try again.',
+        unavailable: []
+      };
+    }
+  };
+
 
   return (
     <div className="container py-5">
