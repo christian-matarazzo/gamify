@@ -7,14 +7,51 @@ export default function CartPage() {
     const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
     const navigate = useNavigate()
     const [promoCode, setPromoCode] = useState("");
+    const [couponFeedback, setCouponFeedback] = useState({ message: "", type: "" });
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [discountAmount, setDiscountAmount] = useState(0);
 
     const total = cart.reduce(
         (sum, item) => sum + item.base_price * item.quantity,
         0
     );
+    const totalAfterDIscount = total - discountAmount
 
-    const handleProceedToCheckout = () => {
-        localStorage.setItem('gamify_cart', JSON.stringify(cart));
+    const handleProceedToCheckout = function () {
+        const savedCartRaw = localStorage.getItem('gamify_cart');
+
+        let itemsToSave;
+
+        if (savedCartRaw) {
+            try {
+                const savedCart = JSON.parse(savedCartRaw);
+                if (savedCart.items && Array.isArray(savedCart.items)) {
+                    const firstItemHasDiscount = savedCart.items[0]?.discounted_price !== undefined;
+
+                    if (firstItemHasDiscount) {
+                        itemsToSave = savedCart.items;
+                    } else {
+                        itemsToSave = cart;
+                    }
+                } else {
+                    itemsToSave = cart;
+                }
+            } catch (error) {
+                console.error('Errore nel parsing del carrello salvato:', error);
+                itemsToSave = cart;
+            }
+        } else {
+            itemsToSave = cart;
+        }
+
+        const cartData = {
+            items: itemsToSave,
+            coupon: appliedCoupon,
+            discount: discountAmount,
+            finalTotal: total - discountAmount
+        };
+
+        localStorage.setItem('gamify_cart', JSON.stringify(cartData));
         navigate('/checkout');
     };
 
@@ -30,6 +67,56 @@ export default function CartPage() {
             </div>
         );
     }
+
+    const handleApplyCoupon = async function () {
+        setCouponFeedback({ message: "", type: "" });
+
+        if (!promoCode.trim()) {
+            setCouponFeedback({ message: "Please enter a coupon code", type: "error" });
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/api/coupons/validate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    couponCode: promoCode,
+                    cartTotal: total
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                setAppliedCoupon(promoCode);
+                setDiscountAmount(result.discountAmount);
+                setCouponFeedback({ message: result.message, type: "success" });
+                const discountPercentage = result.discountAmount / total;
+                const updatedCart = cart.map(function (item) {
+                    const itemDiscount = item.base_price * discountPercentage;
+                    return {
+                        ...item,
+                        discounted_price: item.base_price - itemDiscount
+                    };
+                });
+
+                const cartData = {
+                    items: updatedCart,
+                    coupon: promoCode,
+                    discount: result.discountAmount,
+                    finalTotal: result.finalTotal
+                };
+                localStorage.setItem('gamify_cart', JSON.stringify(cartData));
+
+            } else {
+                setCouponFeedback({ message: result.message, type: "error" });
+            }
+        } catch (error) {
+            setCouponFeedback({ message: "Something went wrong. Please try again.", type: "error" });
+            console.error("Coupon validation error:", error);
+        }
+    };
 
     return (
         <div className="container py-4">
@@ -121,7 +208,7 @@ export default function CartPage() {
 
                         <div className="d-flex justify-content-between align-items-center mb-4">
                             <span className="gamify-summary-total-label">Total</span>
-                            <span className="gamify-summary-total-price">€{total.toFixed(2)}</span>
+                            <span className="gamify-summary-total-price">€{totalAfterDIscount.toFixed(2)}</span>
                         </div>
 
                         <div className="gamify-promo-section mb-4">
@@ -137,9 +224,14 @@ export default function CartPage() {
                                     aria-label="Discount code"
                                     onChange={(e) => setPromoCode(e.target.value)}
                                 />
-                                <button className="btn gamify-btn-apply" type="button">
+                                <button onClick={handleApplyCoupon} className="btn gamify-btn-apply" type="button">
                                     Apply
                                 </button>
+                                {couponFeedback.message && (
+                                    <div className={`alert alert-${couponFeedback.type === "success" ? "success" : "danger"} mt-2`}>
+                                        {couponFeedback.message}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <button

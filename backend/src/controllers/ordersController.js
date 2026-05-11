@@ -1,7 +1,7 @@
 const db = require('../config/db');
-const nodemailer = require('nodemailer'); // ← Aggiunto per inviare email
+const nodemailer = require('nodemailer'); 
 
-/* Configura il transporter per le email (condiviso con newsletter) */
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
@@ -11,7 +11,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-/* Funzione helper: valida e applica un coupon */
 function applyCoupon(couponCode, baseTotal, callback) {
   if (!couponCode || couponCode.trim() === '') {
     return callback(null, { discount: 0, couponId: null, finalTotal: baseTotal });
@@ -49,7 +48,7 @@ function applyCoupon(couponCode, baseTotal, callback) {
   });
 }
 
-/* Funzione helper: riserva N chiavi disponibili per un gioco */
+
 function reserveKeys(gameId, quantity, callback) {
   const countQuery = `
     SELECT COUNT(*) as available 
@@ -79,13 +78,11 @@ function reserveKeys(gameId, quantity, callback) {
   });
 }
 
-/* Controller principale: gestisce ordini con multipli item */
 const purchase = function(request, response) {
   const customerEmail = request.body.email;
   const items = request.body.items;
   const couponCode = request.body.coupon;
 
-  // Validazione base
   if (!items || !Array.isArray(items) || items.length === 0) {
     return response.status(400).json({
       success: false,
@@ -93,7 +90,7 @@ const purchase = function(request, response) {
     });
   }
 
-  // Variabili CONDIVISE tra tutte le callback
+
   let baseTotal = 0;
   let finalTotal = 0;
   let discountAmount = 0;
@@ -101,7 +98,7 @@ const purchase = function(request, response) {
   const validatedItems = [];
   const reservedKeys = [];
 
-  // 1. Calcola prezzo base totale e valida input
+
   let processedCount = 0;
   const totalItems = items.length;
 
@@ -138,7 +135,6 @@ const purchase = function(request, response) {
     });
   });
 
-  // 2. Applica coupon al totale
   function proceedToCoupon() {
     applyCoupon(couponCode, baseTotal, function(err, couponData) {
       if (err) {
@@ -146,12 +142,12 @@ const purchase = function(request, response) {
         return response.status(500).json({ success: false, message: 'Failed to apply coupon' });
       }
 
-      // Assegna i valori alle variabili CONDIVISE
+
       discountAmount = couponData.discount;
       couponId = couponData.couponId;
       finalTotal = couponData.finalTotal;
 
-      // 3. Riserva tutte le chiavi necessarie
+    
       let reservedCount = 0;
 
       function checkAllReserved() {
@@ -184,7 +180,6 @@ const purchase = function(request, response) {
     });
   }
 
-  // 4. Crea ordine + item + aggiorna stato chiavi
   function proceedToCreateOrder() {
     db.getConnection(function(connErr, conn) {
       if (connErr) {
@@ -198,7 +193,6 @@ const purchase = function(request, response) {
           return response.status(500).json({ success: false, message: 'Transaction start failed' });
         }
 
-        // 4a. Crea ordine
         const insertOrderQuery = `
           INSERT INTO orders (email, total_amount, discount_amount, coupon_id) 
           VALUES (?, ?, ?, ?)
@@ -215,29 +209,25 @@ const purchase = function(request, response) {
 
             const newOrderId = orderResult.insertId;
 
-            // 4b. Inserisci tutti gli order_items
+      
             let itemsInserted = 0;
 
             function checkAllItemsInserted() {
               itemsInserted++;
               if (itemsInserted === reservedKeys.length) {
-                // 4c. Aggiorna stato chiavi a 'sold'
+    
                 let keysUpdated = 0;
 
                 function checkAllKeysUpdated() {
                   keysUpdated++;
                   if (keysUpdated === reservedKeys.length) {
-                    // 4d. Commit transazione
+
                     conn.commit(function(commitErr) {
                       conn.release();
                       
                       if (commitErr) {
                         return response.status(500).json({ success: false, message: 'Failed to confirm order' });
                       }
-
-                      // ✅ ORDINE CONFERMATO: ora invia le email
-
-                      // === EMAIL 1: AL CLIENTE (conferma ordine + chiavi) ===
                       const customerMailOptions = {
                         from: process.env.EMAIL_FROM,
                         to: customerEmail,
@@ -297,7 +287,6 @@ Save these keys in a safe place.
                         }
                       });
 
-                      // === EMAIL 2: AL VENDITORE (notifica nuovo ordine) ===
                       const sellerMailOptions = {
                         from: process.env.EMAIL_FROM,
                         to: process.env.SELLER_EMAIL,
@@ -370,13 +359,13 @@ Coupon used: ${couponCode || 'None'}
                       transporter.sendMail(sellerMailOptions, function(sellerMailError, sellerMailInfo) {
                         if (sellerMailError) {
                           console.error('❌ Seller email send error:', sellerMailError.message);
-                          // Non blocchiamo la risposta: l'ordine è comunque valido
+        
                         } else {
                           console.log('✅ Seller email sent:', sellerMailInfo.messageId);
                         }
                       });
 
-                      // === Risposta finale al frontend (sempre inviata) ===
+        
                       const licenseKeys = reservedKeys.map(k => k.license_key);
 
                       response.json({
@@ -390,7 +379,7 @@ Coupon used: ${couponCode || 'None'}
                         message: 'Purchase completed successfully'
                       });
 
-                    }); // fine conn.commit
+                    });
                   }
                 }
 
@@ -430,4 +419,4 @@ Coupon used: ${couponCode || 'None'}
   }
 };
 
-module.exports = { purchase };
+module.exports = { purchase, applyCoupon: applyCoupon};
