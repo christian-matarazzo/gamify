@@ -1,16 +1,22 @@
 import { useCart } from "../context/CartContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../styles/CartPage.css";
 
 export default function CartPage() {
     const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
+    const navigate = useNavigate()
     const [promoCode, setPromoCode] = useState("");
 
     const total = cart.reduce(
         (sum, item) => sum + item.base_price * item.quantity,
         0
     );
+
+        const handleProceedToCheckout = () => {
+        localStorage.setItem('gamify_cart', JSON.stringify(cart));
+        navigate('/checkout');
+    };
 
     if (cart.length === 0) {
         return (
@@ -136,10 +142,11 @@ export default function CartPage() {
                                 </button>
                             </div>
                         </div>
-
-                        <Link to="/checkout" className="gamify-btn-checkout d-block w-100 text-center">
-                            Proceed to checkout
-                        </Link>
+                        <button 
+                            className="btn btn-primary w-100 mt-3"
+                            onClick={handleProceedToCheckout}>
+                           Checkout
+                        </button>
                     </div>
                 </div>
             </div>
