@@ -252,6 +252,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .gamify-btn-add-cart:hover:not(:disabled) {

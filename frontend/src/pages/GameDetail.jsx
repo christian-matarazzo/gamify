@@ -130,15 +130,14 @@ const GameDetail = () => {
                             >
                                 <i className="bi bi-plus-lg"></i>
                             </button>
-                            <button
+                            <Link
+                                to="/cart"
                                 className="gamify-btn-add-cart"
-                                onClick={handleAddToCart}
-                                disabled={isOutOfStock}
-                                aria-label="Add to cart"
+                                aria-label="Go to Cart"
                             >
                                 <i className="bi bi-cart-plus me-2"></i>
-                                Add to cart
-                            </button>
+                                Go to Cart
+                            </Link>
                         </div>
 
                         {cartItem && (
