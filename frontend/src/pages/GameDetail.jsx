@@ -44,6 +44,10 @@ const GameDetail = () => {
         addToCart({ ...game, stock: availableKeys });
     };
 
+    
+
+
+
     if (!game) return (
         <main className="container py-4 text-center">
             <i className="bi bi-controller" style={{ fontSize: "48px", color: "var(--accent)" }}></i>
