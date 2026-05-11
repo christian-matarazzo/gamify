@@ -16,7 +16,7 @@ export default function SearchPage() {
         if (ordered === "year") {
             return b.release_date.localeCompare(a.release_date);
         }
-        return a.title.localeCompare(b.title);
+        return 0;
     });
 
     return (
@@ -48,7 +48,6 @@ export default function SearchPage() {
                         onChange={e => setOrdered(e.target.value)}
                         className="gamify-select"
                     >
-                        <option value="title">Name</option>
                         <option value="year">Year</option>
                         <option value="price">Price</option>
                     </select>
