@@ -4,6 +4,7 @@ import "../styles/CartPage.css";
 
 export default function CartPage() {
     const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
+    const [promoCode, setPromoCode] = useState("");
 
     const total = cart.reduce(
         (sum, item) => sum + item.base_price * item.quantity,
@@ -127,6 +128,7 @@ export default function CartPage() {
                                     className="form-control gamify-promo-input"
                                     placeholder="Enter code"
                                     aria-label="Discount code"
+                                    onChange={(e) => setPromoCode(e.target.value)}
                                 />
                                 <button className="btn gamify-btn-apply" type="button">
                                     Apply

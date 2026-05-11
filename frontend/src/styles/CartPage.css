@@ -252,13 +252,12 @@
 .gamify-promo-input {
     background: var(--bg-3);
     border: 1px solid var(--bg-4);
-    color: var(--text-primary);
+    color: #ffffff;
     font-size: 13px;
     border-radius: 8px;
     padding: 10px 12px;
     transition: all 0.15s;
 }
-
 .gamify-promo-input::placeholder {
     color: var(--text-secondary);
     opacity: 0.7;
@@ -266,6 +265,7 @@
 
 .gamify-promo-input:focus {
     background: var(--bg-2);
+    color: #ffffff; 
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(252, 238, 9, 0.12);
     outline: none;
