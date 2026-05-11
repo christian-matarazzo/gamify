@@ -1,4 +1,15 @@
 const db = require('../config/db');
+const nodemailer = require('nodemailer'); // ← Aggiunto per inviare email
+
+/* Configura il transporter per le email (condiviso con newsletter) */
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 /* Funzione helper: valida e applica un coupon */
 function applyCoupon(couponCode, baseTotal, callback) {
@@ -82,7 +93,7 @@ const purchase = function(request, response) {
     });
   }
 
-  // Variabili CONDIVISE tra tutte le callback (definite QUI, in alto)
+  // Variabili CONDIVISE tra tutte le callback
   let baseTotal = 0;
   let finalTotal = 0;
   let discountAmount = 0;
@@ -135,7 +146,7 @@ const purchase = function(request, response) {
         return response.status(500).json({ success: false, message: 'Failed to apply coupon' });
       }
 
-      // ✅ Assegna i valori alle variabili CONDIVISE (scope esterno)
+      // Assegna i valori alle variabili CONDIVISE
       discountAmount = couponData.discount;
       couponId = couponData.couponId;
       finalTotal = couponData.finalTotal;
@@ -146,7 +157,7 @@ const purchase = function(request, response) {
       function checkAllReserved() {
         reservedCount++;
         if (reservedCount === validatedItems.length) {
-          proceedToCreateOrder(); // ✅ Ora finalTotal, discountAmount, couponId sono definiti
+          proceedToCreateOrder();
         }
       }
 
@@ -187,7 +198,7 @@ const purchase = function(request, response) {
           return response.status(500).json({ success: false, message: 'Transaction start failed' });
         }
 
-        // 4a. Crea ordine (usa le variabili CONDIVISE)
+        // 4a. Crea ordine
         const insertOrderQuery = `
           INSERT INTO orders (email, total_amount, discount_amount, coupon_id) 
           VALUES (?, ?, ?, ?)
@@ -216,7 +227,7 @@ const purchase = function(request, response) {
                 function checkAllKeysUpdated() {
                   keysUpdated++;
                   if (keysUpdated === reservedKeys.length) {
-                    // 4d. Commit transazione e rispondi
+                    // 4d. Commit transazione
                     conn.commit(function(commitErr) {
                       conn.release();
                       
@@ -224,6 +235,148 @@ const purchase = function(request, response) {
                         return response.status(500).json({ success: false, message: 'Failed to confirm order' });
                       }
 
+                      // ✅ ORDINE CONFERMATO: ora invia le email
+
+                      // === EMAIL 1: AL CLIENTE (conferma ordine + chiavi) ===
+                      const customerMailOptions = {
+                        from: process.env.EMAIL_FROM,
+                        to: customerEmail,
+                        subject: `🎮 Order #${newOrderId} Confirmed - Your License Keys`,
+                        text: `
+Thank you for your order!
+
+Order ID: ${newOrderId}
+Date: ${new Date().toLocaleString('it-IT')}
+
+Your license keys:
+${reservedKeys.map((k, i) => `${i + 1}. ${k.license_key}`).join('\n')}
+
+Total items: ${reservedKeys.length}
+Amount paid: ${finalTotal}€
+Discount applied: ${discountAmount}€
+
+Save these keys in a safe place.
+-- Gamify Team
+                        `,
+                        html: `
+                          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                            <h2 style="color: #0d6efd;">✅ Order Confirmed!</h2>
+                            <p>Thank you for your purchase, <strong>${customerEmail}</strong>.</p>
+                            
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                              <p style="margin: 5px 0;"><strong>Order ID:</strong> #${newOrderId}</p>
+                              <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date().toLocaleString('it-IT')}</p>
+                            </div>
+
+                            <h3 style="margin-top: 30px;">Your License Keys</h3>
+                            ${reservedKeys.map((k, i) => `
+                              <div style="background: #fff3cd; padding: 10px 15px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 14px;">
+                                ${i + 1}. ${k.license_key}
+                              </div>
+                            `).join('')}
+
+                            <div style="margin-top: 30px; padding: 15px; background: #e7f1ff; border-radius: 6px;">
+                              <p style="margin: 5px 0;"><strong>Total items:</strong> ${reservedKeys.length}</p>
+                              <p style="margin: 5px 0;"><strong>Amount paid:</strong> ${finalTotal}€</p>
+                              <p style="margin: 5px 0;"><strong>Discount:</strong> ${discountAmount}€</p>
+                            </div>
+
+                            <p style="margin-top: 30px; color: #6c757d; font-size: 14px;">
+                              Save these keys in a safe place.<br>
+                              -- Gamify Team
+                            </p>
+                          </div>
+                        `
+                      };
+
+                      transporter.sendMail(customerMailOptions, function(customerMailError, customerMailInfo) {
+                        if (customerMailError) {
+                          console.error('❌ Customer email send error:', customerMailError.message);
+                        } else {
+                          console.log('✅ Customer email sent:', customerMailInfo.messageId);
+                        }
+                      });
+
+                      // === EMAIL 2: AL VENDITORE (notifica nuovo ordine) ===
+                      const sellerMailOptions = {
+                        from: process.env.EMAIL_FROM,
+                        to: process.env.SELLER_EMAIL,
+                        subject: `🎮 New Order #${newOrderId} - ${customerEmail}`,
+                        text: `
+New order received!
+
+Order ID: ${newOrderId}
+Customer: ${customerEmail}
+Date: ${new Date().toLocaleString('it-IT')}
+
+Items sold:
+${reservedKeys.map((k, i) => 
+  `${i + 1}. Game ID: ${k.game_id} | Key: ${k.license_key} | Price: ${k.sold_price}€`
+).join('\n')}
+
+Total items: ${reservedKeys.length}
+Total amount: ${finalTotal}€
+Discount applied: ${discountAmount}€
+Coupon used: ${couponCode || 'None'}
+
+-- Gamify Admin Panel
+                        `,
+                        html: `
+                          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                            <h2 style="color: #0d6efd;">🎮 New Order Received</h2>
+                            
+                            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+                              <tr><td style="padding: 8px 0;"><strong>Order ID:</strong></td><td>#${newOrderId}</td></tr>
+                              <tr><td style="padding: 8px 0;"><strong>Customer:</strong></td><td>${customerEmail}</td></tr>
+                              <tr><td style="padding: 8px 0;"><strong>Date:</strong></td><td>${new Date().toLocaleString('it-IT')}</td></tr>
+                            </table>
+
+                            <h3 style="margin-top: 30px; color: #343a40;">Items Sold</h3>
+                            <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                              <thead>
+                                <tr style="background: #f8f9fa;">
+                                  <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">#</th>
+                                  <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Game ID</th>
+                                  <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">License Key</th>
+                                  <th style="padding: 10px; text-align: right; border-bottom: 2px solid #dee2e6;">Price</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                ${reservedKeys.map((k, i) => `
+                                  <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">${i + 1}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">${k.game_id}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6; font-family: monospace; font-size: 12px;">${k.license_key}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6; text-align: right;">${k.sold_price}€</td>
+                                  </tr>
+                                `).join('')}
+                              </tbody>
+                            </table>
+
+                            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                              <p style="margin: 5px 0;"><strong>Total items:</strong> ${reservedKeys.length}</p>
+                              <p style="margin: 5px 0;"><strong>Total amount:</strong> ${finalTotal}€</p>
+                              <p style="margin: 5px 0;"><strong>Discount:</strong> ${discountAmount}€</p>
+                              <p style="margin: 5px 0;"><strong>Coupon:</strong> ${couponCode || 'None'}</p>
+                            </div>
+
+                            <p style="margin-top: 30px; color: #6c757d; font-size: 14px; border-top: 1px solid #dee2e6; padding-top: 20px;">
+                              -- Gamify Admin Panel
+                            </p>
+                          </div>
+                        `
+                      };
+
+                      transporter.sendMail(sellerMailOptions, function(sellerMailError, sellerMailInfo) {
+                        if (sellerMailError) {
+                          console.error('❌ Seller email send error:', sellerMailError.message);
+                          // Non blocchiamo la risposta: l'ordine è comunque valido
+                        } else {
+                          console.log('✅ Seller email sent:', sellerMailInfo.messageId);
+                        }
+                      });
+
+                      // === Risposta finale al frontend (sempre inviata) ===
                       const licenseKeys = reservedKeys.map(k => k.license_key);
 
                       response.json({
@@ -236,7 +389,8 @@ const purchase = function(request, response) {
                         coupon_used: couponCode && couponCode.trim() !== '' ? couponCode : null,
                         message: 'Purchase completed successfully'
                       });
-                    });
+
+                    }); // fine conn.commit
                   }
                 }
 
