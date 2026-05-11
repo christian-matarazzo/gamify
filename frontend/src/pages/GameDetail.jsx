@@ -132,11 +132,17 @@ const GameDetail = () => {
                             </button>
                             <Link
                                 to="/cart"
-                                className="gamify-btn-add-cart"
+                                className={!cartItem || cartItem.quantity === 0 ? 'pe-none' : ''}
+                                onClick={e => (!cartItem || cartItem.quantity === 0) && e.preventDefault()}
                                 aria-label="Go to Cart"
                             >
-                                <i className="bi bi-cart-plus me-2"></i>
-                                Go to Cart
+                                <button
+                                    className="gamify-btn-add-cart"
+                                    disabled={!cartItem || cartItem.quantity === 0}
+                                >
+                                    <i className="bi bi-cart-plus me-2"></i>
+                                    Go to Cart
+                                </button>
                             </Link>
                         </div>
 
