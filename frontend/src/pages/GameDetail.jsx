@@ -65,6 +65,9 @@ const GameDetail = () => {
                 <Link to="/" className="gamify-detail-back-btn">
                     <i className="bi bi-arrow-left"></i> Back to Homepage
                 </Link>
+                <Link to="/search" className="gamify-detail-back-btn ms-2">
+                    <i className="bi bi-search"></i> Keep searching!
+                </Link>
                 <hr />
 
                 <section className="row g-4">
@@ -127,6 +130,15 @@ const GameDetail = () => {
                             >
                                 <i className="bi bi-plus-lg"></i>
                             </button>
+                            <button
+                                className="gamify-btn-add-cart"
+                                onClick={handleAddToCart}
+                                disabled={isOutOfStock}
+                                aria-label="Add to cart"
+                            >
+                                <i className="bi bi-cart-plus me-2"></i>
+                                Add to cart
+                            </button>
                         </div>
 
                         {cartItem && (
@@ -138,7 +150,7 @@ const GameDetail = () => {
                             </button>
                         )}
 
-                                                {error && (
+                        {error && (
                             <div className="gamify-detail-alert p-2 mb-3">
                                 <i className="bi bi-exclamation-circle me-2"></i>
                                 {error}
