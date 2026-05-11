@@ -48,24 +48,27 @@ const purchase = function (request, response) {
 
         if (couponCode && couponCode.trim() !== "") {
           const findCouponQuery = `
-          SELECT id, coupon_discount 
+          SELECT id, coupon_discount, expires_at, is_active
           FROM coupon 
           WHERE LOWER(coupon_name) = LOWER(?)
         `;
 
-          db.query(
-            findCouponQuery,
-            [couponCode],
-            function (couponError, couponResults) {
-              if (!couponError && couponResults.length > 0) {
-                discountAmount = couponResults[0].coupon_discount;
-                couponId = couponResults[0].id;
+          db.query(findCouponQuery, [couponCode], function (couponError, couponResults) {
+            if (!couponError && couponResults.length > 0) {
+              const foundCoupon = couponResults[0];
+
+              const isExpired = foundCoupon.expires_at && new Date(foundCoupon.expires_at) < new Date();
+              const isActive = foundCoupon.is_active === 1;
+
+              if (isActive && !isExpired) {
+                discountAmount = foundCoupon.coupon_discount;
+                couponId = foundCoupon.id;
                 finalPrice = basePrice - discountAmount;
                 if (finalPrice < 0) finalPrice = 0;
               }
-              proceedToCreateOrder();
-            },
-          );
+            }
+            proceedToCreateOrder();
+          });
         } else {
           proceedToCreateOrder();
         }
