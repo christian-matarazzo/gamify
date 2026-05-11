@@ -20,6 +20,12 @@ export default function CartPage() {
         );
     }
 
+    const handleSubmitCart = () => {
+        localStorage.setItem("gamify_cart", JSON.stringify(cart));
+    };
+
+
+
     return (
         <div className="container py-4 text-light">
             <h2 className="mb-4">Carrello</h2>
@@ -74,7 +80,7 @@ export default function CartPage() {
                                         Rimuovi
                                     </button>
                                 </div>
-                                
+
                                 {isOutOfStock && (
                                     <div className="alert alert-danger py-2 mt-1">
                                         <i className="bi bi-exclamation-circle me-2"></i>
@@ -95,7 +101,7 @@ export default function CartPage() {
                         <h4>Totale</h4>
                         <h3>€{total.toFixed(2)}</h3>
 
-                        <Link to="/checkout" className="btn btn-primary w-100 mt-3">
+                        <Link onClick={handleSubmitCart} to="/checkout" className="btn btn-primary w-100 mt-3">
                             Procedi al checkout
                         </Link>
                     </div>
