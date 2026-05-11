@@ -18,8 +18,10 @@ venga bloccato l'acquisto per mancanze di chiavi.
 
 # FAQ ROTTE:
 
-api/purchase (effettua l'acquisto finale dopo aver calcolato e controllato tutto l'ordine)
-api/inventory (restituisce un item tramite quary con tutto il db come oggetto per poter estrarre il numero di chiavi rimase)
-api/games:
-/games (restituisce tutto il db per essere mappato)
-/:slug (restituisce lo slug del singolo elemento per una pagina di dettagli)
+
+api/inventory (GET - restituisce un item tramite quary con tutto il db come oggetto per poter estrarre il numero di chiavi rimase)
+api/games (GET - restituisce tutto il db per essere mappato)
+api/games/:slug (GET - restituisce lo slug del singolo elemento per una pagina di dettagli)
+api/orders/purchase (POST - effettua l'acquisto finale dopo aver calcolato e controllato tutto l'ordine. Il body è composto da: {"email": "test@example.com", "game_id": 1, "coupon": "WELCOME10"} )
+/api/newsletter/subscribe (POST - effettua la sub di una email per la newsletter. Il body è composto da: {"email: "test@example.com","confirmation_sent": 1} )
+
