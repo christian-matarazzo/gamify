@@ -13,7 +13,7 @@ export default function CartPage() {
         0
     );
 
-        const handleProceedToCheckout = () => {
+    const handleProceedToCheckout = () => {
         localStorage.setItem('gamify_cart', JSON.stringify(cart));
         navigate('/checkout');
     };
@@ -142,10 +142,10 @@ export default function CartPage() {
                                 </button>
                             </div>
                         </div>
-                        <button 
-                            className="btn btn-primary w-100 mt-3"
+                        <button
+                            className="gamify-btn-checkout d-block w-100 text-center"
                             onClick={handleProceedToCheckout}>
-                           Checkout
+                            Checkout
                         </button>
                     </div>
                 </div>
