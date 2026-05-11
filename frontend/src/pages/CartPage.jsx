@@ -1,5 +1,6 @@
 import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import "../styles/CartPage.css";
 
 export default function CartPage() {
