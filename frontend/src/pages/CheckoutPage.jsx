@@ -19,24 +19,18 @@ export default function CheckoutPage() {
 
 
   useEffect(() => {
-    console.group('📥 CheckoutPage: useEffect - Caricamento carrello');
-
     const savedCart = localStorage.getItem('gamify_cart');
-    console.log('Raw localStorage:', savedCart);
+
 
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart);
-        console.log('Parsed cart:', parsedCart);
-        console.log('parsedCart.items esiste?', !!parsedCart.items);
-        console.log('parsedCart.items è array?', Array.isArray(parsedCart.items));
 
         if (parsedCart && parsedCart.items && Array.isArray(parsedCart.items)) {
 
           setCartItems(parsedCart.items);
 
           if (parsedCart.coupon) {
-            console.log('Coupon trovato:', parsedCart.coupon);
             setCouponCode(parsedCart.coupon);
           }
           if (parsedCart.discount !== undefined && parsedCart.discount !== null) {
@@ -49,7 +43,6 @@ export default function CheckoutPage() {
         else {
         }
       } catch (error) {
-        console.error("Errore nel parsing del carrello:", error);
         setErrorMessage("Cart can't be loaded. Retry");
       }
     } else {
@@ -220,7 +213,6 @@ const handlePurchase = async function(event) {
       });
       return response.data;
     } catch (networkError) {
-      console.error('Errore di rete durante il controllo stock:', networkError);
       return {
         success: false,
         message: 'Unable to verify item availability. Please check your connection and try again.',
