@@ -98,10 +98,11 @@ export default function CheckoutPage() {
 
       if (response.data.success) {
         setOrderResult(response.data);
-        sessionStorage.removeItem('gamify_cart');
-        setCartItems([]);
+        clearCart();  // ✅ Resetta Context + sessionStorage in una chiamata
         setCouponCode('');
         setDiscountAmount(0);
+        // setCartItems non serve più: clearCart() aggiorna il Context,
+        // e il tuo useEffect locale si sincronizzerà automaticamente
       }
     } catch (purchaseError) {
       setErrorMessage(purchaseError.response?.data?.message || 'Purchase failed. Please try again.');
