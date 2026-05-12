@@ -98,11 +98,9 @@ export default function CheckoutPage() {
 
       if (response.data.success) {
         setOrderResult(response.data);
-        clearCart();  // ✅ Resetta Context + sessionStorage in una chiamata
+        clearCart(); 
         setCouponCode('');
         setDiscountAmount(0);
-        // setCartItems non serve più: clearCart() aggiorna il Context,
-        // e il tuo useEffect locale si sincronizzerà automaticamente
       }
     } catch (purchaseError) {
       setErrorMessage(purchaseError.response?.data?.message || 'Purchase failed. Please try again.');
@@ -240,7 +238,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="Mario Rossi"
+                    placeholder="John Doe"
                     value={billingName}
                     onChange={function (event) { setBillingName(event.target.value); }}
                   />
@@ -250,7 +248,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="Via Roma 123"
+                    placeholder="Fifth Avenue, NYC, SID"
                     value={billingAddress}
                     onChange={function (event) { setBillingAddress(event.target.value); }}
                   />
@@ -260,7 +258,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="Milano"
+                    placeholder="New York"
                     value={billingCity}
                     onChange={function (event) { setBillingCity(event.target.value); }}
                   />
@@ -295,7 +293,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="IT12345678901"
+                    placeholder="LM12345678901"
                     value={billingVat}
                     onChange={function (event) { setBillingVat(event.target.value); }}
                   />
@@ -356,21 +354,28 @@ export default function CheckoutPage() {
                   const quantity = item.quantity || 1;
 
                   return (
-                    <div key={item.id} className="gamify-checkout-item-row">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div className="min-w-0">
-                          <div className="gamify-item-title-sm">{item.title}</div>
-                          <div className="gamify-summary-text">Qty: {quantity}</div>
-                        </div>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="min-w-0">
+                        <div className="gamify-item-title-sm">{item.title}</div>
+                        <div className="gamify-summary-text">Qty: {quantity}</div>
+                      </div>
+
+                      <div className="d-flex align-items-center gap-2">
                         <div className="text-end">
                           {originalPrice !== null && (
-                            <div className="text-decoration-line-through text-muted small">€{originalPrice.toFixed(2)}</div>
+                            <div className="text-decoration-line-through text-muted small">
+                              €{originalPrice.toFixed(2)}
+                            </div>
                           )}
-                          <div className="text-white fw-bold">€{displayPrice.toFixed(2)}</div>
+
+                          <div className="text-white fw-bold">
+                            €{displayPrice.toFixed(2)}
+                          </div>
                         </div>
+
                         <button
                           type="button"
-                          className="gamify-cart-remove ms-2"
+                          className="gamify-cart-remove"
                           onClick={() => handleRemoveItem(item.id)}
                         >
                           <i className="bi bi-x-lg"></i>

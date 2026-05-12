@@ -13,6 +13,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import CheckoutPage from "./pages/CheckoutPage";
 import SupportPage from "./pages/SupportPage";
 import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
