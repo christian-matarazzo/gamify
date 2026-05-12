@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../styles/CheckoutPage.css';
+import '../styles/SupportPage.css';
 
 export default function SupportPage() {
   const [messageStatus, setMessageStatus] = useState('idle');
@@ -9,9 +9,9 @@ export default function SupportPage() {
     e.preventDefault();
     setMessageStatus('sending');
 
-    // This is a UI-only form in the starter project. It won't post to backend.
     setTimeout(() => {
       setMessageStatus('sent');
+      setMessageText('');
     }, 800);
   };
 
@@ -19,69 +19,89 @@ export default function SupportPage() {
     <div className="container py-5">
       <h2 className="gamify-cart-heading mb-4"><span>Technical</span> Support</h2>
 
-      <div className="row">
-        <div className="col-lg-7 mb-4">
-          <div className="gamify-checkout-section p-4">
-            <h5 className="mb-3">Contact our support team</h5>
-            <p className="text-secondary">Describe your issue and we'll get back to you within 24–48 hours.</p>
+      <div className="row g-4">
+        <div className="col-lg-7">
+          <div className="gamify-support-section">
+            <h5 className="mb-3 text-white">Contact our support team</h5>
+            <p className="text-secondary mb-4">Describe your issue and we'll get back to you within 24–48 hours.</p>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label className="form-label">Your email</label>
+                <label className="gamify-support-label">Your email</label>
                 <input
                   type="email"
-                  className="form-control"
+                  className="form-control gamify-support-input"
                   placeholder="you@example.com"
                   required
                 />
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Subject</label>
-                <input type="text" className="form-control" placeholder="Short summary" required />
+                <label className="gamify-support-label">Subject</label>
+                <input
+                  type="text"
+                  className="form-control gamify-support-input"
+                  placeholder="Short summary of the issue"
+                  required
+                />
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Message</label>
+              <div className="mb-4">
+                <label className="gamify-support-label">Message</label>
                 <textarea
-                  className="form-control"
+                  className="form-control gamify-support-input"
                   rows={6}
-                  placeholder="What happened? Include order id, screenshots or steps to reproduce."
+                  placeholder="What happened?"
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
                   required
                 />
               </div>
 
-              <button type="submit" className="gamify-btn-primary" disabled={messageStatus === 'sending'}>
-                {messageStatus === 'sending' ? 'Sending...' : 'Send message'}
+              <button type="submit" className="gamify-support-btn w-100" disabled={messageStatus === 'sending'}>
+                {messageStatus === 'sending' ? (
+                  <><span className="spinner-border spinner-border-sm me-2"></span>Sending...</>
+                ) : 'Send message'}
               </button>
 
               {messageStatus === 'sent' && (
-                <p className="mt-3 text-success">Thanks — your message was sent. We'll reply soon.</p>
+                <div className="mt-3 text-success-gamify d-flex align-items-center">
+                  <i className="bi bi-check-circle-fill me-2"></i>
+                  Thanks — your message was sent. We'll reply soon.
+                </div>
               )}
             </form>
           </div>
         </div>
 
         <div className="col-lg-5">
-          <div className="gamify-checkout-section p-4">
-            <h5>Support resources</h5>
-            <ul className="list-unstyled mt-3">
-              <li className="mb-2"><strong>Email:</strong> support@gamify.example</li>
-              <li className="mb-2"><strong>Hours:</strong> Mon–Fri 9:00–18:00 CET</li>
-              <li className="mb-2"><strong>Phone:</strong> +39 02 1234 5678</li>
-            </ul>
-
-            <hr />
-
-            <h6>Frequently asked</h6>
+          <div className="gamify-support-section">
+            <h5 className="text-white mb-3">Support resources</h5>
             <div className="mt-3">
-              <p className="mb-1"><strong>Where do I find my keys?</strong></p>
-              <p className="small text-secondary">After purchase your license keys are shown on the confirmation page and emailed to you.</p>
+              <div className="gamify-support-list-item">
+                <strong>Email:</strong> <span className="ms-2">support@gamify.com</span>
+              </div>
+              <div className="gamify-support-list-item">
+                <strong>Hours:</strong> <span className="ms-2">Mon–Fri 9:00–18:00 CET</span>
+              </div>
+              <div className="gamify-support-list-item">
+                <strong>Phone:</strong> <span className="ms-2">+39 02 1234 5678</span>
+              </div>
+            </div>
 
-              <p className="mb-1"><strong>Issue with an order?</strong></p>
-              <p className="small text-secondary">Include your order ID and the email used to purchase in your message.</p>
+            <hr className="gamify-support-hr" />
+
+            <h6 className="text-white mb-3">Frequently asked</h6>
+            <div className="mt-3">
+              <div className="mb-3">
+                <span className="gamify-faq-question">Where do I find my keys?</span>
+                <p className="gamify-faq-answer">After purchase your license keys are shown on the confirmation page and emailed to you.</p>
+              </div>
+
+              <div className="mb-3">
+                <span className="gamify-faq-question">Issue with an order?</span>
+                <p className="gamify-faq-answer">Include your order ID and the email used to purchase in your message.</p>
+              </div>
             </div>
           </div>
         </div>
