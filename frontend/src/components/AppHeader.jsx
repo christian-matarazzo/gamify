@@ -13,7 +13,7 @@ export default function AppHeader() {
 
     function handleNavClick() {
         const element = document.getElementById('gamifyNavCollapse');
-        const bsCollapse = Collapse.getInstance(el);
+        const bsCollapse = Collapse.getInstance(element);
         if (bsCollapse) bsCollapse.hide();
     }
 
