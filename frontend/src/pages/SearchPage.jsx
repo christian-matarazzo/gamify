@@ -12,8 +12,12 @@ export default function SearchPage() {
         game.title?.toLowerCase().includes(query.trim().toLowerCase()
         ))
     const orderedSearch = [...filtered].sort((a, b) => {
-        if (ordered === "price") return b.base_price - a.base_price;
-        if (ordered === "year") {
+        if (ordered === "higher_price") return b.base_price - a.base_price;
+        if (ordered === "lower_price") return a.base_price - b.base_price;
+        if (ordered === "release_older") {
+            return a.release_date.localeCompare(b.release_date);
+        }
+        if (ordered === "release_newer") {
             return b.release_date.localeCompare(a.release_date);
         }
         return 0;
@@ -31,7 +35,6 @@ export default function SearchPage() {
                         <span>Filter</span> By
                     </h1>
                 </div>
-
                 <div className="gamify-search-bar mb-4">
                     <div className="gamify-search-input-wrapper">
                         <i className="bi bi-search gamify-search-icon"></i>
@@ -48,8 +51,11 @@ export default function SearchPage() {
                         onChange={e => setOrdered(e.target.value)}
                         className="gamify-select"
                     >
-                        <option value="year">Year</option>
-                        <option value="price">Price</option>
+                        <option value="select_filter">Reset filter</option>
+                        <option value="release_newer">Release Date: Newer</option>
+                        <option value="release_older">Release Date: Older</option>
+                        <option value="higher_price">Price: From Higher Price</option>
+                        <option value="lower_price">Price: From Lower Price</option>
                     </select>
                 </div>
                 {!loading && (
