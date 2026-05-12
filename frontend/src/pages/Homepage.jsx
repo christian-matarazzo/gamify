@@ -41,6 +41,8 @@ export default function Homepage() {
                     )}
                 </div>
 
+                <div className="gamify-home-divider" />
+
                 <div className="row g-3">
                     <h1 className="gamify-preorders"><span>Preorder</span> Now!</h1>
                     {loading ? (
@@ -51,6 +53,8 @@ export default function Homepage() {
                             .map((game) => <GameCard key={game.id} game={game} />)
                     )}
                 </div>
+
+                <div className="gamify-home-divider" />
 
                 <div className="row g-3">
                     <h1 className="gamify-preorders"><span>Iconic</span> titles</h1>

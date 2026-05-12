@@ -13,7 +13,7 @@ const pool = mysql.createPool({
 });
 
 /* Test connessione (opzionale ma utile) */
-pool.getConnection(function(err, connection) {
+pool.getConnection(function (err, connection) {
   if (err) {
     console.error('❌ Database connection failed:', err.message);
     return;

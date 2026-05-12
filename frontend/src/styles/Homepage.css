@@ -115,6 +115,19 @@
     color: var(--accent);
 }
 
+.gamify-home-divider {
+    height: 1px;
+    width: 100%;
+    margin: 32px 0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(252, 238, 9, 0.25),
+            rgba(93, 112, 128, 0.2),
+            rgba(252, 238, 9, 0.25),
+            transparent);
+    opacity: 0.8;
+}
+
 @keyframes gamify-shimmer {
     0% {
         background-position: 200% 0;
