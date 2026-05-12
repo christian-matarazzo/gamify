@@ -98,11 +98,9 @@ export default function CheckoutPage() {
 
       if (response.data.success) {
         setOrderResult(response.data);
-        clearCart();  // ✅ Resetta Context + sessionStorage in una chiamata
+        clearCart(); 
         setCouponCode('');
         setDiscountAmount(0);
-        // setCartItems non serve più: clearCart() aggiorna il Context,
-        // e il tuo useEffect locale si sincronizzerà automaticamente
       }
     } catch (purchaseError) {
       setErrorMessage(purchaseError.response?.data?.message || 'Purchase failed. Please try again.');
@@ -240,7 +238,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="Mario Rossi"
+                    placeholder="John Doe"
                     value={billingName}
                     onChange={function (event) { setBillingName(event.target.value); }}
                   />
@@ -250,7 +248,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="Via Roma 123"
+                    placeholder="Fifth Avenue, NYC, SID"
                     value={billingAddress}
                     onChange={function (event) { setBillingAddress(event.target.value); }}
                   />
@@ -260,7 +258,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="Milano"
+                    placeholder="New York"
                     value={billingCity}
                     onChange={function (event) { setBillingCity(event.target.value); }}
                   />
@@ -295,7 +293,7 @@ export default function CheckoutPage() {
                   <input
                     type="text"
                     className="form-control gamify-promo-input"
-                    placeholder="IT12345678901"
+                    placeholder="LM12345678901"
                     value={billingVat}
                     onChange={function (event) { setBillingVat(event.target.value); }}
                   />
