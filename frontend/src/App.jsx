@@ -11,6 +11,7 @@ import WishListPage from "./pages/WishListPage";
 import { WishlistProvider } from "./context/WishlistContext";
 import ScrollToTop from "./components/ScrollToTop";
 import CheckoutPage from "./pages/CheckoutPage";
+import SupportPage from "./pages/SupportPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/wishlist" element={<WishListPage />} />
                 <Route path="/checkout" element={<CheckoutPage/>}/>
+                <Route path="/support" element={<SupportPage/>} />
               </Route>
             </Routes>
           </BrowserRouter>

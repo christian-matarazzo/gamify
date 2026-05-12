@@ -8,7 +8,7 @@ export default function AppHeader() {
         { text: 'Home', path: '/' },
         { text: 'Pre-orders', path: '/games/preorders' },
         { text: 'Blog', path: '/' },
-        { text: 'Technical Support', path: '/' },
+        { text: 'Technical Support', path: '/support' },
     ];
 
     function handleNavClick() {
