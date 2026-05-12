@@ -1,41 +1,170 @@
-.wishTitle{
-    color: rgba(252, 238, 9);
+.wishlist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--bg-4);
 }
 
-.description{
-    color: rgba(93, 112, 128);
+.wishlist-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 0;
 }
 
-#top-container{
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-    padding: 23px;     
-    background-color: rgba(13, 20, 29);
-    border-bottom: solid 1px rgba(252, 238, 9);
-    
-}   
-
-#logo{
-    width: 90px;
+.wishlist-accent {
+    color: var(--accent);
 }
 
-@media(max-width:480px){
-    #logo{display: none;
+.wishlist-count {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    opacity: 0.7;
+    margin-top: 4px;
+    display: block;
+}
+
+.wishlist-clear-btn {
+    background: transparent;
+    border: 1px solid var(--bg-4);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.wishlist-clear-btn:hover {
+    border-color: rgba(252, 238, 9, 0.3);
+    color: var(--accent);
+}
+
+.wishlist-card-wrapper {
+    position: relative;
+}
+
+.wishlist-card-wrapper .gamify-game-card-inner {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.wishlist-remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: var(--bg-2);
+    border: 1px solid var(--bg-4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    z-index: 2;
+}
+
+.wishlist-remove-btn i {
+    font-size: 14px;
+    color: var(--accent);
+    transition: transform 0.15s ease;
+}
+
+.wishlist-remove-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.wishlist-remove-btn:hover i {
+    color: var(--bg-1);
+    transform: scale(1.1);
+}
+
+.wishlist-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--bg-2);
+    border: 1px solid var(--bg-4);
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.wishlist-empty-icon {
+    font-size: 48px;
+    color: var(--bg-4);
+    margin-bottom: 16px;
+}
+
+.wishlist-empty p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 20px 0;
+    opacity: 0.7;
+}
+
+.wishlist-empty .gamify-btn-login {
+    background: var(--accent);
+    color: var(--bg-1);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    border: none;
+}
+
+.wishlist-empty .gamify-btn-login:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+    .wishlist-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 
-    #top-container{
-        justify-content: center;
-        text-align: center;
+    .wishlist-title {
+        font-size: 15px;
     }
 
-    #text-container{
-        align-items: center;
+    .wishlist-clear-btn {
+        font-size: 12px;
+        padding: 6px 12px;
     }
-}
 
-.middle-container{
-    padding-left: 23px;
-    margin-top: 15px;
+    .wishlist-remove-btn {
+        width: 28px;
+        height: 28px;
+        top: 8px;
+        right: 8px;
+    }
 
+    .wishlist-remove-btn i {
+        font-size: 12px;
+    }
+
+    .wishlist-empty {
+        padding: 40px 16px;
+    }
+
+    .wishlist-empty-icon {
+        font-size: 36px;
+    }
 }
