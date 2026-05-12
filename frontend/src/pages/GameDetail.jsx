@@ -48,12 +48,8 @@ const GameDetail = () => {
         addToCart({ ...game, stock: availableKeys });
     };
 
-    
-    console.log(games);
-    
-    console.log(game);
-    
-    
+
+
     if (!game) return (
         <main className="container py-4 text-center">
             <i className="bi bi-controller" style={{ fontSize: "48px", color: "var(--accent)" }}></i>
@@ -68,8 +64,8 @@ const GameDetail = () => {
             </Link>
         </main>
     );
-    const relatedGames = games.filter(relatedGames=> relatedGames.genre === game.genre && relatedGames.id !==game.id).slice(0,4)
-    
+    const relatedGames = games.filter(relatedGames => relatedGames.genre === game.genre && relatedGames.id !== game.id).slice(0, 4)
+
     return (
         <main className="container py-4">
             <div>
@@ -177,28 +173,28 @@ const GameDetail = () => {
             </div>
             <div className="row g-3">
                 <h2>Related Games</h2>
-                            {loading ? (
-                                [...Array(4)].map((_, i) => <GhostCard key={i} />)
-                            ) : relatedGames.length === 0 ? (
-                                <div className="text-center py-5 col-12">
-                                    <i className="bi bi-emoji-frown display-1 text-secondary"></i>
-                                    <p className="gamify-no-results">No related Games Found</p>
-                                </div>
-                            ) : (
-                                relatedGames.map(related => {
-                                    const isRelatedInWishlist = wish.some(id => String(id) === String(related.id));
-                            
-                                    return (
-                                        <GameCard 
-                                            key={related.id} 
-                                            game={related} 
-                                            isInWishlist={isRelatedInWishlist}
-                                            onToggleWish={() => handleWish(related.id)} 
-                                        />
-                                    );
-                                })
-                            )}
-                        </div>
+                {loading ? (
+                    [...Array(4)].map((_, i) => <GhostCard key={i} />)
+                ) : relatedGames.length === 0 ? (
+                    <div className="text-center py-5 col-12">
+                        <i className="bi bi-emoji-frown display-1 text-secondary"></i>
+                        <p className="gamify-no-results">No related Games Found</p>
+                    </div>
+                ) : (
+                    relatedGames.map(related => {
+                        const isRelatedInWishlist = wish.some(id => String(id) === String(related.id));
+
+                        return (
+                            <GameCard
+                                key={related.id}
+                                game={related}
+                                isInWishlist={isRelatedInWishlist}
+                                onToggleWish={() => handleWish(related.id)}
+                            />
+                        );
+                    })
+                )}
+            </div>
         </main>
     );
 };
