@@ -11,13 +11,13 @@ export default function Homepage() {
     const [showPopup, setShowPopup] = useState(false);
     const { games, loading } = useGames();
 
-    useEffect(() =>{
+    useEffect(() => {
         const firstVisit = sessionStorage.getItem("gamifyPopUp");
-        if (!firstVisit){
+        if (!firstVisit) {
             setShowPopup(true);
             sessionStorage.setItem("gamifyPopUp", "true");
         }
-    },[]);
+    }, []);
 
     const closePopUp = () => {
         setShowPopup(false);
@@ -25,9 +25,9 @@ export default function Homepage() {
 
     return (
         <>
-        {showPopup && (
-                    <PopUp onClose={closePopUp} />
-        )}
+            {showPopup && (
+                <PopUp onClose={closePopUp} />
+            )}
             <Hero />
             <main className="container py-4">
                 <div className="row g-3">
@@ -36,7 +36,7 @@ export default function Homepage() {
                         [...Array(6)].map((_, index) => <GhostCard key={index} />)
                     ) : (
                         games
-                            .filter((game) => game.tag === "Trending") 
+                            .filter((game) => game.tag === "Trending")
                             .map((game) => <GameCard key={game.id} game={game} />)
                     )}
                 </div>
@@ -47,10 +47,23 @@ export default function Homepage() {
                         [...Array(6)].map((_, index) => <GhostCard key={index} />)
                     ) : (
                         games
-                            .filter((game) => game.tag === "Preorder") 
+                            .filter((game) => game.tag === "Preorder")
                             .map((game) => <GameCard key={game.id} game={game} />)
                     )}
                 </div>
+
+                <div className="row g-3">
+                    <h1 className="gamify-preorders"><span>Iconic</span> titles</h1>
+                    {loading ? (
+                        [...Array(6)].map((_, index) => <GhostCard key={index} />)
+                    ) : (
+                        games
+                            .filter((game) => game.tag === "Iconic")
+                            .map((game) => <GameCard key={game.id} game={game} />)
+                    )}
+                </div>
+
+
             </main>
         </>
     );
