@@ -4,7 +4,7 @@ import { useState } from "react";
 import "../styles/CartPage.css";
 
 export default function CartPage() {
-    const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart();
+    const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart, saveCartWithMetadata } = useCart();
     const navigate = useNavigate()
     const [promoCode, setPromoCode] = useState("");
     const [couponFeedback, setCouponFeedback] = useState({ message: "", type: "" });
@@ -101,13 +101,7 @@ export default function CartPage() {
                     };
                 });
 
-                const cartData = {
-                    items: updatedCart,
-                    coupon: promoCode,
-                    discount: result.discountAmount,
-                    finalTotal: result.finalTotal
-                };
-                sessionStorage.setItem('gamify_cart', JSON.stringify(cartData));
+                saveCartWithMetadata(updatedCart, promoCode, result.discountAmount, result.finalTotal);
 
             } else {
                 setCouponFeedback({ message: result.message, type: "error" });
