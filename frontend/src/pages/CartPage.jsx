@@ -156,6 +156,12 @@ export default function CartPage() {
                                                 >
                                                     +
                                                 </button>
+                                        {isOutOfStock && (
+                                            <div className="gamify-stock-badge mt-1">
+                                                <i className="bi bi-exclamation-circle me-2"></i>
+                                                No more keys available for this product!
+                                            </div>
+                                        )}
                                             </div>
                                         </div>
 
@@ -168,12 +174,6 @@ export default function CartPage() {
                                         </button>
                                     </div>
 
-                                    {isOutOfStock && (
-                                        <div className="gamify-stock-badge mt-1">
-                                            <i className="bi bi-exclamation-circle me-2"></i>
-                                            No more keys available for this product!
-                                        </div>
-                                    )}
                                 </div>
                             );
                         })}
@@ -194,8 +194,8 @@ export default function CartPage() {
                             <span className="gamify-summary-text">€{total.toFixed(2)}</span>
                         </div>
                         <div className="d-flex justify-content-between mb-2">
-                            <span className="gamify-summary-text">Shipping fee</span>
-                            <span className="gamify-summary-free">Free</span>
+                            <span className="gamify-summary-text">VAT</span>
+                            <span className="gamify-summary-free">Always Free</span>
                         </div>
 
                         <hr className="gamify-summary-divider" />
