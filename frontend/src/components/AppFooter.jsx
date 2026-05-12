@@ -15,7 +15,7 @@ export default function AppFooter() {
         ],
         support: [
             { text: 'Technical Support', path: '/support' },
-            { text: 'Terms of Service', path: '/' },
+            { text: 'Terms of Service', path: '/terms' },
             { text: 'Privacy Policy', path: '/' },
         ]
     };

@@ -12,6 +12,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import ScrollToTop from "./components/ScrollToTop";
 import CheckoutPage from "./pages/CheckoutPage";
 import SupportPage from "./pages/SupportPage";
+import TermsPage from "./pages/TermsPage";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
       <CartProvider>
         <WishlistProvider>
           <BrowserRouter>
-          <ScrollToTop />
+            <ScrollToTop />
             <Routes>
               <Route element={<DefaultLayout />}>
                 <Route path="/" element={<Homepage />} />
@@ -28,8 +29,9 @@ function App() {
                 <Route path="/games/:slug" element={<GameDetail />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/wishlist" element={<WishListPage />} />
-                <Route path="/checkout" element={<CheckoutPage/>}/>
-                <Route path="/support" element={<SupportPage/>} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/support" element={<SupportPage />} />
+                <Route path="/terms" element={<TermsPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
