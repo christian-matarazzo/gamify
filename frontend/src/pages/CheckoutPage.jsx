@@ -215,7 +215,7 @@ export default function CheckoutPage() {
         <div className="row g-4">
           <div className="col-12 col-lg-7">
             <div className="gamify-checkout-section mb-4">
-              <div className="gamify-section-title mb-4">
+              <div className="gamify-checkout-title mb-4">
                 <i className="bi bi-receipt me-2"></i>
                 Billing Information
               </div>
@@ -289,7 +289,7 @@ export default function CheckoutPage() {
             </div>
 
             <form onSubmit={handlePurchase} className="gamify-checkout-section">
-              <div className="gamify-section-title mb-3">
+              <div className="gamify-checkout-title mb-3">
                 <i className="bi bi-envelope me-2"></i>
                 Delivery Email
               </div>
