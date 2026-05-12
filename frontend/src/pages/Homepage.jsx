@@ -36,7 +36,7 @@ export default function Homepage() {
                         [...Array(6)].map((_, index) => <GhostCard key={index} />)
                     ) : (
                         games
-                            .filter((game) => game.tag !== "Preorder") 
+                            .filter((game) => game.tag === "Trending") 
                             .map((game) => <GameCard key={game.id} game={game} />)
                     )}
                 </div>
