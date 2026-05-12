@@ -1,32 +1,27 @@
-// frontend/src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 const STORAGE_KEY = "gamify_cart";
 
 export const CartProvider = ({ children }) => {
-  
-  // ✅ Inizializzazione robusta: gestisce sia array che oggetti con metadata
+
   const [cart, setCart] = useState(() => {
     try {
       const savedData = sessionStorage.getItem(STORAGE_KEY);
       if (savedData === null) {
         return [];
       }
-      
+
       const parsedData = JSON.parse(savedData);
-      
-      // Se è un array, restituiscilo direttamente
+
       if (Array.isArray(parsedData)) {
         return parsedData;
       }
-      
-      // Se è un oggetto con proprietà "items", estrai l'array
+
       if (parsedData !== null && typeof parsedData === "object" && Array.isArray(parsedData.items)) {
         return parsedData.items;
       }
-      
-      // Fallback per dati non validi
+
       return [];
     } catch (error) {
       console.error("Errore nel caricamento del carrello da sessionStorage:", error);
@@ -34,7 +29,6 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // ✅ Sincronizzazione automatica: ogni cambiamento dello state viene salvato
   useEffect(() => {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
@@ -46,8 +40,8 @@ export const CartProvider = ({ children }) => {
   const addToCart = (product) => {
     setCart((previousCart) => {
       const existingItemIndex = previousCart.findIndex((cartItem) => cartItem.id === product.id);
-      const currentQuantity = existingItemIndex !== -1 
-        ? previousCart[existingItemIndex].quantity 
+      const currentQuantity = existingItemIndex !== -1
+        ? previousCart[existingItemIndex].quantity
         : 0;
 
       const availableStock = product.stock !== undefined ? product.stock : Infinity;
@@ -57,9 +51,9 @@ export const CartProvider = ({ children }) => {
 
       if (existingItemIndex !== -1) {
         const updatedCart = [...previousCart];
-        updatedCart[existingItemIndex] = { 
-          ...updatedCart[existingItemIndex], 
-          quantity: currentQuantity + 1 
+        updatedCart[existingItemIndex] = {
+          ...updatedCart[existingItemIndex],
+          quantity: currentQuantity + 1
         };
         return updatedCart;
       }
@@ -71,18 +65,18 @@ export const CartProvider = ({ children }) => {
   const decreaseQuantity = (productId) => {
     setCart((previousCart) => {
       const itemIndex = previousCart.findIndex((cartItem) => cartItem.id === productId);
-      
+
       if (itemIndex === -1) {
         return previousCart;
       }
 
       const currentItem = previousCart[itemIndex];
-      
+
       if (currentItem.quantity > 1) {
         const updatedCart = [...previousCart];
-        updatedCart[itemIndex] = { 
-          ...currentItem, 
-          quantity: currentItem.quantity - 1 
+        updatedCart[itemIndex] = {
+          ...currentItem,
+          quantity: currentItem.quantity - 1
         };
         return updatedCart;
       }
@@ -97,13 +91,11 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // ✅ clearCart ora rimuove anche da sessionStorage
   const clearCart = () => {
     sessionStorage.removeItem(STORAGE_KEY);
     setCart([]);
   };
 
-  // ✅ Helper per salvare carrello con metadata (coupon, discount) in formato compatibile
   const saveCartWithMetadata = (itemsArray, couponCode, discountValue, finalTotalValue) => {
     const cartData = {
       items: itemsArray,
@@ -112,16 +104,15 @@ export const CartProvider = ({ children }) => {
       finalTotal: finalTotalValue
     };
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cartData));
-    // Importante: aggiorna lo state con il solo array, non con l'oggetto completo
     setCart(itemsArray);
   };
 
   return (
-    <CartContext.Provider value={{ 
-      cart, 
-      addToCart, 
-      decreaseQuantity, 
-      removeFromCart, 
+    <CartContext.Provider value={{
+      cart,
+      addToCart,
+      decreaseQuantity,
+      removeFromCart,
       clearCart,
       saveCartWithMetadata
     }}>
