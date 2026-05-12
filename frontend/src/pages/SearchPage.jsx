@@ -51,8 +51,9 @@ export default function SearchPage() {
                         onChange={e => setOrdered(e.target.value)}
                         className="gamify-select"
                     >
-                        <option value="release_newer">Release Newer</option>
-                        <option value="release_older">Release Older</option>
+                        <option value="select_filter">Reset filter</option>
+                        <option value="release_newer">Release Date: Newer</option>
+                        <option value="release_older">Release Date: Older</option>
                         <option value="higher_price">Price: From Higher Price</option>
                         <option value="lower_price">Price: From Lower Price</option>
                     </select>
