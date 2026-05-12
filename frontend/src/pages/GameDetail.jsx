@@ -171,14 +171,14 @@ const GameDetail = () => {
                     </div>
                 </section>
             </div>
-            <div className="row g-3">
-                <h2>Related Games</h2>
+            <div className="row g-3 mt-3">
+                <h1 className="gamify-section-title"><span>Related</span> Games</h1>
                 {loading ? (
                     [...Array(4)].map((_, i) => <GhostCard key={i} />)
                 ) : relatedGames.length === 0 ? (
                     <div className="text-center py-5 col-12">
                         <i className="bi bi-emoji-frown display-1 text-secondary"></i>
-                        <p className="gamify-no-results">No related Games Found</p>
+                        <p className="gamify-no-results">No related games found!</p>
                     </div>
                 ) : (
                     relatedGames.map(related => {
