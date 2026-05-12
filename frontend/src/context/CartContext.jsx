@@ -1,10 +1,16 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+    const [cart, setCart] = useState(() => {
+        const savedCart = sessionStorage.getItem("gamify_cart");
+        return savedCart ? JSON.parse(savedCart) : [];
+    });
 
-    const [cart, setCart] = useState([])
+    useEffect(() => {
+        sessionStorage.setItem("gamify_cart", JSON.stringify(cart));
+    }, [cart]);
 
     const addToCart = (product) => {
         setCart((prevCart) => {
@@ -53,7 +59,10 @@ export const CartProvider = ({ children }) => {
         setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
     };
 
-    const clearCart = () => setCart([]);
+    const clearCart = () => {
+    sessionStorage.removeItem("gamify_cart");
+    setCart([]);
+};
 
     return (
         <CartContext.Provider value={{ cart, addToCart, removeFromCart, decreaseQuantity, clearCart }}>

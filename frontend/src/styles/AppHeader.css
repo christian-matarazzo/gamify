@@ -33,6 +33,7 @@
   height: 36px;
   border-radius: 8px;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
+  position: relative;
 }
 
 .gamify-icon-btn:hover {
@@ -64,6 +65,82 @@
 
 .gamify-logo {
   height: 40px;
+}
+
+.gamify-cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--accent);
+  color: var(--bg-1);
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+  border: 2px solid var(--bg-2);
+  pointer-events: none;
+}
+
+.navbar-toggler {
+  background: transparent;
+  border: 1px solid var(--bg-4);
+  color: #8a9bb0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.navbar-toggler:hover {
+  color: var(--accent);
+  border-color: rgba(230, 240, 0, 0.35);
+  background: rgba(230, 240, 0, 0.06);
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%238a9bb0' stroke-width='2' stroke-linecap='round' d='M5 7h20M5 15h20M5 23h20'/%3E%3C/svg%3E");
+  width: 18px;
+  height: 18px;
+}
+
+/* TABLET */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    border-top: 1px solid var(--bg-4);
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .gamify-links .nav-link {
+    padding: 10px 12px;
+  }
+
+  .gamify-links {
+    margin-bottom: 12px;
+  }
+
+  .gamify-actions {
+    border-top: 1px solid var(--bg-4);
+    padding-top: 12px;
+    padding-bottom: 12px;
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 
 /* MOBILE */

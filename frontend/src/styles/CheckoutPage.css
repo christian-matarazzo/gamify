@@ -1,0 +1,98 @@
+.gamify-checkout-section {
+    background: var(--bg-2);
+    border: 1px solid var(--bg-4);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.gamify-checkout-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+}
+
+.gamify-input-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.gamify-checkout-item-row {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--bg-4);
+}
+
+.gamify-checkout-item-row:last-child {
+    border-bottom: none;
+}
+
+.gamify-item-title-sm {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gamify-success-card {
+    background: var(--bg-2);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 0 30px rgba(252, 238, 9, 0.05);
+}
+
+.gamify-success-icon {
+    font-size: 64px;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: block;
+}
+
+.gamify-license-key {
+    background: var(--bg-3);
+    border: 1px dashed var(--bg-4);
+    color: var(--accent);
+    font-family: 'Courier New', Courier, monospace;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.gamify-license-key:hover {
+    border-color: var(--accent);
+    background: rgba(252, 238, 9, 0.05);
+}
+
+.gamify-keys-container {
+    background: var(--bg-4);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+select.gamify-promo-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+@media (max-width: 991px) {
+    .gamify-cart-summary {
+        margin-top: 24px;
+    }
+}

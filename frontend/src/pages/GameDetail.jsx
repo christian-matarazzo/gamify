@@ -44,6 +44,10 @@ const GameDetail = () => {
         addToCart({ ...game, stock: availableKeys });
     };
 
+    
+
+
+
     if (!game) return (
         <main className="container py-4 text-center">
             <i className="bi bi-controller" style={{ fontSize: "48px", color: "var(--accent)" }}></i>
@@ -64,6 +68,9 @@ const GameDetail = () => {
             <div>
                 <Link to="/" className="gamify-detail-back-btn">
                     <i className="bi bi-arrow-left"></i> Back to Homepage
+                </Link>
+                <Link to="/search" className="gamify-detail-back-btn ms-2">
+                    <i className="bi bi-search"></i> Keep searching!
                 </Link>
                 <hr />
 
@@ -127,6 +134,20 @@ const GameDetail = () => {
                             >
                                 <i className="bi bi-plus-lg"></i>
                             </button>
+                            <Link
+                                to="/cart"
+                                className={!cartItem || cartItem.quantity === 0 ? 'pe-none' : ''}
+                                onClick={e => (!cartItem || cartItem.quantity === 0) && e.preventDefault()}
+                                aria-label="Go to Cart"
+                            >
+                                <button
+                                    className="gamify-btn-add-cart"
+                                    disabled={!cartItem || cartItem.quantity === 0}
+                                >
+                                    <i className="bi bi-cart-plus me-2"></i>
+                                    Go to Cart
+                                </button>
+                            </Link>
                         </div>
 
                         {cartItem && (
@@ -138,7 +159,7 @@ const GameDetail = () => {
                             </button>
                         )}
 
-                                                {error && (
+                        {error && (
                             <div className="gamify-detail-alert p-2 mb-3">
                                 <i className="bi bi-exclamation-circle me-2"></i>
                                 {error}

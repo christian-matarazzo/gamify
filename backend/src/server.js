@@ -4,7 +4,11 @@ const gamesRoute = require('./routes/games');
 const inventoryRoute = require('./routes/inventory');
 const ordersRoute = require('./routes/orders'); 
 const newsletterRoute = require('./routes/newsletter');
+const couponsRoutes = require('./routes/coupons');
+const stockRoute = require('./routes/stock');
+
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+
 
 
 const app = express();
@@ -19,6 +23,10 @@ app.use('/api/games', gamesRoute);
 app.use('/api/inventory', inventoryRoute);
 app.use('/api/orders', ordersRoute);
 app.use('/api/newsletter', newsletterRoute);
+app.use('/api/coupons', couponsRoutes);
+app.use('/api/stock', stockRoute);
+
+
 
 
 app.get('/', (req, res) => {

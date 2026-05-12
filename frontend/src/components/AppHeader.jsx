@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import '../styles/AppHeader.css';
 
 export default function AppHeader() {
@@ -16,11 +17,10 @@ export default function AppHeader() {
         if (bsCollapse) bsCollapse.hide();
     }
 
-    function handleCartClick() {
-    }
-    function handleWishClick(){
+    const { cart } = useCart();
+    const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-    }
+
 
     return (
         <header>
@@ -30,7 +30,7 @@ export default function AppHeader() {
                 </Link>
 
                 <button
-                    className="navbar-toggler ms-auto me-2"
+                    className="navbar-toggler ms-auto ms-3"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#gamifyNavCollapse"
@@ -63,8 +63,13 @@ export default function AppHeader() {
                             </button>
                         </Link>
                         <Link to="/cart">
-                            <button className="gamify-icon-btn" aria-label="Cart" onClick={handleCartClick}>
+                            <button className="gamify-icon-btn position-relative" aria-label="Cart">
                                 <i className="bi bi-cart"></i>
+                                {cartCount > 0 && (
+                                    <span className="gamify-cart-badge">
+                                        {cartCount > 99 ? '99+' : cartCount}
+                                    </span>
+                                )}
                             </button>
                         </Link>
                         <Link to="/wishlist">
