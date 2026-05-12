@@ -3,6 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from "../context/CartContext";
 import { useWish } from "../context/WishlistContext";
+import { useGames } from '../context/GamesContext';
+import GhostCard from '../components/GhostCard';
+import GameCard from '../components/GameCard';
 import "../styles/GameDetail.css";
 
 const GameDetail = () => {
@@ -10,6 +13,7 @@ const GameDetail = () => {
     const [game, setGame] = useState(null);
     const [gameKeys, setGameKeys] = useState(null);
     const [error, setError] = useState(null);
+    const { games, loading } = useGames();
 
     const { addToCart, removeFromCart, decreaseQuantity, cart } = useCart();
     const { wish, handleWish } = useWish();
@@ -44,8 +48,6 @@ const GameDetail = () => {
         addToCart({ ...game, stock: availableKeys });
     };
 
-    
-
 
 
     if (!game) return (
@@ -62,6 +64,7 @@ const GameDetail = () => {
             </Link>
         </main>
     );
+    const relatedGames = games.filter(relatedGames => relatedGames.genre === game.genre && relatedGames.id !== game.id).slice(0, 4)
 
     return (
         <main className="container py-4">
@@ -167,6 +170,30 @@ const GameDetail = () => {
                         )}
                     </div>
                 </section>
+            </div>
+            <div className="row g-3">
+                <h2>Related Games</h2>
+                {loading ? (
+                    [...Array(4)].map((_, i) => <GhostCard key={i} />)
+                ) : relatedGames.length === 0 ? (
+                    <div className="text-center py-5 col-12">
+                        <i className="bi bi-emoji-frown display-1 text-secondary"></i>
+                        <p className="gamify-no-results">No related Games Found</p>
+                    </div>
+                ) : (
+                    relatedGames.map(related => {
+                        const isRelatedInWishlist = wish.some(id => String(id) === String(related.id));
+
+                        return (
+                            <GameCard
+                                key={related.id}
+                                game={related}
+                                isInWishlist={isRelatedInWishlist}
+                                onToggleWish={() => handleWish(related.id)}
+                            />
+                        );
+                    })
+                )}
             </div>
         </main>
     );
