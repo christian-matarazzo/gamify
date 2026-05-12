@@ -20,11 +20,7 @@ export default function AppHeader() {
     const { cart } = useCart();
     const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-    function handleCartClick() {
-    }
-    function handleWishClick() {
 
-    }
 
     return (
         <header>
@@ -67,7 +63,7 @@ export default function AppHeader() {
                             </button>
                         </Link>
                         <Link to="/cart">
-                            <button className="gamify-icon-btn position-relative" aria-label="Cart" onClick={handleCartClick}>
+                            <button className="gamify-icon-btn position-relative" aria-label="Cart">
                                 <i className="bi bi-cart"></i>
                                 {cartCount > 0 && (
                                     <span className="gamify-cart-badge">
