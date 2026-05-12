@@ -37,7 +37,7 @@ export default function CartPage() {
                     itemsToSave = cart;
                 }
             } catch (error) {
-                console.error('Errore nel parsing del carrello salvato:', error);
+                console.error('Parsing error:', error);
                 itemsToSave = cart;
             }
         } else {
@@ -228,7 +228,8 @@ export default function CartPage() {
                                     Apply
                                 </button>
                                 {couponFeedback.message && (
-                                    <div className={`alert alert-${couponFeedback.type === "success" ? "success" : "danger"} mt-2`}>
+                                    <div className={`gamify-coupon-feedback ${couponFeedback.type === "success" ? "is-success" : "is-error"}`}>
+                                        <i className={`bi ${couponFeedback.type === "success" ? "bi-check-circle" : "bi-exclamation-circle"} me-2`}></i>
                                         {couponFeedback.message}
                                     </div>
                                 )}
