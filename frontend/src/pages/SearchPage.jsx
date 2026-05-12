@@ -35,7 +35,6 @@ export default function SearchPage() {
                         <span>Filter</span> By
                     </h1>
                 </div>
-
                 <div className="gamify-search-bar mb-4">
                     <div className="gamify-search-input-wrapper">
                         <i className="bi bi-search gamify-search-icon"></i>
