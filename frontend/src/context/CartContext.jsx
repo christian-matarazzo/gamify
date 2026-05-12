@@ -59,7 +59,10 @@ export const CartProvider = ({ children }) => {
         setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
     };
 
-    const clearCart = () => setCart([]);
+    const clearCart = () => {
+    sessionStorage.removeItem("gamify_cart");
+    setCart([]);
+};
 
     return (
         <CartContext.Provider value={{ cart, addToCart, removeFromCart, decreaseQuantity, clearCart }}>

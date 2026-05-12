@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/CheckoutPage.css";
+import { useCart } from "../context/CartContext";
 
 export default function CheckoutPage() {
+  const navigate = useNavigate();
+  const { clearCart } = useCart();
   const [customerEmail, setCustomerEmail] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -20,7 +23,7 @@ export default function CheckoutPage() {
   const [billingVat, setBillingVat] = useState('');
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('gamify_cart');
+    const savedCart = sessionStorage.getItem('gamify_cart');
 
     if (savedCart) {
       try {
@@ -57,50 +60,53 @@ export default function CheckoutPage() {
     return null;
   };
 
-  const handlePurchase = async function(event) {
+  const handlePurchase = async function (event) {
     event.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
 
     const stockCheck = await checkStockAvailability(cartItems);
-    
+
     if (!stockCheck.success) {
-        if (stockCheck.unavailable && stockCheck.unavailable.length > 0) {
-            const unavailableNames = stockCheck.unavailable.map(function(unavailableItem) {
-                if (unavailableItem.title) {
-                    return `"${unavailableItem.title}"`;
-                }
-                return `Product #${unavailableItem.game_id}`;
-            });
-            const userMessage = `The following item(s) are no longer available: ${unavailableNames.join(', ')}. Please remove them from your cart and try again.`;
-            setErrorMessage(userMessage);
-        } else {
-            setErrorMessage(stockCheck.message || 'Some items are no longer available. Please refresh and try again.');
-        }
-        setIsLoading(false);
-        return;
+      if (stockCheck.unavailable && stockCheck.unavailable.length > 0) {
+        const unavailableNames = stockCheck.unavailable.map(function (unavailableItem) {
+          if (unavailableItem.title) {
+            return `"${unavailableItem.title}"`;
+          }
+          return `Product #${unavailableItem.game_id}`;
+        });
+        const userMessage = `The following item(s) are no longer available: ${unavailableNames.join(', ')}. Please remove them from your cart and try again.`;
+        setErrorMessage(userMessage);
+      } else {
+        setErrorMessage(stockCheck.message || 'Some items are no longer available. Please refresh and try again.');
+      }
+      setIsLoading(false);
+      return;
     }
 
     try {
-        const response = await axios.post('http://localhost:3000/api/orders/purchase', {
-            email: customerEmail,
-            items: cartItems.map(function(item) {
-                return {
-                    game_id: item.id,
-                    quantity: item.quantity || 1
-                };
-            }),
-            coupon: couponCode.trim() || null
-        });
+      const response = await axios.post('http://localhost:3000/api/orders/purchase', {
+        email: customerEmail,
+        items: cartItems.map(function (item) {
+          return {
+            game_id: item.id,
+            quantity: item.quantity || 1
+          };
+        }),
+        coupon: couponCode.trim() || null
+      });
 
-        if (response.data.success) {
-            setOrderResult(response.data);
-            localStorage.removeItem('gamify_cart');
-        }
+      if (response.data.success) {
+        setOrderResult(response.data);
+        sessionStorage.removeItem('gamify_cart');
+        setCartItems([]);
+        setCouponCode('');
+        setDiscountAmount(0);
+      }
     } catch (purchaseError) {
-        setErrorMessage(purchaseError.response?.data?.message || 'Purchase failed. Please try again.');
+      setErrorMessage(purchaseError.response?.data?.message || 'Purchase failed. Please try again.');
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -111,17 +117,25 @@ export default function CheckoutPage() {
           <i className="bi bi-check-all gamify-success-icon"></i>
           <h2 className="gamify-cart-heading mb-3"><span>Purchase</span> Successful!</h2>
           <p className="text-secondary">Order ID: <span className="text-white">#{orderResult.order_id}</span></p>
-          
+
           <div className="gamify-keys-container mt-4">
             <h5 className="gamify-summary-label mb-3">Your License Keys</h5>
             {orderResult.license_keys.map((licenseKey, index) => (
               <div key={index} className="gamify-license-key">
                 {licenseKey}
-                <i className="bi bi-copy ms-auto" style={{cursor: 'pointer'}} onClick={() => navigator.clipboard.writeText(licenseKey)}></i>
+                <i className="bi bi-copy ms-auto" style={{ cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(licenseKey)}></i>
               </div>
             ))}
           </div>
-          <Link to="/" className="gamify-btn-primary mt-4 d-inline-block">Back to Home</Link>
+          <button
+            className="gamify-btn-primary mt-4 d-inline-block"
+            onClick={() => {
+              clearCart();
+              navigate('/', { replace: true });
+            }}
+          >
+            Back to Home
+          </button>
         </div>
       </div>
     );
@@ -143,7 +157,7 @@ export default function CheckoutPage() {
       discount: discountAmount,
       finalTotal: newTotal
     };
-    localStorage.setItem('gamify_cart', JSON.stringify(cartData));
+    sessionStorage.setItem('gamify_cart', JSON.stringify(cartData));
   };
 
   const handleResetCheckout = function () {
@@ -162,8 +176,8 @@ export default function CheckoutPage() {
     setOrderResult(null);
     setErrorMessage('');
     setIsLoading(false);
-    localStorage.removeItem('gamify_cart');
-    localStorage.removeItem('gamify_billing');
+    sessionStorage.removeItem('gamify_cart');
+    sessionStorage.removeItem('gamify_billing');
     window.location.href = '/';
   };
 
@@ -207,9 +221,9 @@ export default function CheckoutPage() {
 
       {cartItems.length === 0 ? (
         <div className="text-center py-5">
-           <i className="bi bi-cart-x gamify-cart-empty-icon"></i>
-           <p className="gamify-cart-empty-title">Your cart is empty</p>
-           <Link to="/" className="gamify-btn-primary">Continue shopping</Link>
+          <i className="bi bi-cart-x gamify-cart-empty-icon"></i>
+          <p className="gamify-cart-empty-title">Your cart is empty</p>
+          <Link to="/" className="gamify-btn-primary">Continue shopping</Link>
         </div>
       ) : (
         <div className="row g-4">
@@ -305,8 +319,8 @@ export default function CheckoutPage() {
               </div>
               {errorMessage && (
                 <div className="gamify-coupon-feedback is-error mb-3">
-                   <i className="bi bi-exclamation-triangle me-2"></i>
-                   {errorMessage}
+                  <i className="bi bi-exclamation-triangle me-2"></i>
+                  {errorMessage}
                 </div>
               )}
               <button type="submit" className="gamify-btn-checkout w-100 border-0" disabled={isLoading}>
@@ -315,7 +329,7 @@ export default function CheckoutPage() {
                 ) : 'Complete Purchase'}
               </button>
             </form>
-            
+
             <div className="text-center mt-4">
               <button
                 type="button"
@@ -325,7 +339,7 @@ export default function CheckoutPage() {
                 <i className="bi bi-trash3 me-2"></i>
                 Cancel Order
               </button>
-              <p className="gamify-cart-empty-sub mt-2" style={{fontSize: '11px'}}>
+              <p className="gamify-cart-empty-sub mt-2" style={{ fontSize: '11px' }}>
                 This action can't be reverted!
               </p>
             </div>
@@ -349,7 +363,7 @@ export default function CheckoutPage() {
                         </div>
                         <div className="text-end">
                           {originalPrice !== null && (
-                             <div className="text-decoration-line-through text-muted small">€{originalPrice.toFixed(2)}</div>
+                            <div className="text-decoration-line-through text-muted small">€{originalPrice.toFixed(2)}</div>
                           )}
                           <div className="text-white fw-bold">€{displayPrice.toFixed(2)}</div>
                         </div>
@@ -370,7 +384,7 @@ export default function CheckoutPage() {
                 <span className="gamify-summary-text">Original Subtotal</span>
                 <span className="gamify-summary-text">€{originalTotal.toFixed(2)}</span>
               </div>
-              
+
               {totalSavings > 0 && (
                 <div className="d-flex justify-content-between mb-2">
                   <span className="gamify-summary-text">Total Savings</span>
@@ -379,7 +393,7 @@ export default function CheckoutPage() {
               )}
 
               <hr className="gamify-summary-divider" />
-              
+
               <div className="d-flex justify-content-between align-items-center">
                 <span className="gamify-summary-total-label">Total to Pay</span>
                 <span className="gamify-summary-total-price">€{calculatedTotal.toFixed(2)}</span>

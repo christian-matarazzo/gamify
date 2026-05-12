@@ -18,7 +18,7 @@ export default function CartPage() {
     const totalAfterDIscount = total - discountAmount
 
     const handleProceedToCheckout = function () {
-        const savedCartRaw = localStorage.getItem('gamify_cart');
+        const savedCartRaw = sessionStorage.getItem('gamify_cart');
 
         let itemsToSave;
 
@@ -51,7 +51,7 @@ export default function CartPage() {
             finalTotal: total - discountAmount
         };
 
-        localStorage.setItem('gamify_cart', JSON.stringify(cartData));
+        sessionStorage.setItem('gamify_cart', JSON.stringify(cartData));
         navigate('/checkout');
     };
 
@@ -107,7 +107,7 @@ export default function CartPage() {
                     discount: result.discountAmount,
                     finalTotal: result.finalTotal
                 };
-                localStorage.setItem('gamify_cart', JSON.stringify(cartData));
+                sessionStorage.setItem('gamify_cart', JSON.stringify(cartData));
 
             } else {
                 setCouponFeedback({ message: result.message, type: "error" });
