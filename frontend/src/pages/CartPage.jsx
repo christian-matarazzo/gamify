@@ -195,7 +195,7 @@ export default function CartPage() {
                         </div>
                         <div className="d-flex justify-content-between mb-2">
                             <span className="gamify-summary-text">VAT</span>
-                            <span className="gamify-summary-free">Always Free</span>
+                            <span className="gamify-summary-free">0%</span>
                         </div>
 
                         <hr className="gamify-summary-divider" />

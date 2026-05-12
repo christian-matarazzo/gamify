@@ -356,21 +356,28 @@ export default function CheckoutPage() {
                   const quantity = item.quantity || 1;
 
                   return (
-                    <div key={item.id} className="gamify-checkout-item-row">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div className="min-w-0">
-                          <div className="gamify-item-title-sm">{item.title}</div>
-                          <div className="gamify-summary-text">Qty: {quantity}</div>
-                        </div>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="min-w-0">
+                        <div className="gamify-item-title-sm">{item.title}</div>
+                        <div className="gamify-summary-text">Qty: {quantity}</div>
+                      </div>
+
+                      <div className="d-flex align-items-center gap-2">
                         <div className="text-end">
                           {originalPrice !== null && (
-                            <div className="text-decoration-line-through text-muted small">€{originalPrice.toFixed(2)}</div>
+                            <div className="text-decoration-line-through text-muted small">
+                              €{originalPrice.toFixed(2)}
+                            </div>
                           )}
-                          <div className="text-white fw-bold">€{displayPrice.toFixed(2)}</div>
+
+                          <div className="text-white fw-bold">
+                            €{displayPrice.toFixed(2)}
+                          </div>
                         </div>
+
                         <button
                           type="button"
-                          className="gamify-cart-remove ms-2"
+                          className="gamify-cart-remove"
                           onClick={() => handleRemoveItem(item.id)}
                         >
                           <i className="bi bi-x-lg"></i>

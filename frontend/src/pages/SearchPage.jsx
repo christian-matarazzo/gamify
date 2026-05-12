@@ -50,11 +50,11 @@ export default function SearchPage() {
                     onChange={e => setOrdered(e.target.value)}
                     className="gamify-select"
                 >
-                    <option value="select_filter">No Filter</option>
-                    <option value="release_newer">Release Date: Newer</option>
-                    <option value="release_older">Release Date: Older</option>
-                    <option value="higher_price">Price: From Higher Price</option>
-                    <option value="lower_price">Price: From Lower Price</option>
+                    <option value="select_filter">Sort by</option>
+                    <option value="release_newer">Release Date: Recent</option>
+                    <option value="release_older">Release Date: Old</option>
+                    <option value="higher_price">Price: High to Low</option>
+                    <option value="lower_price">Price: Low to High</option>
                 </select>
             </div>
 
@@ -75,13 +75,13 @@ export default function SearchPage() {
                 ) : (
                     orderedSearch.map(game => {
                         const isInWishlist = wish.some(id => String(id) === String(game.id));
-                        
+
                         return (
-                            <GameCard 
-                                key={game.id} 
-                                game={game} 
+                            <GameCard
+                                key={game.id}
+                                game={game}
                                 isInWishlist={isInWishlist}
-                                onToggleWish={() => handleWish(game.id)} 
+                                onToggleWish={() => handleWish(game.id)}
                             />
                         );
                     })
