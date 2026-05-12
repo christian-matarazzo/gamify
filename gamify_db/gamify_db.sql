@@ -26,9 +26,11 @@ CREATE TABLE `coupon` (
   `id` int NOT NULL AUTO_INCREMENT,
   `coupon_name` varchar(50) NOT NULL,
   `coupon_discount` decimal(6,2) NOT NULL,
+  `expires_at` datetime DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `coupon_name` (`coupon_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +39,7 @@ CREATE TABLE `coupon` (
 
 LOCK TABLES `coupon` WRITE;
 /*!40000 ALTER TABLE `coupon` DISABLE KEYS */;
-INSERT INTO `coupon` VALUES (1,'WELCOME10',10.00);
+INSERT INTO `coupon` VALUES (1,'WELCOME10',10.00,NULL,1),(2,'EXPIRED10',10.00,'2026-05-10 11:17:34',1),(3,'VALID10',10.00,'2026-05-11 12:17:36',1);
 /*!40000 ALTER TABLE `coupon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,7 +117,7 @@ CREATE TABLE `newsletter` (
   `confirmation_sent` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `newslatter_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +126,7 @@ CREATE TABLE `newsletter` (
 
 LOCK TABLES `newsletter` WRITE;
 /*!40000 ALTER TABLE `newsletter` DISABLE KEYS */;
-INSERT INTO `newsletter` VALUES (1,'text@example.it',1),(2,'email@test.it',1),(3,'we@we.it',1),(4,'we@wewe.it',1),(7,'we@wewewe.it',1),(9,'we@wewe.com',1),(10,'ciao@wewe.com',1),(13,'we@wewewu.it',1);
+INSERT INTO `newsletter` VALUES (1,'text@example.it',1),(2,'email@test.it',1),(3,'we@we.it',1),(4,'we@wewe.it',1),(7,'we@wewewe.it',1),(9,'we@wewe.com',1),(10,'ciao@wewe.com',1),(13,'we@wewewu.it',1),(15,'ciao@wewwe.com',1),(16,'gogogo@gogogo.go',1),(30,'gogogo@gogogo.goppp',1),(33,'gogogo@gogogo.gogo',1),(36,'test62@test.it',1),(37,'parte@2.it',1),(38,'example@example3.it',1),(39,'example@example4.it',1),(42,'text@example50.it',1),(43,'wewe@wewe.wewewe',1);
 /*!40000 ALTER TABLE `newsletter` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -194,4 +196,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-08 14:13:44
+-- Dump completed on 2026-05-11 18:15:26
