@@ -1,4 +1,5 @@
 import { useGames } from "../context/GamesContext";
+import { useWish } from "../context/WishlistContext";
 import GameCard from "../components/GameCard";
 import GhostCard from "../components/GhostCard";
 import "../styles/Homepage.css";
@@ -6,6 +7,7 @@ import "../styles/Preorder.css"
 
 export default function Preorders() {
     const { games, loading } = useGames();
+    const { wish, handleWish } = useWish()
 
     return (
         <main className="container py-4">
@@ -61,9 +63,17 @@ export default function Preorders() {
                 ) : (
                     games
                         .filter((game) => game.tag === "Preorder")
-                        .map((game) => (
-                            <GameCard key={game.id} game={game} />
-                        ))
+                        .map((game) => {
+                            const isInWishlist = wish.some(id => String(id) === String(game.id));
+                            return (
+                                <GameCard
+                                    key={game.id}
+                                    game={game}
+                                    isInWishlist={isInWishlist}
+                                    onToggleWish={() => handleWish(game.id)}
+                                />
+                            );
+                        })
                 )}
             </div>
 
