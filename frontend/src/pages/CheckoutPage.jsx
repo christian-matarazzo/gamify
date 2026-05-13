@@ -21,6 +21,7 @@ export default function CheckoutPage() {
   const [billingZip, setBillingZip] = useState('');
   const [billingCountry, setBillingCountry] = useState('IT');
   const [billingVat, setBillingVat] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('card');
 
   useEffect(() => {
     const savedCart = sessionStorage.getItem('gamify_cart');
@@ -209,7 +210,7 @@ const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
     }
   };
 
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  
 
   const paymentMethods = [
     { id: 'card', icon: 'bi-credit-card', label: 'Credit Card', sub: 'Visa / Mastercard' },
