@@ -66,9 +66,8 @@ export default function Homepage() {
                             .map((game) => <GameCard key={game.id} game={game} />)
                     )}
                 </div>
-
-
             </main>
+
             <div className="gamify-trust-bar">
                 <div className="gamify-trust-inner">
                     <div className="gamify-trust-item">

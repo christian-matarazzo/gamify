@@ -6,7 +6,7 @@ import { useCart } from "../context/CartContext";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { clearCart } = useCart();
+  const { clearCart, saveCartWithMetadata } = useCart();
   const [customerEmail, setCustomerEmail] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -46,19 +46,11 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  const getPriceToDisplay = function (item) {
-    if (item.discounted_price !== undefined && item.discounted_price !== null) {
-      return Number(item.discounted_price);
-    }
-    return Number(item.base_price);
-  };
+ const getPriceToDisplay = function (item) {
+  return Number(item.base_price);
+};
 
-  const getOriginalPrice = function (item) {
-    if (item.discounted_price !== undefined && item.discounted_price !== null) {
-      return Number(item.base_price);
-    }
-    return null;
-  };
+
 
   const handlePurchase = async function (event) {
     event.preventDefault();
@@ -141,23 +133,29 @@ export default function CheckoutPage() {
   }
 
   const handleRemoveItem = function (itemId) {
-    const updatedCartItems = cartItems.filter(function (item) {
-      return item.id !== itemId;
-    });
-    setCartItems(updatedCartItems);
-    const newTotal = updatedCartItems.reduce(function (sum, item) {
-      const price = getPriceToDisplay(item);
-      const quantity = item.quantity || 1;
-      return sum + (price * quantity);
-    }, 0);
-    const cartData = {
-      items: updatedCartItems,
-      coupon: couponCode.trim() || null,
-      discount: discountAmount,
-      finalTotal: newTotal
-    };
-    sessionStorage.setItem('gamify_cart', JSON.stringify(cartData));
-  };
+  const updatedCartItems = cartItems.filter(function (item) {
+    return item.id !== itemId;
+  });
+
+  const newSubtotal = updatedCartItems.reduce(function (sum, item) {
+    const price = getPriceToDisplay(item);
+    const quantity = item.quantity || 1;
+    return sum + price * quantity;
+  }, 0);
+
+  const newDiscountAmount = Math.min(discountAmount, newSubtotal);
+  const newFinalTotal = Math.max(newSubtotal - newDiscountAmount, 0);
+
+  setCartItems(updatedCartItems);
+  setDiscountAmount(newDiscountAmount);
+
+  saveCartWithMetadata(
+    updatedCartItems,
+    couponCode.trim() || null,
+    newDiscountAmount,
+    newFinalTotal
+  );
+};
 
   const handleResetCheckout = function () {
     const isConfirmed = window.confirm("Are you sure to cancel the order?");
@@ -186,11 +184,10 @@ export default function CheckoutPage() {
     return sum + (price * quantity);
   }, 0);
 
-  const originalTotal = cartItems.reduce(function (sum, item) {
-    const quantity = item.quantity || 1;
-    return sum + (item.base_price * quantity);
-  }, 0);
-  const totalSavings = originalTotal - calculatedTotal;
+ 
+
+  const safeDiscountAmount = Math.min(discountAmount, calculatedTotal);
+const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
 
   const checkStockAvailability = async function (items) {
     try {
@@ -392,11 +389,10 @@ export default function CheckoutPage() {
               <div className="gamify-checkout-items mb-4">
                 {cartItems.map(function (item) {
                   const displayPrice = getPriceToDisplay(item);
-                  const originalPrice = getOriginalPrice(item);
                   const quantity = item.quantity || 1;
 
                   return (
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex justify-content-between align-items-center" key={item.id}>
                       <div className="min-w-0">
                         <div className="gamify-item-title-sm">{item.title}</div>
                         <div className="gamify-summary-text">Qty: {quantity}</div>
@@ -404,11 +400,7 @@ export default function CheckoutPage() {
 
                       <div className="d-flex align-items-center gap-2">
                         <div className="text-end">
-                          {originalPrice !== null && (
-                            <div className="text-decoration-line-through text-muted small">
-                              €{originalPrice.toFixed(2)}
-                            </div>
-                          )}
+                          
 
                           <div className="text-white fw-bold">
                             €{displayPrice.toFixed(2)}
@@ -430,21 +422,25 @@ export default function CheckoutPage() {
 
               <div className="d-flex justify-content-between mb-2">
                 <span className="gamify-summary-text">Original Subtotal</span>
-                <span className="gamify-summary-text">€{originalTotal.toFixed(2)}</span>
+                <span className="gamify-summary-text">€{calculatedTotal.toFixed(2)}</span>
               </div>
 
-              {totalSavings > 0 && (
-                <div className="d-flex justify-content-between mb-2">
-                  <span className="gamify-summary-text">Total Savings</span>
-                  <span className="gamify-summary-free">- €{totalSavings.toFixed(2)}</span>
-                </div>
-              )}
-
+              
+              {safeDiscountAmount > 0 && (
+  <div className="d-flex justify-content-between mb-2">
+    <span className="gamify-summary-text">
+      Coupon {couponCode && `(${couponCode})`}
+    </span>
+    <span className="gamify-summary-free">
+      - €{safeDiscountAmount.toFixed(2)}
+    </span>
+  </div>
+)}
               <hr className="gamify-summary-divider" />
 
               <div className="d-flex justify-content-between align-items-center">
                 <span className="gamify-summary-total-label">Total to Pay</span>
-                <span className="gamify-summary-total-price">€{calculatedTotal.toFixed(2)}</span>
+                <span className="gamify-summary-total-price">€{finalTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>
