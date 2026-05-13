@@ -7,7 +7,6 @@ export default function PrivacyPage() {
             <h2 className="gamify-cart-heading mb-4"><span>Privacy</span> Policy</h2>
 
             <div className="row">
-                {/* MAIN CONTENT */}
                 <div className="col-lg-8">
                     <div className="gamify-checkout-section p-4">
 
@@ -17,7 +16,6 @@ export default function PrivacyPage() {
                             We do not sell your personal data.
                         </p>
 
-                        {/* TWO-COLUMN LAYOUT */}
                         <div className="row">
                             {/* LEFT COLUMN */}
                             <div className="col-md-6">
@@ -42,7 +40,6 @@ export default function PrivacyPage() {
 
                             </div>
 
-                            {/* RIGHT COLUMN */}
                             <div className="col-md-6">
 
                                 <h5>Third‑party services</h5>
@@ -77,7 +74,6 @@ export default function PrivacyPage() {
                     </div>
                 </div>
 
-                {/* SIDEBAR */}
                 <div className="col-lg-4">
                     <div className="p-4 gamify-checkout-section">
                         <h6>Quick info</h6>
