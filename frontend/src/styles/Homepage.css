@@ -116,16 +116,43 @@
 }
 
 .gamify-home-divider {
+    position: relative;
     height: 1px;
     width: 100%;
     margin: 32px 0;
-    background: linear-gradient(90deg,
-            transparent,
-            rgba(252, 238, 9, 0.25),
-            rgba(93, 112, 128, 0.2),
-            rgba(252, 238, 9, 0.25),
-            transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(252, 238, 9, 0.25),
+        rgba(93, 112, 128, 0.2),
+        rgba(252, 238, 9, 0.25),
+        transparent
+    );
     opacity: 0.8;
+    overflow: hidden;
+}
+
+.gamify-home-divider::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -30%;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(252, 238, 9, 0.9),
+        rgba(255, 255, 255, 0.6),
+        rgba(252, 238, 9, 0.9),
+        transparent
+    );
+    animation: divider-glow 3s ease-in-out infinite;
+}
+
+@keyframes divider-glow {
+    0%   { left: -30%; }
+    100% { left: 130%; }
 }
 
 @keyframes gamify-shimmer {
@@ -138,6 +165,82 @@
     }
 }
 
+.gamify-trust-bar {
+    width: 100%;
+    margin-top: 48px;
+    padding: 20px 0;
+    background: var(--bg-2);
+    border-block: 1px solid var(--bg-4);
+}
+
+.gamify-trust-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.gamify-trust-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.gamify-trust-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--accent);
+    opacity: 0.9;
+    flex-shrink: 0;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.gamify-trust-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.gamify-trust-sub {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.gamify-trust-divider {
+    width: 1px;
+    height: 42px;
+    background: var(--bg-4);
+    flex-shrink: 0;
+}
+
+/* TABLET */
+@media (max-width: 768px) {
+    .gamify-trust-inner {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .gamify-trust-divider {
+        display: none;
+    }
+
+    .gamify-trust-item {
+        flex: 1 1 45%;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
 /* MOBILE */
 @media (max-width: 480px) {
     .gamify-section-title {
@@ -146,5 +249,12 @@
 
     .gamify-preorders {
         font-size: 15px;
+    }
+
+    .gamify-trust-item {
+        flex: 1 1 100%;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 }

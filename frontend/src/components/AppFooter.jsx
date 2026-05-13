@@ -134,13 +134,13 @@ export default function AppFooter() {
 
                         {newsletterStatus === 'success' && (
                             <p className="gamify-newsletter-success mb-0">
-                                <i class="bi bi-check-lg"></i> {newsletterMessage}
+                                <i className="bi bi-check-lg"></i> {newsletterMessage}
                             </p>
                         )}
 
                         {newsletterStatus === 'error' && (
                             <p className="gamify-newsletter-error mb-0">
-                                <i class="bi bi-x-lg"></i> {newsletterMessage}
+                                <i className="bi bi-x-lg"></i> {newsletterMessage}
                             </p>
                         )}
                     </div>

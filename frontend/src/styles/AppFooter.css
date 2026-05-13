@@ -104,3 +104,55 @@
   color: #ff4d4d;
   font-size: 13px;
 }
+
+/* TABLET */
+@media (max-width: 991px) {
+  .gamify-footer {
+    text-align: center;
+  }
+
+  .gamify-footer-brand {
+    justify-content: center;
+  }
+
+  .gamify-socials {
+    justify-content: center;
+  }
+
+  .gamify-footer-links {
+    align-items: center;
+  }
+
+  .gamify-newsletter-group {
+    justify-content: center;
+  }
+
+  .gamify-newsletter-group .input-group {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 767px) {
+  .gamify-footer .row > div {
+    margin-bottom: 1.5rem;
+  }
+
+.gamify-newsletter-group .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .gamify-newsletter-group .form-control {
+    width: 100%;
+    border-radius: 8px !important;
+  }
+
+  .gamify-btn-subscribe {
+    width: 100%;
+    border-radius: 8px !important;
+    padding: 10px 14px;
+  }
+}

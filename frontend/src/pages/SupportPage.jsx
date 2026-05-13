@@ -82,7 +82,7 @@ export default function SupportPage() {
                 <strong>Email:</strong> <span className="ms-2">support@gamify.com</span>
               </div>
               <div className="gamify-support-list-item">
-                <strong>Hours:</strong> <span className="ms-2">Mon–Fri 9:00–18:00 CET</span>
+                <strong>Hours:</strong> <span className="ms-2">Our agents are active 24/7!</span>
               </div>
               <div className="gamify-support-list-item">
                 <strong>Phone:</strong> <span className="ms-2">+39 02 1234 5678</span>
