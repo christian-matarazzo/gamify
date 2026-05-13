@@ -4,6 +4,7 @@ import { useWish } from '../context/WishlistContext';
 import GameCard from '../components/GameCard';
 import GhostCard from '../components/GhostCard';
 import "../styles/SearchPage.css";
+import { Link } from 'react-router-dom';
 
 export default function SearchPage() {
     const { games, loading } = useGames();
@@ -25,8 +26,16 @@ export default function SearchPage() {
 
     return (
         <main className="container py-4">
+            <Link to="/" className="gamify-detail-back-btn ms-2">
+                <i className="bi bi-arrow-left"></i>Back to Homepage
+            </Link>
+            <hr />
+
             <div className="d-flex justify-content-between align-items-baseline mb-4">
+
+
                 <h1 className="gamify-section-title mb-0">
+
                     <span>Search</span> Games
                 </h1>
                 <h1 className="gamify-section-title mb-0">

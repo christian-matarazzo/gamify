@@ -98,7 +98,7 @@ export default function CheckoutPage() {
 
       if (response.data.success) {
         setOrderResult(response.data);
-        clearCart(); 
+        clearCart();
         setCouponCode('');
         setDiscountAmount(0);
       }
@@ -214,6 +214,10 @@ export default function CheckoutPage() {
 
   return (
     <div className="container py-4">
+      <Link to="/cart" className="gamify-detail-back-btn ms-2">
+        <i className="bi bi-arrow-left"></i> Go back to Cart
+      </Link>
+      <hr />
       <h2 className="gamify-cart-heading mb-4">
         <span>Secure</span> Checkout
       </h2>
