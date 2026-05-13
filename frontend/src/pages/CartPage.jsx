@@ -114,6 +114,13 @@ export default function CartPage() {
 
     return (
         <div className="container py-4">
+            <Link to="/" className="gamify-detail-back-btn">
+                <i className="bi bi-arrow-left"></i> Back to Homepage
+            </Link>
+            <Link to="/search" className="gamify-detail-back-btn ms-2">
+                <i className="bi bi-search"></i> Keep searching!
+            </Link>
+            <hr />
             <h2 className="gamify-cart-heading mb-4">
                 <span>Your</span> Cart
             </h2>
@@ -156,12 +163,12 @@ export default function CartPage() {
                                                 >
                                                     +
                                                 </button>
-                                        {isOutOfStock && (
-                                            <div className="gamify-stock-badge mt-1">
-                                                <i className="bi bi-exclamation-circle me-2"></i>
-                                                No more keys available for this product!
-                                            </div>
-                                        )}
+                                                {isOutOfStock && (
+                                                    <div className="gamify-stock-badge mt-1">
+                                                        <i className="bi bi-exclamation-circle me-2"></i>
+                                                        No more keys available for this product!
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 

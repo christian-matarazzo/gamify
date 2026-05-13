@@ -77,7 +77,7 @@ export default function PopUp({ onClose }) {
         <h2>Welcome to <span>Gamify</span></h2>
 
         <p>
-          Use the code below for <strong>10% off</strong> your first order:
+          Use the code below for <strong>10€ off</strong> your first order:
           <span className="promo-code">
             <span className="promo-code-text">WELCOME10</span>
           </span>
