@@ -212,6 +212,20 @@ export default function CheckoutPage() {
     }
   };
 
+  const [paymentMethod, setPaymentMethod] = useState('card');
+
+  const paymentMethods = [
+    { id: 'card', icon: 'bi-credit-card', label: 'Credit Card', sub: 'Visa / Mastercard' },
+    { id: 'paypal', icon: 'bi-paypal', label: 'PayPal', sub: 'Account or guest' },
+    { id: 'apple', icon: 'bi-apple', label: 'Apple Pay', sub: 'Face/Touch ID' },
+  ];
+
+  const paymentDetails = {
+    card: 'Secure payment with credit or debit card. Your data is encrypted and not stored.',
+    paypal: 'You will be redirected to PayPal to complete the payment. Cards are also accepted without an account.',
+    apple: 'Available on Safari/iOS. Use Face ID or Touch ID to authorize the payment.'
+  };
+
   return (
     <div className="container py-4">
       <Link to="/cart" className="gamify-detail-back-btn ms-2">
@@ -304,7 +318,31 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
-
+            <div className="gamify-checkout-section mb-4">
+              <div className="gamify-checkout-title mb-3">
+                <i className="bi bi-wallet2 me-2"></i>
+                Payment Method
+              </div>
+              <div className="row g-2 mb-3">
+                {paymentMethods.map(({ id, icon, label, sub }) => (
+                  <div className="col-6 col-sm-4" key={id}>
+                    <button
+                      type="button"
+                      className={`gamify-pay-btn w-100 ${paymentMethod === id ? 'active' : ''}`}
+                      onClick={() => setPaymentMethod(id)}
+                    >
+                      <i className={`bi ${icon} gamify-pay-icon`}></i>
+                      <span className="gamify-pay-label">{label}</span>
+                      <span className="gamify-pay-sub">{sub}</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="gamify-pay-detail">
+                <i className="bi bi-shield-check me-2"></i>
+                {paymentDetails[paymentMethod]}
+              </div>
+            </div>
             <form onSubmit={handlePurchase} className="gamify-checkout-section">
               <div className="gamify-checkout-title mb-3">
                 <i className="bi bi-envelope me-2"></i>

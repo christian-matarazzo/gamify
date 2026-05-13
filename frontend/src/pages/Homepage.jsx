@@ -70,42 +70,42 @@ export default function Homepage() {
 
             </main>
             <div className="gamify-trust-bar">
-    <div className="gamify-trust-inner">
-        <div className="gamify-trust-item">
-            <span className="gamify-trust-icon">
-                <i className="bi bi-lightning-charge"></i>
-            </span>
-            <div>
-                <p className="gamify-trust-title">Ultra fast delivery</p>
-                <p className="gamify-trust-sub">Instant digital download</p>
+                <div className="gamify-trust-inner">
+                    <div className="gamify-trust-item">
+                        <span className="gamify-trust-icon">
+                            <i className="bi bi-lightning-charge"></i>
+                        </span>
+                        <div>
+                            <p className="gamify-trust-title">Ultra fast delivery</p>
+                            <p className="gamify-trust-sub">Instant digital download</p>
+                        </div>
+                    </div>
+
+                    <div className="gamify-trust-divider" />
+
+                    <div className="gamify-trust-item">
+                        <span className="gamify-trust-icon">
+                            <i className="bi bi-shield-check"></i>
+                        </span>
+                        <div>
+                            <p className="gamify-trust-title">Reliable & safe</p>
+                            <p className="gamify-trust-sub">Over 20.000 titles</p>
+                        </div>
+                    </div>
+
+                    <div className="gamify-trust-divider" />
+
+                    <div className="gamify-trust-item">
+                        <span className="gamify-trust-icon">
+                            <i className="bi bi-headset"></i>
+                        </span>
+                        <div>
+                            <p className="gamify-trust-title">Customer support</p>
+                            <p className="gamify-trust-sub">Our agents are online 24/7</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div className="gamify-trust-divider" />
-
-        <div className="gamify-trust-item">
-            <span className="gamify-trust-icon">
-                <i className="bi bi-shield-check"></i>
-            </span>
-            <div>
-                <p className="gamify-trust-title">Reliable & safe</p>
-                <p className="gamify-trust-sub">Over 20.000 titles</p>
-            </div>
-        </div>
-
-        <div className="gamify-trust-divider" />
-
-        <div className="gamify-trust-item">
-            <span className="gamify-trust-icon">
-                <i className="bi bi-headset"></i>
-            </span>
-            <div>
-                <p className="gamify-trust-title">Customer support</p>
-                <p className="gamify-trust-sub">Our agents are online 24/7</p>
-            </div>
-        </div>
-    </div>
-</div>
         </>
     );
 }
