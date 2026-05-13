@@ -23,6 +23,7 @@ app.use('/api/newsletter', newsletterRoute);
 app.use('/api/coupons', couponsRoutes);
 app.use('/api/stock', stockRoute);
 
+
 app.get('/', (req, res) => {
   res.send('Il mio server');
 });
