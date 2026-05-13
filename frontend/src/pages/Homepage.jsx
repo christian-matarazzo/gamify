@@ -89,7 +89,7 @@ export default function Homepage() {
             </span>
             <div>
                 <p className="gamify-trust-title">Reliable & safe</p>
-                <p className="gamify-trust-sub">Over 20.000 titles</p>
+                <p className="gamify-trust-sub">You choose, we deliver</p>
             </div>
         </div>
 
