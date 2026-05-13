@@ -28,14 +28,36 @@ export const CartProvider = ({ children }) => {
       return [];
     }
   });
+  
+useEffect(() => {
+  try {
+    const savedData = sessionStorage.getItem(STORAGE_KEY);
 
-  useEffect(() => {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
-    } catch (error) {
-      console.error("Errore nel salvataggio del carrello su sessionStorage:", error);
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+
+      if (
+        parsedData !== null &&
+        typeof parsedData === "object" &&
+        !Array.isArray(parsedData) &&
+        Array.isArray(parsedData.items)
+      ) {
+        sessionStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            ...parsedData,
+            items: cart
+          })
+        );
+        return;
+      }
     }
-  }, [cart]);
+
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+  } catch (error) {
+    console.error("Errore nel salvataggio del carrello su sessionStorage:", error);
+  }
+}, [cart]);
 
   const addToCart = (product) => {
     setCart((previousCart) => {
