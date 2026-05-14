@@ -6,33 +6,36 @@ export default function SupportPage() {
   const [messageStatus, setMessageStatus] = useState('idle');
   const [messageText, setMessageText] = useState('');
 
-  const [email,setEmail] =useState("");
-  const[subject, setSubject]= useState("");
-  
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
 
-  
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessageStatus('sending');
-
-    try{
-      await axios.post('http://localhost:3000/api/support',{
+    try {
+      await axios.post('http://localhost:3000/api/support/ticket', {  // ← Aggiunto /ticket
         email,
         subject,
         message: messageText,
+        // Opzionale: se vuoi legare il ticket a un ordine specifico
+        // order_id: currentOrderId || null,
+        priority: 'medium'  // Opzionale: default è già 'medium'
       });
 
       setMessageStatus('sent');
       setEmail('');
       setSubject('');
       setMessageText('');
-    } catch (error){
+    } catch (error) {
       console.log(error);
       setMessageStatus('error')
-    }};
+    }
+  };
 
-   
+
 
   return (
     <div className="container py-5">
@@ -52,7 +55,7 @@ export default function SupportPage() {
                   className="form-control gamify-support-input"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e)=> setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -64,7 +67,7 @@ export default function SupportPage() {
                   className="form-control gamify-support-input"
                   placeholder="Short summary of the issue"
                   value={subject}
-                  onChange={(e)=> setSubject(e.target.value)}
+                  onChange={(e) => setSubject(e.target.value)}
                   required
                 />
               </div>

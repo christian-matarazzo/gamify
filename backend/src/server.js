@@ -6,6 +6,7 @@ const ordersRoute = require('./routes/orders');
 const newsletterRoute = require('./routes/newsletter');
 const couponsRoutes = require('./routes/coupons');
 const stockRoute = require('./routes/stock');
+const supportRoutes = require('./routes/support');
 
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
@@ -25,6 +26,7 @@ app.use('/api/orders', ordersRoute);
 app.use('/api/newsletter', newsletterRoute);
 app.use('/api/coupons', couponsRoutes);
 app.use('/api/stock', stockRoute);
+app.use('/api/support', supportRoutes);
 
 
 
