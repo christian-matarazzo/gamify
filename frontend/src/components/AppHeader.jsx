@@ -224,7 +224,6 @@ export default function AppHeader() {
     const navLinks = [
         { text: 'Home', path: '/' },
         { text: 'Pre-orders', path: '/games/preorders' },
-        { text: 'Blog', path: '/' },
         { text: 'Technical Support', path: '/support' },
     ];
 

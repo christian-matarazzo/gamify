@@ -127,6 +127,18 @@
   display: none;
 }
 
+.carousel-item.active .hero_img {
+  animation: heroZoom 8s ease-out forwards;
+}
+
+.carousel-item.active .hero_content,
+.carousel-item.active .hero_eyebrow,
+.carousel-item.active .hero_title,
+.carousel-item.active .hero_subtitle,
+.carousel-item.active .hero_cta {
+  animation-play-state: running;
+}
+
 /* DESKTOP */
 @media (max-width: 1024px) {
   .hero {
