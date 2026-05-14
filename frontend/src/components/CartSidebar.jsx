@@ -1,19 +1,22 @@
+// frontend/src/components/CartSidebar.jsx
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import "../styles/CartSidebar.css";
 
 export default function CartSidebar({ isOpen, onClose }) {
-    const { cart, addToCart, decreaseQuantity, removeFromCart } = useCart();
+    const { 
+        cart, 
+        addToCart, 
+        decreaseQuantity, 
+        removeFromCart,
+        couponData,
+        subtotal,
+        total,
+        getItemPrice,
+        getAppliedDiscount
+    } = useCart();
 
     const totalQty = cart.reduce((t, i) => t + (parseInt(i.quantity) || 0), 0);
-
-    const total = cart
-        .reduce((sum, item) => {
-            const price = parseFloat(item.discounted_price ?? item.base_price) || 0;
-            const qty = parseInt(item.quantity) || 0;
-            return sum + (price * qty);
-        }, 0)
-        .toFixed(2);
 
     return (
         <>
@@ -43,56 +46,75 @@ export default function CartSidebar({ isOpen, onClose }) {
                             <p>YOUR CART IS EMPTY!</p>
                         </div>
                     ) : (
-                        cart.map((item) => (
-                            <div key={item.id} className="cart-sidebar-item">
-                                <div className="cart-sidebar-item-info">
-                                    <p className="cart-sidebar-item-title">{item.title}</p>
-                                    <p className="cart-sidebar-item-price">
-                                        €{(Number(item.discounted_price ?? item.base_price) * item.quantity).toFixed(2)}
-                                    </p>
-                                </div>
+                        cart.map((item) => {
+                            // getItemPrice restituisce SOLO base_price (nessun sconto)
+                            const unitPrice = getItemPrice(item);
+                            const itemTotal = unitPrice * item.quantity;
+                            
+                            return (
+                                <div key={item.id} className="cart-sidebar-item">
+                                    <div className="cart-sidebar-item-info">
+                                        <p className="cart-sidebar-item-title">{item.title}</p>
+                                        <p className="cart-sidebar-item-price">
+                                            €{itemTotal.toFixed(2)}
+                                        </p>
+                                    </div>
 
-                                <div className="cart-sidebar-item-actions">
-                                    <div className="cart-sidebar-qty-controls">
+                                    <div className="cart-sidebar-item-actions">
+                                        <div className="cart-sidebar-qty-controls">
+                                            <button
+                                                className="icon-btn qty-btn btn-minus"
+                                                onClick={() => decreaseQuantity(item.id)}
+                                                aria-label="Minus"
+                                            >
+                                                <i className="bi bi-dash"></i>
+                                            </button>
+                                            <span className="qty-value">{item.quantity}</span>
+                                            <button
+                                                className="icon-btn qty-btn btn-plus"
+                                                onClick={() => addToCart(item)}
+                                                disabled={item.quantity >= item.stock}
+                                                aria-label="Plus"
+                                            >
+                                                <i className="bi bi-plus"></i>
+                                            </button>
+                                        </div>
                                         <button
-                                            className="icon-btn qty-btn btn-minus"
-                                            onClick={() => decreaseQuantity(item.id)}
-                                            aria-label="Minus"
+                                            className="icon-btn cart-sidebar-item-remove"
+                                            onClick={() => removeFromCart(item.id)}
                                         >
-                                            <i className="bi bi-dash"></i>
-                                        </button>
-                                        <span className="qty-value">{item.quantity}</span>
-                                        <button
-                                            className="icon-btn qty-btn btn-plus"
-                                            onClick={() => addToCart(item)}
-                                            disabled={item.quantity >= item.stock}
-                                            aria-label="Plus"
-                                        >
-                                            <i className="bi bi-plus"></i>
+                                            <i className="bi bi-trash3"></i>
                                         </button>
                                     </div>
-                                    <button
-                                        className="icon-btn cart-sidebar-item-remove"
-                                        onClick={() => removeFromCart(item.id)}
-                                    >
-                                        <i className="bi bi-trash3"></i>
-                                    </button>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
 
                 {cart.length > 0 && (
                     <div className="cart-sidebar-footer">
+                        {couponData.appliedCoupon && getAppliedDiscount() > 0 && (
+                            <div className="cart-sidebar-discount mb-2">
+                                <small className="text-success">
+                                    <i className="bi bi-tag me-1"></i>
+                                    {couponData.appliedCoupon}: -€{getAppliedDiscount().toFixed(2)}
+                                </small>
+                            </div>
+                        )}
+                        
                         <div className="cart-sidebar-total">
                             <span className="cart-sidebar-total-label">Total</span>
                             <span className="cart-sidebar-total-price">
-                                <small>€</small>{total}
+                                <small>€</small>{total.toFixed(2)}
                             </span>
                         </div>
                         <div className="cart-sidebar-footer-buttons">
-                            <Link to="/cart" className="cart-sidebar-btn cart-sidebar-btn--primary" onClick={onClose}>
+                            <Link 
+                                to="/cart" 
+                                className="cart-sidebar-btn cart-sidebar-btn--primary" 
+                                onClick={onClose}
+                            >
                                 Go to Cart Page<i className="bi bi-arrow-right"></i>
                             </Link>
                         </div>
