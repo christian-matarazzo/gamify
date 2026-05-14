@@ -16,13 +16,11 @@ export default function SupportPage() {
     e.preventDefault();
     setMessageStatus('sending');
     try {
-      await axios.post('http://localhost:3000/api/support/ticket', {  // ← Aggiunto /ticket
+      await axios.post('http://localhost:3000/api/support/ticket', {  
         email,
         subject,
         message: messageText,
-        // Opzionale: se vuoi legare il ticket a un ordine specifico
-        // order_id: currentOrderId || null,
-        priority: 'medium'  // Opzionale: default è già 'medium'
+        priority: 'medium' 
       });
 
       setMessageStatus('sent');

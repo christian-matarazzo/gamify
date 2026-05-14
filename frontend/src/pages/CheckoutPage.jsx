@@ -1,4 +1,3 @@
-// frontend/src/pages/CheckoutPage.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
@@ -8,19 +7,17 @@ import { useCart } from "../context/CartContext";
 export default function CheckoutPage() {
   const navigate = useNavigate();
   
-  // --- DATI DAL CARTCONTEXT (unica fonte di verità) ---
-  const { 
-    cart,                    // Array di item nel carrello
-    removeFromCart,          // Funzione per rimuovere item
-    clearCart,               // Funzione per svuotare carrello
-    couponData,              // { appliedCoupon, discountAmount: valore FISSO }
-    subtotal,                // Somma base_price × qty (senza sconto)
-    total,                   // subtotal - sconto applicato (mai negativo)
-    getAppliedDiscount,      // Helper: restituisce sconto effettivo (cappato a subtotal)
-    saveCartWithMetadata     // Persistenza esplicita se necessaria
-  } = useCart();
 
-  // --- STATO LOCALE SPECIFICO DEL CHECKOUT (non condiviso) ---
+  const { 
+    cart,                    
+    removeFromCart,          
+    clearCart,              
+    couponData,            
+    subtotal,               
+    total,                  
+    getAppliedDiscount,     
+    saveCartWithMetadata     
+  } = useCart();
   const [customerEmail, setCustomerEmail] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [orderResult, setOrderResult] = useState(null);
@@ -35,20 +32,11 @@ export default function CheckoutPage() {
   const [billingCountry, setBillingCountry] = useState('IT');
   const [billingVat, setBillingVat] = useState('');
 
-  // --- NOTA: couponCode e discountAmount NON servono più come stato locale ---
-  // Si usano direttamente couponData.appliedCoupon e getAppliedDiscount() dal Context
-
-  // --- Prezzo da visualizzare per item (sempre base_price, mai scontato) ---
   const getPriceToDisplay = function (item) {
     return parseFloat(item?.base_price) || 0;
   };
 
-  // --- Rimozione item: usa la funzione del Context ---
   const handleRemoveItem = function (itemId) {
-    // removeFromCart nel Context gestisce già:
-    // 1. Rimozione dall'array cart
-    // 2. Trigger del useEffect per aggiornare sessionStorage
-    // 3. Ricalcolo automatico di subtotal/total (con sconto fisso invariato)
     removeFromCart(itemId);
   };
 
@@ -57,7 +45,6 @@ export default function CheckoutPage() {
     setIsLoading(true);
     setErrorMessage('');
 
-    // Stock check con i dati attuali dal Context
     const stockCheck = await checkStockAvailability(cart);
 
     if (!stockCheck.success) {
@@ -95,16 +82,11 @@ export default function CheckoutPage() {
             quantity: item.quantity || 1
           };
         }),
-        // Usa il coupon dal Context (se presente)
         coupon: couponData.appliedCoupon?.trim() || null
       });
 
       if (response.data.success) {
         setOrderResult(response.data);
-        // clearCart nel Context gestisce già:
-        // 1. Svuotamento dell'array cart
-        // 2. Reset di couponData
-        // 3. Rimozione da sessionStorage
         clearCart();
       }
     } catch (purchaseError) {
@@ -118,10 +100,8 @@ export default function CheckoutPage() {
     const isConfirmed = window.confirm("Are you sure to cancel the order?");
     if (!isConfirmed) return;
     
-    // Usa clearCart dal Context per una pulizia coerente
+
     clearCart();
-    
-    // Reset dello stato locale specifico del checkout
     setCustomerEmail('');
     setBillingName('');
     setBillingAddress('');
@@ -157,7 +137,7 @@ export default function CheckoutPage() {
     }
   };
 
-  // --- UI: Messaggio di successo ---
+
   if (orderResult?.success) {
     return (
       <div className="container py-5 text-center">
@@ -188,7 +168,7 @@ export default function CheckoutPage() {
     );
   }
 
-  // --- UI: Carrello vuoto ---
+
   if (cart.length === 0) {
     return (
       <div className="container py-4">
@@ -412,7 +392,6 @@ export default function CheckoutPage() {
               <span className="gamify-summary-text">€{subtotal.toFixed(2)}</span>
             </div>
 
-            {/* Mostra sconto SOLO se attivo e > 0, usando getAppliedDiscount() */}
             {couponData.appliedCoupon && getAppliedDiscount() > 0 && (
               <div className="d-flex justify-content-between mb-2">
                 <span className="gamify-summary-text">
@@ -425,10 +404,8 @@ export default function CheckoutPage() {
             )}
             
             <hr className="gamify-summary-divider" />
-
             <div className="d-flex justify-content-between align-items-center">
               <span className="gamify-summary-total-label">Total to Pay</span>
-              {/* total è già calcolato nel Context: subtotal - sconto applicato */}
               <span className="gamify-summary-total-price">€{total.toFixed(2)}</span>
             </div>
           </div>

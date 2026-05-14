@@ -1,15 +1,10 @@
-// backend/controllers/supportController.js
+
 const db = require('../config/db');
 
-/**
- * Crea un nuovo ticket di supporto tecnico
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 const createTicket = function (req, res) {
   const { email, subject, message, order_id, priority = 'medium' } = req.body;
 
-  // ✅ Validazione campi obbligatori
+
   if (!email || !subject || !message) {
     return res.status(400).json({
       success: false,
@@ -17,7 +12,7 @@ const createTicket = function (req, res) {
     });
   }
 
-  // ✅ Validazione formato email
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email.trim())) {
     return res.status(400).json({
@@ -26,7 +21,7 @@ const createTicket = function (req, res) {
     });
   }
 
-  // ✅ Validazione lunghezza subject e message
+  
   if (subject.trim().length < 5 || subject.trim().length > 255) {
     return res.status(400).json({
       success: false,
@@ -41,21 +36,21 @@ const createTicket = function (req, res) {
     });
   }
 
-  // ✅ Validazione priority (se fornita)
+ 
   const validPriorities = ['low', 'medium', 'high'];
   const ticketPriority = validPriorities.includes(priority) ? priority : 'medium';
 
-  // ✅ Preparazione dati per l'inserimento
+
   const ticketData = {
     user_email: email.trim().toLowerCase(),
     subject: subject.trim(),
     message: message.trim(),
-    status: 'open',                    // Default: nuovo ticket è sempre "open"
+    status: 'open',                    
     priority: ticketPriority,
-    order_id: order_id || null         // Nullable: supporto generico o legato a ordine
+    order_id: order_id || null        
   };
 
-  // ✅ Inserimento nel database
+
   const insertQuery = `
     INSERT INTO support_tickets 
     (user_email, subject, message, status, priority, order_id)
@@ -75,7 +70,7 @@ const createTicket = function (req, res) {
     if (err) {
       console.error('❌ Error creating support ticket:', err);
 
-      // Gestione errori specifici MySQL
+
       if (err.code === 'ER_NO_REFERENCED_ROW_2') {
         return res.status(400).json({
           success: false,
@@ -89,11 +84,10 @@ const createTicket = function (req, res) {
       });
     }
 
-    // ✅ Ticket creato con successo
+ 
     console.log(`✅ Support ticket #${result.insertId} created for ${ticketData.user_email}`);
 
-    // ✅ Opzionale: Invia email di conferma all'utente
-    // sendTicketConfirmationEmail(ticketData.user_email, result.insertId, ticketData.subject);
+
 
     res.json({
       success: true,
@@ -105,11 +99,7 @@ const createTicket = function (req, res) {
   });
 };
 
-/**
- * (Opzionale) Recupera i ticket di un utente per email
- * @param {Object} req
- * @param {Object} res
- */
+
 const getTicketsByEmail = function (req, res) {
   const { email } = req.query;
 
@@ -145,11 +135,7 @@ const getTicketsByEmail = function (req, res) {
   });
 };
 
-/**
- * (Opzionale) Aggiorna lo stato di un ticket (per admin panel futuro)
- * @param {Object} req
- * @param {Object} res
- */
+
 const updateTicketStatus = function (req, res) {
   const { ticket_id } = req.params;
   const { status, admin_note } = req.body;
@@ -193,6 +179,6 @@ const updateTicketStatus = function (req, res) {
 
 module.exports = {
   createTicket,
-  getTicketsByEmail,      // Opzionale: per futura pagina "I miei ticket"
-  updateTicketStatus      // Opzionale: per admin panel
+  getTicketsByEmail,    
+  updateTicketStatus      
 };
