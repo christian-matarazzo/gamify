@@ -46,11 +46,9 @@ export default function CheckoutPage() {
     }
   }, []);
 
- const getPriceToDisplay = function (item) {
-  return Number(item.base_price);
-};
-
-
+  const getPriceToDisplay = function (item) {
+    return Number(item.base_price);
+  };
 
   const handlePurchase = async function (event) {
     event.preventDefault();
@@ -133,29 +131,29 @@ export default function CheckoutPage() {
   }
 
   const handleRemoveItem = function (itemId) {
-  const updatedCartItems = cartItems.filter(function (item) {
-    return item.id !== itemId;
-  });
+    const updatedCartItems = cartItems.filter(function (item) {
+      return item.id !== itemId;
+    });
 
-  const newSubtotal = updatedCartItems.reduce(function (sum, item) {
-    const price = getPriceToDisplay(item);
-    const quantity = item.quantity || 1;
-    return sum + price * quantity;
-  }, 0);
+    const newSubtotal = updatedCartItems.reduce(function (sum, item) {
+      const price = getPriceToDisplay(item);
+      const quantity = item.quantity || 1;
+      return sum + price * quantity;
+    }, 0);
 
-  const newDiscountAmount = Math.min(discountAmount, newSubtotal);
-  const newFinalTotal = Math.max(newSubtotal - newDiscountAmount, 0);
+    const newDiscountAmount = Math.min(discountAmount, newSubtotal);
+    const newFinalTotal = Math.max(newSubtotal - newDiscountAmount, 0);
 
-  setCartItems(updatedCartItems);
-  setDiscountAmount(newDiscountAmount);
+    setCartItems(updatedCartItems);
+    setDiscountAmount(newDiscountAmount);
 
-  saveCartWithMetadata(
-    updatedCartItems,
-    couponCode.trim() || null,
-    newDiscountAmount,
-    newFinalTotal
-  );
-};
+    saveCartWithMetadata(
+      updatedCartItems,
+      couponCode.trim() || null,
+      newDiscountAmount,
+      newFinalTotal
+    );
+  };
 
   const handleResetCheckout = function () {
     const isConfirmed = window.confirm("Are you sure to cancel the order?");
@@ -184,10 +182,10 @@ export default function CheckoutPage() {
     return sum + (price * quantity);
   }, 0);
 
- 
+
 
   const safeDiscountAmount = Math.min(discountAmount, calculatedTotal);
-const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
+  const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
 
   const checkStockAvailability = async function (items) {
     try {
@@ -400,7 +398,7 @@ const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
 
                       <div className="d-flex align-items-center gap-2">
                         <div className="text-end">
-                          
+
 
                           <div className="text-white fw-bold">
                             €{displayPrice.toFixed(2)}
@@ -425,17 +423,17 @@ const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
                 <span className="gamify-summary-text">€{calculatedTotal.toFixed(2)}</span>
               </div>
 
-              
+
               {safeDiscountAmount > 0 && (
-  <div className="d-flex justify-content-between mb-2">
-    <span className="gamify-summary-text">
-      Coupon {couponCode && `(${couponCode})`}
-    </span>
-    <span className="gamify-summary-free">
-      - €{safeDiscountAmount.toFixed(2)}
-    </span>
-  </div>
-)}
+                <div className="d-flex justify-content-between mb-2">
+                  <span className="gamify-summary-text">
+                    Coupon {couponCode && `(${couponCode})`}
+                  </span>
+                  <span className="gamify-summary-free">
+                    - €{safeDiscountAmount.toFixed(2)}
+                  </span>
+                </div>
+              )}
               <hr className="gamify-summary-divider" />
 
               <div className="d-flex justify-content-between align-items-center">
