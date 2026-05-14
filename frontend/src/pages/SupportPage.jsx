@@ -14,13 +14,16 @@ export default function SupportPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setMessageStatus('sending');
+
     try {
-      await axios.post('http://localhost:3000/api/support/ticket', {  
+
+      const response = await axios.post('http://localhost:3000/api/support/ticket', {
         email,
         subject,
         message: messageText,
-        priority: 'medium' 
+        priority: 'medium'
       });
 
       setMessageStatus('sent');
@@ -28,8 +31,8 @@ export default function SupportPage() {
       setSubject('');
       setMessageText('');
     } catch (error) {
-      console.log(error);
-      setMessageStatus('error')
+      console.error('❌ Support request failed:', error);
+      setMessageStatus('error');
     }
   };
 
@@ -63,7 +66,7 @@ export default function SupportPage() {
                 <input
                   type="text"
                   className="form-control gamify-support-input"
-                  placeholder="Short summary of the issue"
+                  placeholder="Short summary of the issue."
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   required
@@ -94,6 +97,7 @@ export default function SupportPage() {
                   Thanks — your message was sent. We'll reply soon.
                 </div>
               )}
+              
             </form>
           </div>
         </div>

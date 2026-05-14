@@ -22,17 +22,17 @@ const createTicket = function (req, res) {
   }
 
   
-  if (subject.trim().length < 5 || subject.trim().length > 255) {
+  if (subject.trim().length = 0) {
     return res.status(400).json({
       success: false,
-      message: 'Subject must be between 5 and 255 characters'
+      message: 'No Subject'
     });
   }
 
-  if (message.trim().length < 10 || message.trim().length > 5000) {
+  if (message.trim().length = 0) {
     return res.status(400).json({
       success: false,
-      message: 'Message must be between 10 and 5000 characters'
+      message: 'No message'
     });
   }
 
