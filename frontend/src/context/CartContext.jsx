@@ -1,11 +1,9 @@
-// frontend/src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 
 const CartContext = createContext();
 const STORAGE_KEY = "gamify_cart";
 
 export const CartProvider = ({ children }) => {
-  // --- Caricamento iniziale carrello da sessionStorage ---
   const [cart, setCart] = useState(() => {
     try {
       const savedData = sessionStorage.getItem(STORAGE_KEY);
@@ -20,7 +18,6 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // --- Caricamento iniziale coupon da sessionStorage ---
   const [couponData, setCouponData] = useState(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -36,7 +33,6 @@ export const CartProvider = ({ children }) => {
     return { appliedCoupon: null, discountAmount: 0 };
   });
 
-  // --- Subtotal: somma base_price × quantity (MAI con sconto) ---
   const subtotal = useMemo(() => {
     return cart.reduce((sum, item) => {
       const price = parseFloat(item?.base_price) || 0;
@@ -45,19 +41,17 @@ export const CartProvider = ({ children }) => {
     }, 0);
   }, [cart]);
 
-  // --- Total: subtotal - discount fisso (cappato a 0 per evitare negativi) ---
   const total = useMemo(() => {
     if (!couponData.appliedCoupon || couponData.discountAmount <= 0) return subtotal;
     const effectiveDiscount = Math.min(couponData.discountAmount, subtotal);
     return Math.max(0, subtotal - effectiveDiscount);
   }, [subtotal, couponData]);
 
-  // --- Persistenza automatica su sessionStorage ---
   useEffect(() => {
     const cartData = {
       items: cart,
       coupon: couponData.appliedCoupon,
-      discount: couponData.discountAmount,  // Valore FISSO originale
+      discount: couponData.discountAmount,  
       finalTotal: total
     };
     try {
@@ -81,7 +75,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // --- Azioni carrello ---
   const addToCart = (product) => {
     setCart((previousCart) => {
       const existingIndex = previousCart.findIndex(i => i.id === product.id);
@@ -126,9 +119,9 @@ export const CartProvider = ({ children }) => {
     setCouponData({ appliedCoupon: null, discountAmount: 0 });
   };
 
-  // --- Gestione Coupon (VALORE FISSO, non percentuale) ---
+ 
   const applyCoupon = (couponCode, fixedDiscountAmount) => {
-    // fixedDiscountAmount è il valore ESATTO dal backend (es. 10 per €10 off)
+    
     setCouponData({ appliedCoupon: couponCode, discountAmount: fixedDiscountAmount });
   };
 
@@ -136,12 +129,11 @@ export const CartProvider = ({ children }) => {
     setCouponData({ appliedCoupon: null, discountAmount: 0 });
   };
 
-  // --- Helper: restituisce SOLO il prezzo base (NESSUNA distribuzione sconto) ---
+
   const getItemPrice = (item) => {
     return parseFloat(item?.base_price) || 0;
   };
 
-  // --- Helper: restituisce lo sconto EFFETTIVAMENTE applicato (cappato a subtotal) ---
   const getAppliedDiscount = () => {
     if (!couponData.appliedCoupon || couponData.discountAmount <= 0) return 0;
     return Math.min(couponData.discountAmount, subtotal);
@@ -151,17 +143,17 @@ export const CartProvider = ({ children }) => {
     <CartContext.Provider
       value={{
         cart,
-        couponData,           // { appliedCoupon, discountAmount: valore FISSO }
-        subtotal,             // Somma base_price × qty (senza sconto)
-        total,                // subtotal - sconto applicato (mai negativo)
+        couponData,          
+        subtotal,             
+        total,                
         addToCart,
         decreaseQuantity,
         removeFromCart,
         clearCart,
-        applyCoupon,          // (code, fixedAmount) => void
-        removeCoupon,         // () => void
-        getItemPrice,         // (item) => base_price only
-        getAppliedDiscount,   // () => sconto effettivo (cappato)
+        applyCoupon,          
+        removeCoupon,        
+        getItemPrice,         
+        getAppliedDiscount,   
         saveCartWithMetadata
       }}
     >

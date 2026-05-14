@@ -1,4 +1,3 @@
-// frontend/src/pages/CartPage.jsx
 import { useCart } from "../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -64,7 +63,7 @@ export default function CartPage() {
             const result = await response.json();
 
             if (result.success) {
-                applyCoupon(promoCode, result.discountAmount); // result.discountAmount è VALORE FISSO
+                applyCoupon(promoCode, result.discountAmount); 
                 setCouponFeedback({ message: result.message, type: "success" });
                 setPromoCode("");
             } else {
@@ -101,7 +100,7 @@ export default function CartPage() {
                             const isOutOfStock = item.quantity >= (item.stock ?? 0);
                             const imageUrl = `http://localhost:3000/image/${item.image_url}`;
                             
-                            // getItemPrice restituisce SOLO base_price (nessun sconto distribuito)
+
                             const displayPrice = getItemPrice(item);
                             const itemTotal = displayPrice * item.quantity;
 

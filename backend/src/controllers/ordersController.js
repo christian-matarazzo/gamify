@@ -211,8 +211,6 @@ const purchase = function (request, response) {
             }
 
             const newOrderId = orderResult.insertId;
-
-            // ✅ STEP 1: Salva Billing (se presente)
             function proceedToBilling() {
               if (!billingData || Object.keys(billingData).length === 0) {
                 proceedToInsertItems();
@@ -228,7 +226,6 @@ const purchase = function (request, response) {
               });
             }
 
-            // ✅ STEP 2: Inserisci order_items
             function proceedToInsertItems() {
               if (reservedKeys.length === 0) {
                 proceedToUpdateKeys();
@@ -259,7 +256,6 @@ const purchase = function (request, response) {
               });
             }
 
-            // ✅ STEP 3: Aggiorna status keys
             function proceedToUpdateKeys() {
               if (reservedKeys.length === 0) {
                 finalizeTransaction();
@@ -290,7 +286,6 @@ const purchase = function (request, response) {
               });
             }
 
-            // ✅ STEP 4: Commit + Email + Response (SENZA DUPLICAZIONI)
             function finalizeTransaction() {
               conn.commit(function (commitErr) {
                 conn.release();
@@ -300,7 +295,6 @@ const purchase = function (request, response) {
                   return response.status(500).json({ success: false, message: 'Failed to confirm order' });
                 }
 
-                // --- Email al cliente (async, non blocca la response) ---
                 const customerMailOptions = {
                   from: process.env.EMAIL_FROM,
                   to: customerEmail,
@@ -356,7 +350,6 @@ Save these keys in a safe place.
                   }
                 });
 
-                // --- Email al venditore (async) ---
                 const sellerMailOptions = {
                   from: process.env.EMAIL_FROM,
                   to: process.env.SELLER_EMAIL,
@@ -429,8 +422,6 @@ Coupon used: ${couponCode || 'None'}
                     console.log('✅ Seller email sent:', sellerMailInfo.messageId);
                   }
                 });
-
-                // --- Response JSON (UNA SOLA VOLTA) ---
                 const licenseKeys = reservedKeys.map(k => k.license_key);
 
                 response.json({
@@ -445,8 +436,6 @@ Coupon used: ${couponCode || 'None'}
                 });
               });
             }
-
-            // 🚀 Avvia la catena
             proceedToBilling();
           }
         );
