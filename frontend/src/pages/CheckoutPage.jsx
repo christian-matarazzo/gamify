@@ -78,6 +78,18 @@ export default function CheckoutPage() {
     try {
       const response = await axios.post('http://localhost:3000/api/orders/purchase', {
         email: customerEmail,
+
+        billing:{
+          name: billingName,
+          address: billingAddress,
+          city: billingCity,
+          zip: billingZip,
+          country: billingCountry,
+          vat: billingVat || null
+        },
+
+        paymentMethod: paymentMethod,
+
         items: cartItems.map(function (item) {
           return {
             game_id: item.id,
