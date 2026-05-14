@@ -1,4 +1,3 @@
-// frontend/src/components/CartSidebar.jsx
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import "../styles/CartSidebar.css";
@@ -47,7 +46,7 @@ export default function CartSidebar({ isOpen, onClose }) {
                         </div>
                     ) : (
                         cart.map((item) => {
-                            // getItemPrice restituisce SOLO base_price (nessun sconto)
+                           
                             const unitPrice = getItemPrice(item);
                             const itemTotal = unitPrice * item.quantity;
                             

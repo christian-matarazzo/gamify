@@ -17,7 +17,6 @@ export default function PrivacyPage() {
                         </p>
 
                         <div className="row">
-                            {/* LEFT COLUMN */}
                             <div className="col-md-6">
 
                                 <h5>What we collect</h5>
