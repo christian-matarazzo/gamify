@@ -118,6 +118,273 @@
   height: 18px;
 }
 
+/* ============================================
+   AUTH DROPDOWN — aggiungi a AppHeader.css
+   ============================================ */
+
+.gamify-auth-wrapper {
+    position: relative;
+}
+
+.gamify-btn-login-chevron {
+    font-size: 11px;
+    margin-left: 6px;
+    transition: transform 0.2s ease;
+}
+
+.gamify-auth-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 300px;
+    background: var(--bg-2);
+    border: 1px solid var(--bg-4);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    overflow: hidden;
+    animation: gamifyDropdownIn 0.18s ease;
+}
+
+@keyframes gamifyDropdownIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.gamify-auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--bg-4);
+}
+
+.gamify-auth-tab {
+    flex: 1;
+    padding: 14px 0;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: color 0.15s;
+    position: relative;
+}
+
+.gamify-auth-tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 40%;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+    transition: transform 0.2s ease;
+}
+
+.gamify-auth-tab.active {
+    color: var(--text-primary);
+}
+
+.gamify-auth-tab.active::after {
+    transform: translateX(-50%) scaleX(1);
+}
+
+.gamify-auth-form {
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.gamify-auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.gamify-auth-field label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.gamify-auth-field input {
+    background: var(--bg-3);
+    border: 1px solid var(--bg-4);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text-primary);
+    font-size: 13px;
+    transition: border-color 0.15s, background 0.15s;
+    outline: none;
+    width: 100%;
+}
+
+.gamify-auth-field input::placeholder {
+    color: var(--text-secondary);
+}
+
+.gamify-auth-field input:focus {
+    border-color: rgba(252, 238, 9, 0.35);
+    background: var(--bg-4);
+}
+
+.gamify-auth-password-wrap {
+    position: relative;
+}
+
+.gamify-auth-password-wrap input {
+    padding-right: 40px;
+}
+
+.gamify-auth-eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    font-size: 15px;
+    line-height: 1;
+    transition: color 0.15s;
+}
+
+.gamify-auth-eye:hover {
+    color: var(--text-primary);
+}
+
+.gamify-auth-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: -4px;
+}
+
+.gamify-auth-check {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.gamify-auth-check input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.gamify-auth-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s;
+}
+
+.gamify-auth-link:hover {
+    color: var(--accent);
+}
+
+.gamify-auth-submit {
+    width: 100%;
+    padding: 10px;
+    background: var(--accent);
+    color: var(--bg-1);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-top: 2px;
+}
+
+.gamify-auth-submit:hover  { opacity: 0.88; }
+.gamify-auth-submit:active { transform: scale(0.98); }
+
+.gamify-auth-footer {
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.gamify-auth-back {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s;
+}
+
+.gamify-auth-back:hover {
+    color: var(--text-primary);
+}
+
+.gamify-auth-recover-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.gamify-auth-recover-icon {
+    font-size: 32px;
+    color: var(--accent);
+}
+
+.gamify-auth-recover-header p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+
+.gamify-auth-check input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    background-color: var(--bg-3);
+    border: 1px solid var(--bg-4);
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.gamify-auth-check input[type="checkbox"]:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%230a0f16' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M2 6l3 3 5-5'/%3E%3C/svg%3E");
+    background-size: 10px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 /* TABLET */
 @media (max-width: 991px) {
   .navbar-collapse {
@@ -141,6 +408,15 @@
     width: 100%;
     justify-content: flex-start;
   }
+
+  .gamify-auth-dropdown {
+        position: static;
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: none;
+        margin-top: 8px;
+        animation: none;
+    }
 }
 
 /* MOBILE */

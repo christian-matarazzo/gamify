@@ -9,7 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999;
+    z-index: 1030;
 }
 
 .popup {
@@ -41,7 +41,8 @@
     margin: 0 0 14px;
 }
 
-.popup-submit-btn, .popup-skip {
+.popup-submit-btn,
+.popup-skip {
     background: var(--accent);
     color: var(--bg-1);
     border: none;
@@ -55,7 +56,8 @@
     transition: opacity 0.15s;
 }
 
-.popup-submit-btn:hover, .popup-skip:hover {
+.popup-submit-btn:hover,
+.popup-skip:hover {
     opacity: 0.85;
 }
 
