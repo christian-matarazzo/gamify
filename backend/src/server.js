@@ -6,8 +6,11 @@ const ordersRoute = require('./routes/orders');
 const newsletterRoute = require('./routes/newsletter');
 const couponsRoutes = require('./routes/coupons');
 const stockRoute = require('./routes/stock');
+const supportRoutes = require('./routes/support');
 
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+
+
 
 const app = express();
 const port = 3000;
@@ -16,12 +19,16 @@ app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
 
+/* API ROUTES */
 app.use('/api/games', gamesRoute);
 app.use('/api/inventory', inventoryRoute);
 app.use('/api/orders', ordersRoute);
 app.use('/api/newsletter', newsletterRoute);
 app.use('/api/coupons', couponsRoutes);
 app.use('/api/stock', stockRoute);
+app.use('/api/support', supportRoutes);
+
+
 
 
 app.get('/', (req, res) => {
@@ -33,13 +40,9 @@ app.post('/try', (req, res) => {
   res.status(200).json({ success: true, message: 'Funziono' });
 });
 
-app.use(notFound);
-app.use(errorHandler);
+app.use(notFound)
+app.use(errorHandler)
 
-module.exports = app;
-
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`Il tuo server è sulla porta http://localhost:${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`Il tuo server è sulla porta http://localhost:${port}`);
+});

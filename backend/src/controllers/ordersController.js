@@ -1,5 +1,6 @@
 const db = require('../config/db');
-const nodemailer = require('nodemailer'); 
+const nodemailer = require('nodemailer');
+const billingController = require('./billingController');
 
 
 const transporter = nodemailer.createTransport({
@@ -22,7 +23,7 @@ function applyCoupon(couponCode, baseTotal, callback) {
     WHERE LOWER(coupon_name) = LOWER(?)
   `;
 
-  db.query(findCouponQuery, [couponCode], function(err, results) {
+  db.query(findCouponQuery, [couponCode], function (err, results) {
     if (err || results.length === 0) {
       return callback(null, { discount: 0, couponId: null, finalTotal: baseTotal });
     }
@@ -56,9 +57,9 @@ function reserveKeys(gameId, quantity, callback) {
     WHERE game_id = ? AND status = 'available'
   `;
 
-  db.query(countQuery, [gameId], function(err, countResult) {
+  db.query(countQuery, [gameId], function (err, countResult) {
     if (err) return callback(err);
-    
+
     if (countResult[0].available < quantity) {
       return callback(new Error(`Only ${countResult[0].available} keys available for game ${gameId}`));
     }
@@ -71,17 +72,19 @@ function reserveKeys(gameId, quantity, callback) {
       LIMIT ?
     `;
 
-    db.query(selectKeysQuery, [gameId, quantity], function(err, keyResults) {
+    db.query(selectKeysQuery, [gameId, quantity], function (err, keyResults) {
       if (err) return callback(err);
       callback(null, keyResults);
     });
   });
 }
 
-const purchase = function(request, response) {
+const purchase = function (request, response) {
   const customerEmail = request.body.email;
   const items = request.body.items;
   const couponCode = request.body.coupon;
+  const billingData = request.body.billing;
+
 
   if (!items || !Array.isArray(items) || items.length === 0) {
     return response.status(400).json({
@@ -119,7 +122,7 @@ const purchase = function(request, response) {
       });
     }
 
-    db.query('SELECT base_price FROM games WHERE id = ?', [game_id], function(err, gameResult) {
+    db.query('SELECT base_price FROM games WHERE id = ?', [game_id], function (err, gameResult) {
       if (err || gameResult.length === 0) {
         return response.status(404).json({
           success: false,
@@ -129,14 +132,14 @@ const purchase = function(request, response) {
 
       const basePrice = parseFloat(gameResult[0].base_price);
       baseTotal += basePrice * quantity;
-      
+
       validatedItems.push({ game_id, quantity, base_price: basePrice });
       checkAllProcessed();
     });
   });
 
   function proceedToCoupon() {
-    applyCoupon(couponCode, baseTotal, function(err, couponData) {
+    applyCoupon(couponCode, baseTotal, function (err, couponData) {
       if (err) {
         console.error('Coupon error:', err);
         return response.status(500).json({ success: false, message: 'Failed to apply coupon' });
@@ -147,7 +150,7 @@ const purchase = function(request, response) {
       couponId = couponData.couponId;
       finalTotal = couponData.finalTotal;
 
-    
+
       let reservedCount = 0;
 
       function checkAllReserved() {
@@ -158,7 +161,7 @@ const purchase = function(request, response) {
       }
 
       validatedItems.forEach((item) => {
-        reserveKeys(item.game_id, item.quantity, function(err, keys) {
+        reserveKeys(item.game_id, item.quantity, function (err, keys) {
           if (err) {
             return response.status(400).json({
               success: false,
@@ -181,58 +184,122 @@ const purchase = function(request, response) {
   }
 
   function proceedToCreateOrder() {
-    db.getConnection(function(connErr, conn) {
+    db.getConnection(function (connErr, conn) {
       if (connErr) {
         console.error('Connection error:', connErr);
         return response.status(500).json({ success: false, message: 'Database connection failed' });
       }
 
-      conn.beginTransaction(function(txErr) {
+      conn.beginTransaction(function (txErr) {
         if (txErr) {
           conn.release();
           return response.status(500).json({ success: false, message: 'Transaction start failed' });
         }
 
         const insertOrderQuery = `
-          INSERT INTO orders (email, total_amount, discount_amount, coupon_id) 
-          VALUES (?, ?, ?, ?)
-        `;
-        
+        INSERT INTO orders (email, total_amount, discount_amount, coupon_id) 
+        VALUES (?, ?, ?, ?)
+      `;
+
         conn.query(
           insertOrderQuery,
           [customerEmail, finalTotal, discountAmount, couponId],
-          function(orderErr, orderResult) {
+          function (orderErr, orderResult) {
             if (orderErr) {
               conn.rollback(() => conn.release());
               return response.status(500).json({ success: false, message: 'Failed to create order' });
             }
 
             const newOrderId = orderResult.insertId;
+            function proceedToBilling() {
+              if (!billingData || Object.keys(billingData).length === 0) {
+                proceedToInsertItems();
+                return;
+              }
 
-      
-            let itemsInserted = 0;
+              billingController.saveBillingAddress(newOrderId, billingData, conn, function (billErr) {
+                if (billErr) {
+                  conn.rollback(() => conn.release());
+                  return response.status(500).json({ success: false, message: 'Failed to save billing: ' + billErr.message });
+                }
+                proceedToInsertItems();
+              });
+            }
 
-            function checkAllItemsInserted() {
-              itemsInserted++;
-              if (itemsInserted === reservedKeys.length) {
-    
-                let keysUpdated = 0;
+            function proceedToInsertItems() {
+              if (reservedKeys.length === 0) {
+                proceedToUpdateKeys();
+                return;
+              }
 
-                function checkAllKeysUpdated() {
-                  keysUpdated++;
-                  if (keysUpdated === reservedKeys.length) {
+              let itemsInserted = 0;
 
-                    conn.commit(function(commitErr) {
-                      conn.release();
-                      
-                      if (commitErr) {
-                        return response.status(500).json({ success: false, message: 'Failed to confirm order' });
-                      }
-                      const customerMailOptions = {
-                        from: process.env.EMAIL_FROM,
-                        to: customerEmail,
-                        subject: `🎮 Order #${newOrderId} Confirmed - Your License Keys`,
-                        text: `
+              function checkAllItemsInserted() {
+                itemsInserted++;
+                if (itemsInserted === reservedKeys.length) {
+                  proceedToUpdateKeys();
+                }
+              }
+
+              reservedKeys.forEach((keyData) => {
+                conn.query(
+                  `INSERT INTO order_items (order_id, game_key_id, sold_price) VALUES (?, ?, ?)`,
+                  [newOrderId, keyData.key_id, keyData.sold_price],
+                  function (itemErr) {
+                    if (itemErr) {
+                      conn.rollback(() => conn.release());
+                      return response.status(500).json({ success: false, message: 'Failed to link order item' });
+                    }
+                    checkAllItemsInserted();
+                  }
+                );
+              });
+            }
+
+            function proceedToUpdateKeys() {
+              if (reservedKeys.length === 0) {
+                finalizeTransaction();
+                return;
+              }
+
+              let keysUpdated = 0;
+
+              function checkAllKeysUpdated() {
+                keysUpdated++;
+                if (keysUpdated === reservedKeys.length) {
+                  finalizeTransaction();
+                }
+              }
+
+              reservedKeys.forEach((keyData) => {
+                conn.query(
+                  "UPDATE game_keys SET status = 'sold' WHERE id = ?",
+                  [keyData.key_id],
+                  function (updateErr) {
+                    if (updateErr) {
+                      conn.rollback(() => conn.release());
+                      return response.status(500).json({ success: false, message: 'Failed to update key status' });
+                    }
+                    checkAllKeysUpdated();
+                  }
+                );
+              });
+            }
+
+            function finalizeTransaction() {
+              conn.commit(function (commitErr) {
+                conn.release();
+
+                if (commitErr) {
+                  console.error('Commit error:', commitErr);
+                  return response.status(500).json({ success: false, message: 'Failed to confirm order' });
+                }
+
+                const customerMailOptions = {
+                  from: process.env.EMAIL_FROM,
+                  to: customerEmail,
+                  subject: `🎮 Order #${newOrderId} Confirmed - Your License Keys`,
+                  text: `
 Thank you for your order!
 
 Order ID: ${newOrderId}
@@ -247,51 +314,47 @@ Discount applied: ${discountAmount}€
 
 Save these keys in a safe place.
 -- Gamify Team
-                        `,
-                        html: `
-                          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                            <h2 style="color: #0d6efd;">✅ Order Confirmed!</h2>
-                            <p>Thank you for your purchase, <strong>${customerEmail}</strong>.</p>
-                            
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 20px 0;">
-                              <p style="margin: 5px 0;"><strong>Order ID:</strong> #${newOrderId}</p>
-                              <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date().toLocaleString('it-IT')}</p>
-                            </div>
+                `,
+                  html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h2 style="color: #0d6efd;">✅ Order Confirmed!</h2>
+                    <p>Thank you for your purchase, <strong>${customerEmail}</strong>.</p>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                      <p style="margin: 5px 0;"><strong>Order ID:</strong> #${newOrderId}</p>
+                      <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date().toLocaleString('it-IT')}</p>
+                    </div>
+                    <h3 style="margin-top: 30px;">Your License Keys</h3>
+                    ${reservedKeys.map((k, i) => `
+                      <div style="background: #fff3cd; padding: 10px 15px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 14px;">
+                        ${i + 1}. ${k.license_key}
+                      </div>
+                    `).join('')}
+                    <div style="margin-top: 30px; padding: 15px; background: #e7f1ff; border-radius: 6px;">
+                      <p style="margin: 5px 0;"><strong>Total items:</strong> ${reservedKeys.length}</p>
+                      <p style="margin: 5px 0;"><strong>Amount paid:</strong> ${finalTotal}€</p>
+                      <p style="margin: 5px 0;"><strong>Discount:</strong> ${discountAmount}€</p>
+                    </div>
+                    <p style="margin-top: 30px; color: #6c757d; font-size: 14px;">
+                      Save these keys in a safe place.<br>
+                      -- Gamify Team
+                    </p>
+                  </div>
+                `
+                };
 
-                            <h3 style="margin-top: 30px;">Your License Keys</h3>
-                            ${reservedKeys.map((k, i) => `
-                              <div style="background: #fff3cd; padding: 10px 15px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 14px;">
-                                ${i + 1}. ${k.license_key}
-                              </div>
-                            `).join('')}
+                transporter.sendMail(customerMailOptions, function (customerMailError, customerMailInfo) {
+                  if (customerMailError) {
+                    console.error('❌ Customer email send error:', customerMailError.message);
+                  } else {
+                    console.log('✅ Customer email sent:', customerMailInfo.messageId);
+                  }
+                });
 
-                            <div style="margin-top: 30px; padding: 15px; background: #e7f1ff; border-radius: 6px;">
-                              <p style="margin: 5px 0;"><strong>Total items:</strong> ${reservedKeys.length}</p>
-                              <p style="margin: 5px 0;"><strong>Amount paid:</strong> ${finalTotal}€</p>
-                              <p style="margin: 5px 0;"><strong>Discount:</strong> ${discountAmount}€</p>
-                            </div>
-
-                            <p style="margin-top: 30px; color: #6c757d; font-size: 14px;">
-                              Save these keys in a safe place.<br>
-                              -- Gamify Team
-                            </p>
-                          </div>
-                        `
-                      };
-
-                      transporter.sendMail(customerMailOptions, function(customerMailError, customerMailInfo) {
-                        if (customerMailError) {
-                          console.error('❌ Customer email send error:', customerMailError.message);
-                        } else {
-                          console.log('✅ Customer email sent:', customerMailInfo.messageId);
-                        }
-                      });
-
-                      const sellerMailOptions = {
-                        from: process.env.EMAIL_FROM,
-                        to: process.env.SELLER_EMAIL,
-                        subject: `🎮 New Order #${newOrderId} - ${customerEmail}`,
-                        text: `
+                const sellerMailOptions = {
+                  from: process.env.EMAIL_FROM,
+                  to: process.env.SELLER_EMAIL,
+                  subject: `🎮 New Order #${newOrderId} - ${customerEmail}`,
+                  text: `
 New order received!
 
 Order ID: ${newOrderId}
@@ -299,9 +362,9 @@ Customer: ${customerEmail}
 Date: ${new Date().toLocaleString('it-IT')}
 
 Items sold:
-${reservedKeys.map((k, i) => 
-  `${i + 1}. Game ID: ${k.game_id} | Key: ${k.license_key} | Price: ${k.sold_price}€`
-).join('\n')}
+${reservedKeys.map((k, i) =>
+                    `${i + 1}. Game ID: ${k.game_id} | Key: ${k.license_key} | Price: ${k.sold_price}€`
+                  ).join('\n')}
 
 Total items: ${reservedKeys.length}
 Total amount: ${finalTotal}€
@@ -309,109 +372,71 @@ Discount applied: ${discountAmount}€
 Coupon used: ${couponCode || 'None'}
 
 -- Gamify Admin Panel
-                        `,
-                        html: `
-                          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                            <h2 style="color: #0d6efd;">🎮 New Order Received</h2>
-                            
-                            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
-                              <tr><td style="padding: 8px 0;"><strong>Order ID:</strong></td><td>#${newOrderId}</td></tr>
-                              <tr><td style="padding: 8px 0;"><strong>Customer:</strong></td><td>${customerEmail}</td></tr>
-                              <tr><td style="padding: 8px 0;"><strong>Date:</strong></td><td>${new Date().toLocaleString('it-IT')}</td></tr>
-                            </table>
+                `,
+                  html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                    <h2 style="color: #0d6efd;">🎮 New Order Received</h2>
+                    <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+                      <tr><td style="padding: 8px 0;"><strong>Order ID:</strong></td><td>#${newOrderId}</td></tr>
+                      <tr><td style="padding: 8px 0;"><strong>Customer:</strong></td><td>${customerEmail}</td></tr>
+                      <tr><td style="padding: 8px 0;"><strong>Date:</strong></td><td>${new Date().toLocaleString('it-IT')}</td></tr>
+                    </table>
+                    <h3 style="margin-top: 30px; color: #343a40;">Items Sold</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                      <thead>
+                        <tr style="background: #f8f9fa;">
+                          <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">#</th>
+                          <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Game ID</th>
+                          <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">License Key</th>
+                          <th style="padding: 10px; text-align: right; border-bottom: 2px solid #dee2e6;">Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${reservedKeys.map((k, i) => `
+                          <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">${i + 1}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">${k.game_id}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #dee2e6; font-family: monospace; font-size: 12px;">${k.license_key}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #dee2e6; text-align: right;">${k.sold_price}€</td>
+                          </tr>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                      <p style="margin: 5px 0;"><strong>Total items:</strong> ${reservedKeys.length}</p>
+                      <p style="margin: 5px 0;"><strong>Total amount:</strong> ${finalTotal}€</p>
+                      <p style="margin: 5px 0;"><strong>Discount:</strong> ${discountAmount}€</p>
+                      <p style="margin: 5px 0;"><strong>Coupon:</strong> ${couponCode || 'None'}</p>
+                    </div>
+                    <p style="margin-top: 30px; color: #6c757d; font-size: 14px; border-top: 1px solid #dee2e6; padding-top: 20px;">
+                      -- Gamify Admin Panel
+                    </p>
+                  </div>
+                `
+                };
 
-                            <h3 style="margin-top: 30px; color: #343a40;">Items Sold</h3>
-                            <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
-                              <thead>
-                                <tr style="background: #f8f9fa;">
-                                  <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">#</th>
-                                  <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Game ID</th>
-                                  <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">License Key</th>
-                                  <th style="padding: 10px; text-align: right; border-bottom: 2px solid #dee2e6;">Price</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                ${reservedKeys.map((k, i) => `
-                                  <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">${i + 1}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">${k.game_id}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6; font-family: monospace; font-size: 12px;">${k.license_key}</td>
-                                    <td style="padding: 10px; border-bottom: 1px solid #dee2e6; text-align: right;">${k.sold_price}€</td>
-                                  </tr>
-                                `).join('')}
-                              </tbody>
-                            </table>
-
-                            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
-                              <p style="margin: 5px 0;"><strong>Total items:</strong> ${reservedKeys.length}</p>
-                              <p style="margin: 5px 0;"><strong>Total amount:</strong> ${finalTotal}€</p>
-                              <p style="margin: 5px 0;"><strong>Discount:</strong> ${discountAmount}€</p>
-                              <p style="margin: 5px 0;"><strong>Coupon:</strong> ${couponCode || 'None'}</p>
-                            </div>
-
-                            <p style="margin-top: 30px; color: #6c757d; font-size: 14px; border-top: 1px solid #dee2e6; padding-top: 20px;">
-                              -- Gamify Admin Panel
-                            </p>
-                          </div>
-                        `
-                      };
-
-                      transporter.sendMail(sellerMailOptions, function(sellerMailError, sellerMailInfo) {
-                        if (sellerMailError) {
-                          console.error('❌ Seller email send error:', sellerMailError.message);
-        
-                        } else {
-                          console.log('✅ Seller email sent:', sellerMailInfo.messageId);
-                        }
-                      });
-
-        
-                      const licenseKeys = reservedKeys.map(k => k.license_key);
-
-                      response.json({
-                        success: true,
-                        order_id: newOrderId,
-                        license_keys: licenseKeys,
-                        total_items: reservedKeys.length,
-                        price_paid: finalTotal,
-                        discount_applied: discountAmount,
-                        coupon_used: couponCode && couponCode.trim() !== '' ? couponCode : null,
-                        message: 'Purchase completed successfully'
-                      });
-
-                    });
+                transporter.sendMail(sellerMailOptions, function (sellerMailError, sellerMailInfo) {
+                  if (sellerMailError) {
+                    console.error('❌ Seller email send error:', sellerMailError.message);
+                  } else {
+                    console.log('✅ Seller email sent:', sellerMailInfo.messageId);
                   }
-                }
-
-                reservedKeys.forEach((keyData) => {
-                  conn.query(
-                    "UPDATE game_keys SET status = 'sold' WHERE id = ?",
-                    [keyData.key_id],
-                    function(updateErr) {
-                      if (updateErr) {
-                        conn.rollback(() => conn.release());
-                        return response.status(500).json({ success: false, message: 'Failed to update key status' });
-                      }
-                      checkAllKeysUpdated();
-                    }
-                  );
                 });
-              }
-            }
+                const licenseKeys = reservedKeys.map(k => k.license_key);
 
-            reservedKeys.forEach((keyData) => {
-              conn.query(
-                `INSERT INTO order_items (order_id, game_key_id, sold_price) VALUES (?, ?, ?)`,
-                [newOrderId, keyData.key_id, keyData.sold_price],
-                function(itemErr) {
-                  if (itemErr) {
-                    conn.rollback(() => conn.release());
-                    return response.status(500).json({ success: false, message: 'Failed to link order item' });
-                  }
-                  checkAllItemsInserted();
-                }
-              );
-            });
+                response.json({
+                  success: true,
+                  order_id: newOrderId,
+                  license_keys: licenseKeys,
+                  total_items: reservedKeys.length,
+                  price_paid: finalTotal,
+                  discount_applied: discountAmount,
+                  coupon_used: couponCode && couponCode.trim() !== '' ? couponCode : null,
+                  message: 'Purchase completed successfully'
+                });
+              });
+            }
+            proceedToBilling();
           }
         );
       });
@@ -419,4 +444,4 @@ Coupon used: ${couponCode || 'None'}
   }
 };
 
-module.exports = { purchase, applyCoupon: applyCoupon};
+module.exports = { purchase, applyCoupon: applyCoupon };

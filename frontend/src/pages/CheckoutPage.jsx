@@ -6,14 +6,24 @@ import { useCart } from "../context/CartContext";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { clearCart, saveCartWithMetadata } = useCart();
+  
+
+  const { 
+    cart,                    
+    removeFromCart,          
+    clearCart,              
+    couponData,            
+    subtotal,               
+    total,                  
+    getAppliedDiscount,     
+    saveCartWithMetadata     
+  } = useCart();
   const [customerEmail, setCustomerEmail] = useState('');
-  const [couponCode, setCouponCode] = useState('');
-  const [discountAmount, setDiscountAmount] = useState(0);
-  const [cartItems, setCartItems] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState('card');
   const [orderResult, setOrderResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
   /* billing infos two way data binding (Salvatore don't remove the comment, thanks. By Cri)*/
   const [billingName, setBillingName] = useState('');
   const [billingAddress, setBillingAddress] = useState('');
@@ -21,44 +31,21 @@ export default function CheckoutPage() {
   const [billingZip, setBillingZip] = useState('');
   const [billingCountry, setBillingCountry] = useState('IT');
   const [billingVat, setBillingVat] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('card');
 
-  useEffect(() => {
-    const savedCart = sessionStorage.getItem('gamify_cart');
+  const getPriceToDisplay = function (item) {
+    return parseFloat(item?.base_price) || 0;
+  };
 
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart);
-        if (parsedCart && parsedCart.items && Array.isArray(parsedCart.items)) {
-          setCartItems(parsedCart.items);
-          if (parsedCart.coupon) {
-            setCouponCode(parsedCart.coupon);
-          }
-          if (parsedCart.discount !== undefined && parsedCart.discount !== null) {
-            setDiscountAmount(Number(parsedCart.discount));
-          }
-        }
-        else if (Array.isArray(parsedCart)) {
-          setCartItems(parsedCart);
-        }
-      } catch (error) {
-        setErrorMessage("Cart can't be loaded. Retry");
-      }
-    }
-  }, []);
-
- const getPriceToDisplay = function (item) {
-  return Number(item.base_price);
-};
-
-
+  const handleRemoveItem = function (itemId) {
+    removeFromCart(itemId);
+  };
 
   const handlePurchase = async function (event) {
     event.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
 
-    const stockCheck = await checkStockAvailability(cartItems);
+    const stockCheck = await checkStockAvailability(cart);
 
     if (!stockCheck.success) {
       if (stockCheck.unavailable && stockCheck.unavailable.length > 0) {
@@ -80,20 +67,27 @@ export default function CheckoutPage() {
     try {
       const response = await axios.post('http://localhost:3000/api/orders/purchase', {
         email: customerEmail,
-        items: cartItems.map(function (item) {
+        billing: {
+          name: billingName,
+          address: billingAddress,
+          city: billingCity,
+          zip: billingZip,
+          country: billingCountry,
+          vat: billingVat || null
+        },
+        paymentMethod: paymentMethod,
+        items: cart.map(function (item) {
           return {
             game_id: item.id,
             quantity: item.quantity || 1
           };
         }),
-        coupon: couponCode.trim() || null
+        coupon: couponData.appliedCoupon?.trim() || null
       });
 
       if (response.data.success) {
         setOrderResult(response.data);
         clearCart();
-        setCouponCode('');
-        setDiscountAmount(0);
       }
     } catch (purchaseError) {
       setErrorMessage(purchaseError.response?.data?.message || 'Purchase failed. Please try again.');
@@ -102,93 +96,26 @@ export default function CheckoutPage() {
     }
   };
 
-  if (orderResult?.success) {
-    return (
-      <div className="container py-5 text-center">
-        <div className="gamify-success-card">
-          <i className="bi bi-check-all gamify-success-icon"></i>
-          <h2 className="gamify-cart-heading mb-3"><span>Purchase</span> Successful!</h2>
-          <p className="text-secondary">Order ID: <span className="text-white">#{orderResult.order_id}</span></p>
-
-          <div className="gamify-keys-container mt-4">
-            <h5 className="gamify-summary-label mb-3">Your License Keys</h5>
-            {orderResult.license_keys.map((licenseKey, index) => (
-              <div key={index} className="gamify-license-key">
-                {licenseKey}
-                <i className="bi bi-copy ms-auto" style={{ cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(licenseKey)}></i>
-              </div>
-            ))}
-          </div>
-          <button
-            className="gamify-btn-primary mt-4 d-inline-block"
-            onClick={() => {
-              clearCart();
-              navigate('/', { replace: true });
-            }}
-          >
-            Back to Home
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const handleRemoveItem = function (itemId) {
-  const updatedCartItems = cartItems.filter(function (item) {
-    return item.id !== itemId;
-  });
-
-  const newSubtotal = updatedCartItems.reduce(function (sum, item) {
-    const price = getPriceToDisplay(item);
-    const quantity = item.quantity || 1;
-    return sum + price * quantity;
-  }, 0);
-
-  const newDiscountAmount = Math.min(discountAmount, newSubtotal);
-  const newFinalTotal = Math.max(newSubtotal - newDiscountAmount, 0);
-
-  setCartItems(updatedCartItems);
-  setDiscountAmount(newDiscountAmount);
-
-  saveCartWithMetadata(
-    updatedCartItems,
-    couponCode.trim() || null,
-    newDiscountAmount,
-    newFinalTotal
-  );
-};
-
   const handleResetCheckout = function () {
     const isConfirmed = window.confirm("Are you sure to cancel the order?");
     if (!isConfirmed) return;
-    setCartItems([]);
+    
+
+    clearCart();
     setCustomerEmail('');
-    setCouponCode('');
-    setDiscountAmount(0);
     setBillingName('');
     setBillingAddress('');
     setBillingCity('');
     setBillingZip('');
     setBillingCountry('IT');
     setBillingVat('');
+    setPaymentMethod('card');
     setOrderResult(null);
     setErrorMessage('');
     setIsLoading(false);
-    sessionStorage.removeItem('gamify_cart');
-    sessionStorage.removeItem('gamify_billing');
-    window.location.href = '/';
+    
+    navigate('/', { replace: true });
   };
-
-  const calculatedTotal = cartItems.reduce(function (sum, item) {
-    const price = getPriceToDisplay(item);
-    const quantity = item.quantity || 1;
-    return sum + (price * quantity);
-  }, 0);
-
- 
-
-  const safeDiscountAmount = Math.min(discountAmount, calculatedTotal);
-const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
 
   const checkStockAvailability = async function (items) {
     try {
@@ -210,7 +137,53 @@ const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
     }
   };
 
-  
+
+  if (orderResult?.success) {
+    return (
+      <div className="container py-5 text-center">
+        <div className="gamify-success-card">
+          <i className="bi bi-check-all gamify-success-icon"></i>
+          <h2 className="gamify-cart-heading mb-3"><span>Purchase</span> Successful!</h2>
+          <p className="text-secondary">Order ID: <span className="text-white">#{orderResult.order_id}</span></p>
+
+          <div className="gamify-keys-container mt-4">
+            <h5 className="gamify-summary-label mb-3">Your License Keys</h5>
+            {orderResult.license_keys.map((licenseKey, index) => (
+              <div key={index} className="gamify-license-key">
+                {licenseKey}
+                <i className="bi bi-copy ms-auto" style={{ cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(licenseKey)}></i>
+              </div>
+            ))}
+          </div>
+          <button
+            className="gamify-btn-primary mt-4 d-inline-block"
+            onClick={() => {
+              navigate('/', { replace: true });
+            }}
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
+  if (cart.length === 0) {
+    return (
+      <div className="container py-4">
+        <Link to="/cart" className="gamify-detail-back-btn ms-2">
+          <i className="bi bi-arrow-left"></i> Go back to Cart
+        </Link>
+        <hr />
+        <div className="text-center py-5">
+          <i className="bi bi-cart-x gamify-cart-empty-icon"></i>
+          <p className="gamify-cart-empty-title">Your cart is empty</p>
+          <Link to="/" className="gamify-btn-primary">Continue shopping</Link>
+        </div>
+      </div>
+    );
+  }
 
   const paymentMethods = [
     { id: 'card', icon: 'bi-credit-card', label: 'Credit Card', sub: 'Visa / Mastercard' },
@@ -234,219 +207,210 @@ const finalTotal = Math.max(calculatedTotal - safeDiscountAmount, 0);
         <span>Secure</span> Checkout
       </h2>
 
-      {cartItems.length === 0 ? (
-        <div className="text-center py-5">
-          <i className="bi bi-cart-x gamify-cart-empty-icon"></i>
-          <p className="gamify-cart-empty-title">Your cart is empty</p>
-          <Link to="/" className="gamify-btn-primary">Continue shopping</Link>
-        </div>
-      ) : (
-        <div className="row g-4">
-          <div className="col-12 col-lg-7">
-            <div className="gamify-checkout-section mb-4">
-              <div className="gamify-checkout-title mb-4">
-                <i className="bi bi-receipt me-2"></i>
-                Billing Information
-              </div>
-              <div className="row g-3">
-                <div className="col-12">
-                  <label className="gamify-input-label">Full Name</label>
-                  <input
-                    type="text"
-                    className="form-control gamify-promo-input"
-                    placeholder="John Doe"
-                    value={billingName}
-                    onChange={function (event) { setBillingName(event.target.value); }}
-                  />
-                </div>
-                <div className="col-12">
-                  <label className="gamify-input-label">Address</label>
-                  <input
-                    type="text"
-                    className="form-control gamify-promo-input"
-                    placeholder="Fifth Avenue, NYC, SID"
-                    value={billingAddress}
-                    onChange={function (event) { setBillingAddress(event.target.value); }}
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="gamify-input-label">City</label>
-                  <input
-                    type="text"
-                    className="form-control gamify-promo-input"
-                    placeholder="New York"
-                    value={billingCity}
-                    onChange={function (event) { setBillingCity(event.target.value); }}
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="gamify-input-label">ZIP Code</label>
-                  <input
-                    type="text"
-                    className="form-control gamify-promo-input"
-                    placeholder="20100"
-                    value={billingZip}
-                    onChange={function (event) { setBillingZip(event.target.value); }}
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="gamify-input-label">Country</label>
-                  <select
-                    className="form-select gamify-promo-input"
-                    value={billingCountry}
-                    onChange={function (event) { setBillingCountry(event.target.value); }}
-                  >
-                    <option value="IT">Italy</option>
-                    <option value="FR">France</option>
-                    <option value="DE">Germany</option>
-                    <option value="ES">Spain</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="US">United States</option>
-                  </select>
-                </div>
-                <div className="col-md-6">
-                  <label className="gamify-input-label">VAT Number (optional)</label>
-                  <input
-                    type="text"
-                    className="form-control gamify-promo-input"
-                    placeholder="LM12345678901"
-                    value={billingVat}
-                    onChange={function (event) { setBillingVat(event.target.value); }}
-                  />
-                </div>
-              </div>
+      <div className="row g-4">
+        <div className="col-12 col-lg-7">
+          <div className="gamify-checkout-section mb-4">
+            <div className="gamify-checkout-title mb-4">
+              <i className="bi bi-receipt me-2"></i>
+              Billing Information
             </div>
-            <div className="gamify-checkout-section mb-4">
-              <div className="gamify-checkout-title mb-3">
-                <i className="bi bi-wallet2 me-2"></i>
-                Payment Method
-              </div>
-              <div className="row g-2 mb-3">
-                {paymentMethods.map(({ id, icon, label, sub }) => (
-                  <div className="col-6 col-sm-4" key={id}>
-                    <button
-                      type="button"
-                      className={`gamify-pay-btn w-100 ${paymentMethod === id ? 'active' : ''}`}
-                      onClick={() => setPaymentMethod(id)}
-                    >
-                      <i className={`bi ${icon} gamify-pay-icon`}></i>
-                      <span className="gamify-pay-label">{label}</span>
-                      <span className="gamify-pay-sub">{sub}</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className="gamify-pay-detail">
-                <i className="bi bi-shield-check me-2"></i>
-                {paymentDetails[paymentMethod]}
-              </div>
-            </div>
-            <form onSubmit={handlePurchase} className="gamify-checkout-section">
-              <div className="gamify-checkout-title mb-3">
-                <i className="bi bi-envelope me-2"></i>
-                Delivery Email
-              </div>
-              <div className="mb-3">
+            <div className="row g-3">
+              <div className="col-12">
+                <label className="gamify-input-label">Full Name</label>
                 <input
-                  type="email"
+                  type="text"
                   className="form-control gamify-promo-input"
-                  placeholder="Where should we send your keys?"
-                  value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
-                  required
+                  placeholder="John Doe"
+                  value={billingName}
+                  onChange={function (event) { setBillingName(event.target.value); }}
                 />
               </div>
-              {errorMessage && (
-                <div className="gamify-coupon-feedback is-error mb-3">
-                  <i className="bi bi-exclamation-triangle me-2"></i>
-                  {errorMessage}
-                </div>
-              )}
-              <button type="submit" className="gamify-btn-checkout w-100 border-0" disabled={isLoading}>
-                {isLoading ? (
-                  <><span className="spinner-border spinner-border-sm me-2"></span>Processing...</>
-                ) : 'Complete Purchase'}
-              </button>
-            </form>
-
-            <div className="text-center mt-4">
-              <button
-                type="button"
-                className="gamify-btn-clear"
-                onClick={handleResetCheckout}
-              >
-                <i className="bi bi-trash3 me-2"></i>
-                Cancel Order
-              </button>
-              <p className="gamify-cart-empty-sub mt-2" style={{ fontSize: '11px' }}>
-                This action can't be reverted!
-              </p>
+              <div className="col-12">
+                <label className="gamify-input-label">Address</label>
+                <input
+                  type="text"
+                  className="form-control gamify-promo-input"
+                  placeholder="Fifth Avenue, NYC, SID"
+                  value={billingAddress}
+                  onChange={function (event) { setBillingAddress(event.target.value); }}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="gamify-input-label">City</label>
+                <input
+                  type="text"
+                  className="form-control gamify-promo-input"
+                  placeholder="New York"
+                  value={billingCity}
+                  onChange={function (event) { setBillingCity(event.target.value); }}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="gamify-input-label">ZIP Code</label>
+                <input
+                  type="text"
+                  className="form-control gamify-promo-input"
+                  placeholder="20100"
+                  value={billingZip}
+                  onChange={function (event) { setBillingZip(event.target.value); }}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="gamify-input-label">Country</label>
+                <select
+                  className="form-select gamify-promo-input"
+                  value={billingCountry}
+                  onChange={function (event) { setBillingCountry(event.target.value); }}
+                >
+                  <option value="IT">Italy</option>
+                  <option value="FR">France</option>
+                  <option value="DE">Germany</option>
+                  <option value="ES">Spain</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="US">United States</option>
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="gamify-input-label">VAT Number (optional)</label>
+                <input
+                  type="text"
+                  className="form-control gamify-promo-input"
+                  placeholder="LM12345678901"
+                  value={billingVat}
+                  onChange={function (event) { setBillingVat(event.target.value); }}
+                />
+              </div>
             </div>
           </div>
+          
+          <div className="gamify-checkout-section mb-4">
+            <div className="gamify-checkout-title mb-3">
+              <i className="bi bi-wallet2 me-2"></i>
+              Payment Method
+            </div>
+            <div className="row g-2 mb-3">
+              {paymentMethods.map(({ id, icon, label, sub }) => (
+                <div className="col-6 col-sm-4" key={id}>
+                  <button
+                    type="button"
+                    className={`gamify-pay-btn w-100 ${paymentMethod === id ? 'active' : ''}`}
+                    onClick={() => setPaymentMethod(id)}
+                  >
+                    <i className={`bi ${icon} gamify-pay-icon`}></i>
+                    <span className="gamify-pay-label">{label}</span>
+                    <span className="gamify-pay-sub">{sub}</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="gamify-pay-detail">
+              <i className="bi bi-shield-check me-2"></i>
+              {paymentDetails[paymentMethod]}
+            </div>
+          </div>
+          
+          <form onSubmit={handlePurchase} className="gamify-checkout-section">
+            <div className="gamify-checkout-title mb-3">
+              <i className="bi bi-envelope me-2"></i>
+              Delivery Email
+            </div>
+            <div className="mb-3">
+              <input
+                type="email"
+                className="form-control gamify-promo-input"
+                placeholder="Where should we send your keys?"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+                required
+              />
+            </div>
+            {errorMessage && (
+              <div className="gamify-coupon-feedback is-error mb-3">
+                <i className="bi bi-exclamation-triangle me-2"></i>
+                {errorMessage}
+              </div>
+            )}
+            <button type="submit" className="gamify-btn-checkout w-100 border-0" disabled={isLoading}>
+              {isLoading ? (
+                <><span className="spinner-border spinner-border-sm me-2"></span>Processing...</>
+              ) : 'Complete Purchase'}
+            </button>
+          </form>
 
-          <div className="col-12 col-lg-5">
-            <div className="gamify-cart-summary sticky-lg-top">
-              <h4 className="gamify-summary-label">Order Review</h4>
-              <div className="gamify-checkout-items mb-4">
-                {cartItems.map(function (item) {
-                  const displayPrice = getPriceToDisplay(item);
-                  const quantity = item.quantity || 1;
+          <div className="text-center mt-4">
+            <button
+              type="button"
+              className="gamify-btn-clear"
+              onClick={handleResetCheckout}
+            >
+              <i className="bi bi-trash3 me-2"></i>
+              Cancel Order
+            </button>
+            <p className="gamify-cart-empty-sub mt-2" style={{ fontSize: '11px' }}>
+              This action can't be reverted!
+            </p>
+          </div>
+        </div>
 
-                  return (
-                    <div className="d-flex justify-content-between align-items-center" key={item.id}>
-                      <div className="min-w-0">
-                        <div className="gamify-item-title-sm">{item.title}</div>
-                        <div className="gamify-summary-text">Qty: {quantity}</div>
-                      </div>
+        <div className="col-12 col-lg-5">
+          <div className="gamify-cart-summary sticky-lg-top">
+            <h4 className="gamify-summary-label">Order Review</h4>
+            <div className="gamify-checkout-items mb-4">
+              {cart.map(function (item) {
+                const displayPrice = getPriceToDisplay(item);
+                const quantity = item.quantity || 1;
 
-                      <div className="d-flex align-items-center gap-2">
-                        <div className="text-end">
-                          
-
-                          <div className="text-white fw-bold">
-                            €{displayPrice.toFixed(2)}
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          className="gamify-cart-remove"
-                          onClick={() => handleRemoveItem(item.id)}
-                        >
-                          <i className="bi bi-x-lg"></i>
-                        </button>
-                      </div>
+                return (
+                  <div className="d-flex justify-content-between align-items-center" key={item.id}>
+                    <div className="min-w-0">
+                      <div className="gamify-item-title-sm">{item.title}</div>
+                      <div className="gamify-summary-text">Qty: {quantity}</div>
                     </div>
-                  );
-                })}
-              </div>
 
+                    <div className="d-flex align-items-center gap-2">
+                      <div className="text-end">
+                        <div className="text-white fw-bold">
+                          €{displayPrice.toFixed(2)}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="gamify-cart-remove"
+                        onClick={() => handleRemoveItem(item.id)}
+                      >
+                        <i className="bi bi-x-lg"></i>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="d-flex justify-content-between mb-2">
+              <span className="gamify-summary-text">Original Subtotal</span>
+              <span className="gamify-summary-text">€{subtotal.toFixed(2)}</span>
+            </div>
+
+            {couponData.appliedCoupon && getAppliedDiscount() > 0 && (
               <div className="d-flex justify-content-between mb-2">
-                <span className="gamify-summary-text">Original Subtotal</span>
-                <span className="gamify-summary-text">€{calculatedTotal.toFixed(2)}</span>
+                <span className="gamify-summary-text">
+                  Coupon ({couponData.appliedCoupon})
+                </span>
+                <span className="gamify-summary-free">
+                  - €{getAppliedDiscount().toFixed(2)}
+                </span>
               </div>
-
-              
-              {safeDiscountAmount > 0 && (
-  <div className="d-flex justify-content-between mb-2">
-    <span className="gamify-summary-text">
-      Coupon {couponCode && `(${couponCode})`}
-    </span>
-    <span className="gamify-summary-free">
-      - €{safeDiscountAmount.toFixed(2)}
-    </span>
-  </div>
-)}
-              <hr className="gamify-summary-divider" />
-
-              <div className="d-flex justify-content-between align-items-center">
-                <span className="gamify-summary-total-label">Total to Pay</span>
-                <span className="gamify-summary-total-price">€{finalTotal.toFixed(2)}</span>
-              </div>
+            )}
+            
+            <hr className="gamify-summary-divider" />
+            <div className="d-flex justify-content-between align-items-center">
+              <span className="gamify-summary-total-label">Total to Pay</span>
+              <span className="gamify-summary-total-price">€{total.toFixed(2)}</span>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -1,19 +1,39 @@
 import { useState } from 'react';
 import '../styles/SupportPage.css';
+import axios from 'axios';
 
 export default function SupportPage() {
   const [messageStatus, setMessageStatus] = useState('idle');
   const [messageText, setMessageText] = useState('');
 
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+
+
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessageStatus('sending');
+    try {
+      await axios.post('http://localhost:3000/api/support/ticket', {  
+        email,
+        subject,
+        message: messageText,
+        priority: 'medium' 
+      });
 
-    setTimeout(() => {
       setMessageStatus('sent');
+      setEmail('');
+      setSubject('');
       setMessageText('');
-    }, 800);
+    } catch (error) {
+      console.log(error);
+      setMessageStatus('error')
+    }
   };
+
+
 
   return (
     <div className="container py-5">
@@ -32,6 +52,8 @@ export default function SupportPage() {
                   type="email"
                   className="form-control gamify-support-input"
                   placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -42,6 +64,8 @@ export default function SupportPage() {
                   type="text"
                   className="form-control gamify-support-input"
                   placeholder="Short summary of the issue"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                   required
                 />
               </div>

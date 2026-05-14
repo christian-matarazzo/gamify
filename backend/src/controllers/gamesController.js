@@ -24,7 +24,6 @@ function search(req, res) {
 
     connection.query(sql, values, (err, results) => {
       if (err) {
-        console.error('❌ SQL Error in search:', err);
         return res.status(500).json({ 
           success: false, 
           error: 'Database error', 
@@ -39,7 +38,6 @@ function search(req, res) {
       });
     });
   } catch (error) {
-    console.error('❌ Controller error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Server error', 
@@ -52,7 +50,6 @@ function index(req, res) {
   const sql = "SELECT *, DATE_FORMAT(release_date, '%Y-%m-%d') AS release_date FROM games";
   connection.query(sql, (err, results) => {
     if (err) {
-      console.error('❌ SQL Error in index:', err);
       return res.status(500).json({ success: false, error: 'Database error', message: err.message });
     }
     res.json({ success: true, results });
@@ -64,7 +61,6 @@ function show(req, res) {
   const sql = "SELECT *, DATE_FORMAT(release_date, '%Y-%m-%d') AS release_date FROM games WHERE slug=?";
   connection.query(sql, [slug], (err, results) => {
     if (err) {
-      console.error('❌ SQL Error in show:', err);
       return res.status(500).json({ success: false, error: 'Database error', message: err.message });
     }
     if (results.length === 0) {
