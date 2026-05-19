@@ -77,7 +77,7 @@ export default function PrivacyPage() {
                     <div className="p-4 gamify-checkout-section">
                         <h6>Quick info</h6>
                         <p className="small mb-2">
-                            <strong>Privacy requests:</strong> support@gamify.example
+                            <strong>Privacy requests:</strong> support@gamify.com
                         </p>
 
                         <h6 className="mt-3">Cookies</h6>
