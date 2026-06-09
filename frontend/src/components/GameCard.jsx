@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../api';
 
 export default function GameCard({ game, isInWishlist = false, onToggleWish }) {
     return (
@@ -7,7 +8,7 @@ export default function GameCard({ game, isInWishlist = false, onToggleWish }) {
                 <div className="gamify-card-img-wrap">
                     <img
                         className="gamify-card-thumbnail"
-                        src={`http://localhost:3000/image/${game.image_url}`}
+                        src={`${API_BASE_URL}/image/${game.image_url}`}
                         alt={game.title}
                     />
                     {onToggleWish && (
@@ -15,8 +16,8 @@ export default function GameCard({ game, isInWishlist = false, onToggleWish }) {
                             type="button"
                             className={`gamify-detail-wish-btn${isInWishlist ? ' active' : ''}`}
                             onClick={(e) => {
-                                e.stopPropagation(); 
-                                e.preventDefault();  
+                                e.stopPropagation();
+                                e.preventDefault();
                                 onToggleWish();
                             }}
                             aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}

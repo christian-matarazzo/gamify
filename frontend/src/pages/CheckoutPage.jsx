@@ -1,30 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/CheckoutPage.css";
 import { useCart } from "../context/CartContext";
+import API_BASE_URL from "../api";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  
 
   const { 
-    cart,                    
-    removeFromCart,          
-    clearCart,              
-    couponData,            
-    subtotal,               
-    total,                  
-    getAppliedDiscount,     
-    saveCartWithMetadata     
+    cart, removeFromCart, clearCart, couponData,
+    subtotal, total, getAppliedDiscount, saveCartWithMetadata
   } = useCart();
+
   const [customerEmail, setCustomerEmail] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [orderResult, setOrderResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  /* billing infos two way data binding (Salvatore don't remove the comment, thanks. By Cri)*/
   const [billingName, setBillingName] = useState('');
   const [billingAddress, setBillingAddress] = useState('');
   const [billingCity, setBillingCity] = useState('');
@@ -40,6 +33,23 @@ export default function CheckoutPage() {
     removeFromCart(itemId);
   };
 
+  const checkStockAvailability = async function (items) {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/stock/check`, {
+        items: items.map(function (item) {
+          return { game_id: item.id, quantity: item.quantity || 1 };
+        })
+      });
+      return response.data;
+    } catch (networkError) {
+      return {
+        success: false,
+        message: 'Unable to verify item availability. Please check your connection and try again.',
+        unavailable: []
+      };
+    }
+  };
+
   const handlePurchase = async function (event) {
     event.preventDefault();
     setIsLoading(true);
@@ -50,13 +60,9 @@ export default function CheckoutPage() {
     if (!stockCheck.success) {
       if (stockCheck.unavailable && stockCheck.unavailable.length > 0) {
         const unavailableNames = stockCheck.unavailable.map(function (unavailableItem) {
-          if (unavailableItem.title) {
-            return `"${unavailableItem.title}"`;
-          }
-          return `Product #${unavailableItem.game_id}`;
+          return unavailableItem.title ? `"${unavailableItem.title}"` : `Product #${unavailableItem.game_id}`;
         });
-        const userMessage = `The following item(s) are no longer available: ${unavailableNames.join(', ')}. Please remove them from your cart and try again.`;
-        setErrorMessage(userMessage);
+        setErrorMessage(`The following item(s) are no longer available: ${unavailableNames.join(', ')}. Please remove them from your cart and try again.`);
       } else {
         setErrorMessage(stockCheck.message || 'Some items are no longer available. Please refresh and try again.');
       }
@@ -65,22 +71,16 @@ export default function CheckoutPage() {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/orders/purchase', {
+      const response = await axios.post(`${API_BASE_URL}/api/orders/purchase`, {
         email: customerEmail,
         billing: {
-          name: billingName,
-          address: billingAddress,
-          city: billingCity,
-          zip: billingZip,
-          country: billingCountry,
-          vat: billingVat || null
+          name: billingName, address: billingAddress,
+          city: billingCity, zip: billingZip,
+          country: billingCountry, vat: billingVat || null
         },
-        paymentMethod: paymentMethod,
+        paymentMethod,
         items: cart.map(function (item) {
-          return {
-            game_id: item.id,
-            quantity: item.quantity || 1
-          };
+          return { game_id: item.id, quantity: item.quantity || 1 };
         }),
         coupon: couponData.appliedCoupon?.trim() || null
       });
@@ -99,44 +99,14 @@ export default function CheckoutPage() {
   const handleResetCheckout = function () {
     const isConfirmed = window.confirm("Are you sure to cancel the order?");
     if (!isConfirmed) return;
-    
-
     clearCart();
     setCustomerEmail('');
-    setBillingName('');
-    setBillingAddress('');
-    setBillingCity('');
-    setBillingZip('');
-    setBillingCountry('IT');
-    setBillingVat('');
+    setBillingName(''); setBillingAddress(''); setBillingCity('');
+    setBillingZip(''); setBillingCountry('IT'); setBillingVat('');
     setPaymentMethod('card');
-    setOrderResult(null);
-    setErrorMessage('');
-    setIsLoading(false);
-    
+    setOrderResult(null); setErrorMessage(''); setIsLoading(false);
     navigate('/', { replace: true });
   };
-
-  const checkStockAvailability = async function (items) {
-    try {
-      const response = await axios.post('http://localhost:3000/api/stock/check', {
-        items: items.map(function (item) {
-          return {
-            game_id: item.id,
-            quantity: item.quantity || 1
-          };
-        })
-      });
-      return response.data;
-    } catch (networkError) {
-      return {
-        success: false,
-        message: 'Unable to verify item availability. Please check your connection and try again.',
-        unavailable: []
-      };
-    }
-  };
-
 
   if (orderResult?.success) {
     return (
@@ -145,7 +115,6 @@ export default function CheckoutPage() {
           <i className="bi bi-check-all gamify-success-icon"></i>
           <h2 className="gamify-cart-heading mb-3"><span>Purchase</span> Successful!</h2>
           <p className="text-secondary">Order ID: <span className="text-white">#{orderResult.order_id}</span></p>
-
           <div className="gamify-keys-container mt-4">
             <h5 className="gamify-summary-label mb-3">Your License Keys</h5>
             {orderResult.license_keys.map((licenseKey, index) => (
@@ -155,19 +124,13 @@ export default function CheckoutPage() {
               </div>
             ))}
           </div>
-          <button
-            className="gamify-btn-primary mt-4 d-inline-block"
-            onClick={() => {
-              navigate('/', { replace: true });
-            }}
-          >
+          <button className="gamify-btn-primary mt-4 d-inline-block" onClick={() => navigate('/', { replace: true })}>
             Back to Home
           </button>
         </div>
       </div>
     );
   }
-
 
   if (cart.length === 0) {
     return (
@@ -203,65 +166,34 @@ export default function CheckoutPage() {
         <i className="bi bi-arrow-left"></i> Go back to Cart
       </Link>
       <hr />
-      <h2 className="gamify-cart-heading mb-4">
-        <span>Secure</span> Checkout
-      </h2>
+      <h2 className="gamify-cart-heading mb-4"><span>Secure</span> Checkout</h2>
 
       <div className="row g-4">
         <div className="col-12 col-lg-7">
           <div className="gamify-checkout-section mb-4">
             <div className="gamify-checkout-title mb-4">
-              <i className="bi bi-receipt me-2"></i>
-              Billing Information
+              <i className="bi bi-receipt me-2"></i>Billing Information
             </div>
             <div className="row g-3">
               <div className="col-12">
                 <label className="gamify-input-label">Full Name</label>
-                <input
-                  type="text"
-                  className="form-control gamify-promo-input"
-                  placeholder="John Doe"
-                  value={billingName}
-                  onChange={function (event) { setBillingName(event.target.value); }}
-                />
+                <input type="text" className="form-control gamify-promo-input" placeholder="John Doe" value={billingName} onChange={e => setBillingName(e.target.value)} />
               </div>
               <div className="col-12">
                 <label className="gamify-input-label">Address</label>
-                <input
-                  type="text"
-                  className="form-control gamify-promo-input"
-                  placeholder="Fifth Avenue, NYC, SID"
-                  value={billingAddress}
-                  onChange={function (event) { setBillingAddress(event.target.value); }}
-                />
+                <input type="text" className="form-control gamify-promo-input" placeholder="Fifth Avenue, NYC, SID" value={billingAddress} onChange={e => setBillingAddress(e.target.value)} />
               </div>
               <div className="col-md-6">
                 <label className="gamify-input-label">City</label>
-                <input
-                  type="text"
-                  className="form-control gamify-promo-input"
-                  placeholder="New York"
-                  value={billingCity}
-                  onChange={function (event) { setBillingCity(event.target.value); }}
-                />
+                <input type="text" className="form-control gamify-promo-input" placeholder="New York" value={billingCity} onChange={e => setBillingCity(e.target.value)} />
               </div>
               <div className="col-md-6">
                 <label className="gamify-input-label">ZIP Code</label>
-                <input
-                  type="text"
-                  className="form-control gamify-promo-input"
-                  placeholder="20100"
-                  value={billingZip}
-                  onChange={function (event) { setBillingZip(event.target.value); }}
-                />
+                <input type="text" className="form-control gamify-promo-input" placeholder="20100" value={billingZip} onChange={e => setBillingZip(e.target.value)} />
               </div>
               <div className="col-md-6">
                 <label className="gamify-input-label">Country</label>
-                <select
-                  className="form-select gamify-promo-input"
-                  value={billingCountry}
-                  onChange={function (event) { setBillingCountry(event.target.value); }}
-                >
+                <select className="form-select gamify-promo-input" value={billingCountry} onChange={e => setBillingCountry(e.target.value)}>
                   <option value="IT">Italy</option>
                   <option value="FR">France</option>
                   <option value="DE">Germany</option>
@@ -272,30 +204,19 @@ export default function CheckoutPage() {
               </div>
               <div className="col-md-6">
                 <label className="gamify-input-label">VAT Number (optional)</label>
-                <input
-                  type="text"
-                  className="form-control gamify-promo-input"
-                  placeholder="LM12345678901"
-                  value={billingVat}
-                  onChange={function (event) { setBillingVat(event.target.value); }}
-                />
+                <input type="text" className="form-control gamify-promo-input" placeholder="LM12345678901" value={billingVat} onChange={e => setBillingVat(e.target.value)} />
               </div>
             </div>
           </div>
-          
+
           <div className="gamify-checkout-section mb-4">
             <div className="gamify-checkout-title mb-3">
-              <i className="bi bi-wallet2 me-2"></i>
-              Payment Method
+              <i className="bi bi-wallet2 me-2"></i>Payment Method
             </div>
             <div className="row g-2 mb-3">
               {paymentMethods.map(({ id, icon, label, sub }) => (
                 <div className="col-6 col-sm-4" key={id}>
-                  <button
-                    type="button"
-                    className={`gamify-pay-btn w-100 ${paymentMethod === id ? 'active' : ''}`}
-                    onClick={() => setPaymentMethod(id)}
-                  >
+                  <button type="button" className={`gamify-pay-btn w-100 ${paymentMethod === id ? 'active' : ''}`} onClick={() => setPaymentMethod(id)}>
                     <i className={`bi ${icon} gamify-pay-icon`}></i>
                     <span className="gamify-pay-label">{label}</span>
                     <span className="gamify-pay-sub">{sub}</span>
@@ -304,51 +225,32 @@ export default function CheckoutPage() {
               ))}
             </div>
             <div className="gamify-pay-detail">
-              <i className="bi bi-shield-check me-2"></i>
-              {paymentDetails[paymentMethod]}
+              <i className="bi bi-shield-check me-2"></i>{paymentDetails[paymentMethod]}
             </div>
           </div>
-          
+
           <form onSubmit={handlePurchase} className="gamify-checkout-section">
             <div className="gamify-checkout-title mb-3">
-              <i className="bi bi-envelope me-2"></i>
-              Delivery Email
+              <i className="bi bi-envelope me-2"></i>Delivery Email
             </div>
             <div className="mb-3">
-              <input
-                type="email"
-                className="form-control gamify-promo-input"
-                placeholder="Where should we send your keys?"
-                value={customerEmail}
-                onChange={(e) => setCustomerEmail(e.target.value)}
-                required
-              />
+              <input type="email" className="form-control gamify-promo-input" placeholder="Where should we send your keys?" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} required />
             </div>
             {errorMessage && (
               <div className="gamify-coupon-feedback is-error mb-3">
-                <i className="bi bi-exclamation-triangle me-2"></i>
-                {errorMessage}
+                <i className="bi bi-exclamation-triangle me-2"></i>{errorMessage}
               </div>
             )}
             <button type="submit" className="gamify-btn-checkout w-100 border-0" disabled={isLoading}>
-              {isLoading ? (
-                <><span className="spinner-border spinner-border-sm me-2"></span>Processing...</>
-              ) : 'Complete Purchase'}
+              {isLoading ? <><span className="spinner-border spinner-border-sm me-2"></span>Processing...</> : 'Complete Purchase'}
             </button>
           </form>
 
           <div className="text-center mt-4">
-            <button
-              type="button"
-              className="gamify-btn-clear"
-              onClick={handleResetCheckout}
-            >
-              <i className="bi bi-trash3 me-2"></i>
-              Cancel Order
+            <button type="button" className="gamify-btn-clear" onClick={handleResetCheckout}>
+              <i className="bi bi-trash3 me-2"></i>Cancel Order
             </button>
-            <p className="gamify-cart-empty-sub mt-2" style={{ fontSize: '11px' }}>
-              This action can't be reverted!
-            </p>
+            <p className="gamify-cart-empty-sub mt-2" style={{ fontSize: '11px' }}>This action can't be reverted!</p>
           </div>
         </div>
 
@@ -359,26 +261,17 @@ export default function CheckoutPage() {
               {cart.map(function (item) {
                 const displayPrice = getPriceToDisplay(item);
                 const quantity = item.quantity || 1;
-
                 return (
                   <div className="d-flex justify-content-between align-items-center" key={item.id}>
                     <div className="min-w-0">
                       <div className="gamify-item-title-sm">{item.title}</div>
                       <div className="gamify-summary-text">Qty: {quantity}</div>
                     </div>
-
                     <div className="d-flex align-items-center gap-2">
                       <div className="text-end">
-                        <div className="text-white fw-bold">
-                          €{displayPrice.toFixed(2)}
-                        </div>
+                        <div className="text-white fw-bold">€{displayPrice.toFixed(2)}</div>
                       </div>
-
-                      <button
-                        type="button"
-                        className="gamify-cart-remove"
-                        onClick={() => handleRemoveItem(item.id)}
-                      >
+                      <button type="button" className="gamify-cart-remove" onClick={() => handleRemoveItem(item.id)}>
                         <i className="bi bi-x-lg"></i>
                       </button>
                     </div>
@@ -386,23 +279,16 @@ export default function CheckoutPage() {
                 );
               })}
             </div>
-
             <div className="d-flex justify-content-between mb-2">
               <span className="gamify-summary-text">Original Subtotal</span>
               <span className="gamify-summary-text">€{subtotal.toFixed(2)}</span>
             </div>
-
             {couponData.appliedCoupon && getAppliedDiscount() > 0 && (
               <div className="d-flex justify-content-between mb-2">
-                <span className="gamify-summary-text">
-                  Coupon ({couponData.appliedCoupon})
-                </span>
-                <span className="gamify-summary-free">
-                  - €{getAppliedDiscount().toFixed(2)}
-                </span>
+                <span className="gamify-summary-text">Coupon ({couponData.appliedCoupon})</span>
+                <span className="gamify-summary-free">- €{getAppliedDiscount().toFixed(2)}</span>
               </div>
             )}
-            
             <hr className="gamify-summary-divider" />
             <div className="d-flex justify-content-between align-items-center">
               <span className="gamify-summary-total-label">Total to Pay</span>

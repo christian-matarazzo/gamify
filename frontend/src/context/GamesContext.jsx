@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
+import API_BASE_URL from "../api";
 
 const GamesContext = createContext();
 
@@ -8,7 +9,7 @@ export const GamesProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("http://localhost:3000/api/games")
+        axios.get(`${API_BASE_URL}/api/games`)
             .then(response => {
                 setGames(response.data.results);
                 setLoading(false);

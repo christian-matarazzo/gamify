@@ -2,6 +2,7 @@ import { useCart } from "../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../styles/CartPage.css";
+import API_BASE_URL from "../api";
 
 export default function CartPage() {
     const { 
@@ -51,7 +52,7 @@ export default function CartPage() {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/coupons/validate", {
+            const response = await fetch(`${API_BASE_URL}/api/coupons/validate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -98,9 +99,7 @@ export default function CartPage() {
                     <div className="d-flex flex-column gap-3">
                         {cart.map(item => {
                             const isOutOfStock = item.quantity >= (item.stock ?? 0);
-                            const imageUrl = `http://localhost:3000/image/${item.image_url}`;
-                            
-
+                            const imageUrl = `${API_BASE_URL}/image/${item.image_url}`;
                             const displayPrice = getItemPrice(item);
                             const itemTotal = displayPrice * item.quantity;
 

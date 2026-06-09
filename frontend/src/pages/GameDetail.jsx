@@ -7,6 +7,7 @@ import { useGames } from '../context/GamesContext';
 import GhostCard from '../components/GhostCard';
 import GameCard from '../components/GameCard';
 import "../styles/GameDetail.css";
+import API_BASE_URL from '../api';
 
 const GameDetail = () => {
     const { slug } = useParams();
@@ -21,22 +22,20 @@ const GameDetail = () => {
     const cartItem = cart.find(item => item.id === game?.id);
     const isInWishlist = wish.includes(game?.id);
     const availableKeys = gameKeys?.available_keys ?? 0;
-    const isOutOfStock = cartItem
-        ? cartItem.quantity >= availableKeys
-        : availableKeys === 0;
+    const isOutOfStock = cartItem ? cartItem.quantity >= availableKeys : availableKeys === 0;
 
     useEffect(() => {
         setError(isOutOfStock ? "Product ran out of keys!" : null);
     }, [isOutOfStock]);
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/api/games/${slug}`)
+        axios.get(`${API_BASE_URL}/api/games/${slug}`)
             .then(response => setGame(response.data.results))
             .catch(() => setGame(null));
     }, [slug]);
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/api/inventory/`)
+        axios.get(`${API_BASE_URL}/api/inventory/`)
             .then(response => {
                 const inventoryGame = response.data.data.find(item => item.slug === slug);
                 setGameKeys(inventoryGame);
@@ -47,8 +46,6 @@ const GameDetail = () => {
     const handleAddToCart = () => {
         addToCart({ ...game, stock: availableKeys });
     };
-
-
 
     if (!game) return (
         <main className="container py-4 text-center">
@@ -64,7 +61,8 @@ const GameDetail = () => {
             </Link>
         </main>
     );
-    const relatedGames = games.filter(relatedGames => relatedGames.genre === game.genre && relatedGames.id !== game.id).slice(0, 4)
+
+    const relatedGames = games.filter(g => g.genre === game.genre && g.id !== game.id).slice(0, 4);
 
     return (
         <main className="container py-4">
@@ -76,13 +74,12 @@ const GameDetail = () => {
                     <i className="bi bi-search"></i> Keep searching!
                 </Link>
                 <hr />
-
                 <section className="row g-4">
                     <div className="col-12 col-md-6">
                         <div className="gamify-detail-cover-wrap">
                             {game.image_url && (
                                 <img
-                                    src={`http://localhost:3000/image/${game.image_url}`}
+                                    src={`${API_BASE_URL}/image/${game.image_url}`}
                                     alt={game.title}
                                     className="gamify-detail-cover-img"
                                 />
@@ -99,73 +96,43 @@ const GameDetail = () => {
 
                     <div className="col-12 col-md-6 d-flex gamify-detail-info-panel flex-column gap-2">
                         <h1 className="gamify-detail-title">{game.title}</h1>
-
                         <div className="gamify-detail-meta-group">
                             <p><strong>Developer: </strong>{game.developer_name}</p>
                             <p><strong>Genre: </strong>{game.genre}</p>
                             <p><strong>Release date:</strong> {game.release_date || 'Available'}</p>
                         </div>
-
                         <p className="gamify-detail-description">{game.description}</p>
                         <hr className="my-1" />
-
                         <div className="gamify-detail-price-section">
                             <p className="gamify-detail-price">{game.base_price}€</p>
                             <span className="gamify-detail-keys-badge">
-                                <i className="bi bi-key me-1"></i>
-                                {availableKeys} keys left!
+                                <i className="bi bi-key me-1"></i>{availableKeys} keys left!
                             </span>
                         </div>
-
                         <div className="d-flex align-items-center gap-2">
-                            <button
-                                className="gamify-btn-sq gamify-btn-minus"
-                                onClick={() => decreaseQuantity(game.id)}
-                                disabled={!cartItem || cartItem.quantity === 0}
-                                aria-label="Decrease quantity"
-                            >
+                            <button className="gamify-btn-sq gamify-btn-minus" onClick={() => decreaseQuantity(game.id)} disabled={!cartItem || cartItem.quantity === 0} aria-label="Decrease quantity">
                                 <i className="bi bi-dash-lg"></i>
                             </button>
                             <span className={`gamify-detail-qty-count${cartItem ? ' active' : ''}`}>
                                 {cartItem ? `${cartItem.quantity} in cart` : '0 in cart'}
                             </span>
-                            <button
-                                className="gamify-btn-sq gamify-btn-plus"
-                                onClick={handleAddToCart}
-                                disabled={isOutOfStock}
-                                aria-label="Add to cart"
-                            >
+                            <button className="gamify-btn-sq gamify-btn-plus" onClick={handleAddToCart} disabled={isOutOfStock} aria-label="Add to cart">
                                 <i className="bi bi-plus-lg"></i>
                             </button>
-                            <Link
-                                to="/cart"
-                                className={!cartItem || cartItem.quantity === 0 ? 'pe-none' : ''}
-                                onClick={e => (!cartItem || cartItem.quantity === 0) && e.preventDefault()}
-                                aria-label="Go to Cart"
-                            >
-                                <button
-                                    className="gamify-btn-add-cart"
-                                    disabled={!cartItem || cartItem.quantity === 0}
-                                >
-                                    <i className="bi bi-cart-plus me-2"></i>
-                                    Go to Cart
+                            <Link to="/cart" className={!cartItem || cartItem.quantity === 0 ? 'pe-none' : ''} onClick={e => (!cartItem || cartItem.quantity === 0) && e.preventDefault()} aria-label="Go to Cart">
+                                <button className="gamify-btn-add-cart" disabled={!cartItem || cartItem.quantity === 0}>
+                                    <i className="bi bi-cart-plus me-2"></i>Go to Cart
                                 </button>
                             </Link>
                         </div>
-
                         {cartItem && (
-                            <button
-                                className="gamify-detail-remove-btn"
-                                onClick={() => removeFromCart(game.id)}
-                            >
+                            <button className="gamify-detail-remove-btn" onClick={() => removeFromCart(game.id)}>
                                 Remove all from cart
                             </button>
                         )}
-
                         {error && (
                             <div className="gamify-detail-alert p-2 mb-3">
-                                <i className="bi bi-exclamation-circle me-2"></i>
-                                {error}
+                                <i className="bi bi-exclamation-circle me-2"></i>{error}
                             </div>
                         )}
                     </div>
@@ -183,14 +150,8 @@ const GameDetail = () => {
                 ) : (
                     relatedGames.map(related => {
                         const isRelatedInWishlist = wish.some(id => String(id) === String(related.id));
-
                         return (
-                            <GameCard
-                                key={related.id}
-                                game={related}
-                                isInWishlist={isRelatedInWishlist}
-                                onToggleWish={() => handleWish(related.id)}
-                            />
+                            <GameCard key={related.id} game={related} isInWishlist={isRelatedInWishlist} onToggleWish={() => handleWish(related.id)} />
                         );
                     })
                 )}

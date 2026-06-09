@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AppFooter.css';
+import API_BASE_URL from '../api';
 
 export default function AppFooter() {
     const [newsletterStatus, setNewsletterStatus] = useState('idle');
@@ -29,7 +30,7 @@ export default function AppFooter() {
 
         try {
             const response = await axios.post(
-                'http://localhost:3000/api/newsletter/subscribe',
+                `${API_BASE_URL}/api/newsletter/subscribe`,
                 { email }
             );
 

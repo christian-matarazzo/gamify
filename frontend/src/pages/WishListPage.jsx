@@ -3,6 +3,7 @@ import { useGames } from '../context/GamesContext';
 import { useWish } from '../context/WishlistContext';
 import { Link } from 'react-router-dom';
 import GhostCard from '../components/GhostCard';
+import API_BASE_URL from '../api';
 
 export default function WishPage() {
     const { games, loading } = useGames();
@@ -41,22 +42,14 @@ export default function WishPage() {
                                 <div className="gamify-game-card wishlist-card-wrapper">
                                     <Link to={`/games/${game.slug}`} className="gamify-game-card-inner">
                                         <div className="gamify-card-img-wrap">
-                                            <img
-                                                className="gamify-card-thumbnail"
-                                                src={`http://localhost:3000/image/${game.image_url}`}
-                                                alt={game.title}
-                                            />
+                                            <img className="gamify-card-thumbnail" src={`${API_BASE_URL}/image/${game.image_url}`} alt={game.title} />
                                         </div>
                                         <div className="gamify-card-body">
                                             <p className="gamify-card-title">{game.title}</p>
                                             <p className="gamify-price-current">€{game.base_price}</p>
                                         </div>
                                     </Link>
-                                    <button
-                                        className="wishlist-remove-btn"
-                                        onClick={() => handleWish(game.id)}
-                                        aria-label="Remove from wishlist"
-                                    >
+                                    <button className="wishlist-remove-btn" onClick={() => handleWish(game.id)} aria-label="Remove from wishlist">
                                         <i className="bi bi-heart-fill"></i>
                                     </button>
                                 </div>

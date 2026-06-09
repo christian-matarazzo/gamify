@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/PopUp.css";
+import API_BASE_URL from "../api";
 
 export default function PopUp({ onClose }) {
   const [status, setStatus] = useState("idle");
@@ -23,7 +24,7 @@ export default function PopUp({ onClose }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/newsletter/subscribe",
+        `${API_BASE_URL}/api/newsletter/subscribe`,
         { email }
       );
 
@@ -54,13 +55,10 @@ export default function PopUp({ onClose }) {
       <div className="overlay" onClick={onClose}>
         <div className="popup" onClick={(e) => e.stopPropagation()}>
           <button className="popup-x" onClick={onClose} aria-label="Close">✕</button>
-
           <h2>You're <span>In!</span></h2>
-
           <p>
             Welcome to the Gamify community. Your newsletter subscription is now active. Check your inbox for news about the videogame world, exclusive discounts on your favorite titles, and early access to special events. Get ready to level up your gaming experience!
           </p>
-
           <button className="popup-submit-btn" onClick={onClose}>
             Start Exploring
           </button>
@@ -73,22 +71,18 @@ export default function PopUp({ onClose }) {
     <div className="overlay" onClick={onClose}>
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         <button className="popup-x" onClick={onClose} aria-label="Close">✕</button>
-
         <h2>Welcome to <span>Gamify</span></h2>
-
         <p>
           Use the code below for <strong>10€ off</strong> your first order:
           <span className="promo-code">
             <span className="promo-code-text">WELCOME10</span>
           </span>
         </p>
-
         <p>
           <strong className="gamify-wantmore">Want more?</strong> Join the
           Gamify community for early access to deals, exclusive discounts, and
           updates on the most anticipated releases.
         </p>
-
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -98,7 +92,6 @@ export default function PopUp({ onClose }) {
             required
             disabled={status === "loading"}
           />
-
           <button
             type="submit"
             className="popup-submit-btn"
@@ -106,7 +99,6 @@ export default function PopUp({ onClose }) {
           >
             {status === "loading" ? "Joining..." : "Join Gamify!"}
           </button>
-
           <button
             type="button"
             className="popup-skip"
@@ -116,7 +108,6 @@ export default function PopUp({ onClose }) {
             No thanks, maybe later
           </button>
         </form>
-
         {status === "error" && errorMessage && (
           <p className="popup-error mt-3">{errorMessage}</p>
         )}
