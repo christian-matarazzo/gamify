@@ -422,7 +422,6 @@
 /* MOBILE */
 @media (max-width: 480px) {
   .gamify-logo {
-    content: url('/img/gamify-logo-small.png');
     height: 35px;
     margin: 0;
   }

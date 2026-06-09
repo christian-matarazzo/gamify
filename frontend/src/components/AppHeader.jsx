@@ -11,36 +11,16 @@ function AuthDropdown({ onClose }) {
     const [recoverData, setRecoverData] = useState({ email: '' });
     const [showPassword, setShowPassword] = useState(false);
 
-    function handleLogin(e) {
-        e.preventDefault();
-    }
-
-    function handleRegister(e) {
-        e.preventDefault();
-    }
-
-    function handleRecover(e) {
-        e.preventDefault();
-    }
+    function handleLogin(e) { e.preventDefault(); }
+    function handleRegister(e) { e.preventDefault(); }
+    function handleRecover(e) { e.preventDefault(); }
 
     return (
         <div className="gamify-auth-dropdown">
             {tab !== 'recover' && (
                 <div className="gamify-auth-tabs">
-                    <button
-                        className={`gamify-auth-tab ${tab === 'login' ? 'active' : ''}`}
-                        onClick={() => setTab('login')}
-                        type="button"
-                    >
-                        Log In
-                    </button>
-                    <button
-                        className={`gamify-auth-tab ${tab === 'register' ? 'active' : ''}`}
-                        onClick={() => setTab('register')}
-                        type="button"
-                    >
-                        Register
-                    </button>
+                    <button className={`gamify-auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')} type="button">Log In</button>
+                    <button className={`gamify-auth-tab ${tab === 'register' ? 'active' : ''}`} onClick={() => setTab('register')} type="button">Register</button>
                 </div>
             )}
 
@@ -48,63 +28,28 @@ function AuthDropdown({ onClose }) {
                 <form className="gamify-auth-form" onSubmit={handleLogin}>
                     <div className="gamify-auth-field">
                         <label htmlFor="login-email">Email</label>
-                        <input
-                            id="login-email"
-                            type="email"
-                            placeholder="you@example.com"
-                            autoComplete="email"
-                            value={loginData.email}
-                            onChange={e => setLoginData({ ...loginData, email: e.target.value })}
-                            required
-                        />
+                        <input id="login-email" type="email" placeholder="you@example.com" autoComplete="email" value={loginData.email} onChange={e => setLoginData({ ...loginData, email: e.target.value })} required />
                     </div>
                     <div className="gamify-auth-field">
                         <label htmlFor="login-password">Password</label>
                         <div className="gamify-auth-password-wrap">
-                            <input
-                                id="login-password"
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
-                                autoComplete="current-password"
-                                value={loginData.password}
-                                onChange={e => setLoginData({ ...loginData, password: e.target.value })}
-                                required
-                            />
-                            <button
-                                type="button"
-                                className="gamify-auth-eye"
-                                aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
-                                onClick={() => setShowPassword(v => !v)}
-                            >
+                            <input id="login-password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" autoComplete="current-password" value={loginData.password} onChange={e => setLoginData({ ...loginData, password: e.target.value })} required />
+                            <button type="button" className="gamify-auth-eye" onClick={() => setShowPassword(v => !v)}>
                                 <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                             </button>
                         </div>
                     </div>
                     <div className="gamify-auth-row">
                         <label className="gamify-auth-check">
-                            <input
-                                type="checkbox"
-                                checked={loginData.remember}
-                                onChange={e => setLoginData({ ...loginData, remember: e.target.checked })}
-                            />
+                            <input type="checkbox" checked={loginData.remember} onChange={e => setLoginData({ ...loginData, remember: e.target.checked })} />
                             <span>Remember me</span>
                         </label>
-                        <button
-                            type="button"
-                            className="gamify-auth-link"
-                            onClick={() => setTab('recover')}
-                        >
-                            Forgot password?
-                        </button>
+                        <button type="button" className="gamify-auth-link" onClick={() => setTab('recover')}>Forgot password?</button>
                     </div>
-                    <button type="submit" className="gamify-auth-submit">
-                        Log In
-                    </button>
+                    <button type="submit" className="gamify-auth-submit">Log In</button>
                     <p className="gamify-auth-footer">
                         No account?{' '}
-                        <button type="button" className="gamify-auth-link" onClick={() => setTab('register')}>
-                            Sign up
-                        </button>
+                        <button type="button" className="gamify-auth-link" onClick={() => setTab('register')}>Sign up</button>
                     </p>
                 </form>
             )}
@@ -113,82 +58,36 @@ function AuthDropdown({ onClose }) {
                 <form className="gamify-auth-form" onSubmit={handleRegister}>
                     <div className="gamify-auth-field">
                         <label htmlFor="reg-username">Username</label>
-                        <input
-                            id="reg-username"
-                            type="text"
-                            placeholder="GamerXYZ"
-                            autoComplete="username"
-                            value={registerData.username}
-                            onChange={e => setRegisterData({ ...registerData, username: e.target.value })}
-                            required
-                        />
+                        <input id="reg-username" type="text" placeholder="GamerXYZ" autoComplete="username" value={registerData.username} onChange={e => setRegisterData({ ...registerData, username: e.target.value })} required />
                     </div>
                     <div className="gamify-auth-field">
                         <label htmlFor="reg-email">Email</label>
-                        <input
-                            id="reg-email"
-                            type="email"
-                            placeholder="you@example.com"
-                            autoComplete="email"
-                            value={registerData.email}
-                            onChange={e => setRegisterData({ ...registerData, email: e.target.value })}
-                            required
-                        />
+                        <input id="reg-email" type="email" placeholder="you@example.com" autoComplete="email" value={registerData.email} onChange={e => setRegisterData({ ...registerData, email: e.target.value })} required />
                     </div>
                     <div className="gamify-auth-field">
                         <label htmlFor="reg-password">Password</label>
                         <div className="gamify-auth-password-wrap">
-                            <input
-                                id="reg-password"
-                                type={showPassword ? 'text' : 'password'}
-                                placeholder="••••••••"
-                                autoComplete="new-password"
-                                value={registerData.password}
-                                onChange={e => setRegisterData({ ...registerData, password: e.target.value })}
-                                required
-                            />
-                            <button
-                                type="button"
-                                className="gamify-auth-eye"
-                                aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
-                                onClick={() => setShowPassword(v => !v)}
-                            >
+                            <input id="reg-password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" autoComplete="new-password" value={registerData.password} onChange={e => setRegisterData({ ...registerData, password: e.target.value })} required />
+                            <button type="button" className="gamify-auth-eye" onClick={() => setShowPassword(v => !v)}>
                                 <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                             </button>
                         </div>
                     </div>
                     <div className="gamify-auth-field">
                         <label htmlFor="reg-confirm">Confirm Password</label>
-                        <input
-                            id="reg-confirm"
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="••••••••"
-                            autoComplete="new-password"
-                            value={registerData.confirm}
-                            onChange={e => setRegisterData({ ...registerData, confirm: e.target.value })}
-                            required
-                        />
+                        <input id="reg-confirm" type={showPassword ? 'text' : 'password'} placeholder="••••••••" autoComplete="new-password" value={registerData.confirm} onChange={e => setRegisterData({ ...registerData, confirm: e.target.value })} required />
                     </div>
-                    <button type="submit" className="gamify-auth-submit">
-                        Create Account
-                    </button>
+                    <button type="submit" className="gamify-auth-submit">Create Account</button>
                     <p className="gamify-auth-footer">
                         Already have an account?{' '}
-                        <button type="button" className="gamify-auth-link" onClick={() => setTab('login')}>
-                            Log in
-                        </button>
+                        <button type="button" className="gamify-auth-link" onClick={() => setTab('login')}>Log in</button>
                     </p>
                 </form>
             )}
 
             {tab === 'recover' && (
                 <form className="gamify-auth-form" onSubmit={handleRecover}>
-                    <button
-                        type="button"
-                        className="gamify-auth-back"
-                        onClick={() => setTab('login')}
-                        aria-label="Back"
-                    >
+                    <button type="button" className="gamify-auth-back" onClick={() => setTab('login')}>
                         <i className="bi bi-arrow-left"></i> Back
                     </button>
                     <div className="gamify-auth-recover-header">
@@ -197,19 +96,9 @@ function AuthDropdown({ onClose }) {
                     </div>
                     <div className="gamify-auth-field">
                         <label htmlFor="recover-email">Email</label>
-                        <input
-                            id="recover-email"
-                            type="email"
-                            placeholder="you@example.com"
-                            autoComplete="email"
-                            value={recoverData.email}
-                            onChange={e => setRecoverData({ email: e.target.value })}
-                            required
-                        />
+                        <input id="recover-email" type="email" placeholder="you@example.com" autoComplete="email" value={recoverData.email} onChange={e => setRecoverData({ email: e.target.value })} required />
                     </div>
-                    <button type="submit" className="gamify-auth-submit">
-                        Send Reset Link
-                    </button>
+                    <button type="submit" className="gamify-auth-submit">Send Reset Link</button>
                 </form>
             )}
         </div>
@@ -219,6 +108,7 @@ function AuthDropdown({ onClose }) {
 export default function AppHeader() {
     const [cartOpen, setCartOpen] = useState(false);
     const [authOpen, setAuthOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
     const authRef = useRef(null);
 
     const navLinks = [
@@ -226,6 +116,12 @@ export default function AppHeader() {
         { text: 'Pre-orders', path: '/games/preorders' },
         { text: 'Technical Support', path: '/support' },
     ];
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 480);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     function handleNavClick() {
         const element = document.getElementById('gamifyNavCollapse');
@@ -235,20 +131,14 @@ export default function AppHeader() {
 
     useEffect(() => {
         function handleClickOutside(e) {
-            if (authRef.current && !authRef.current.contains(e.target)) {
-                setAuthOpen(false);
-            }
+            if (authRef.current && !authRef.current.contains(e.target)) setAuthOpen(false);
         }
-        if (authOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
+        if (authOpen) document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [authOpen]);
 
     useEffect(() => {
-        function handleEsc(e) {
-            if (e.key === 'Escape') setAuthOpen(false);
-        }
+        function handleEsc(e) { if (e.key === 'Escape') setAuthOpen(false); }
         document.addEventListener('keydown', handleEsc);
         return () => document.removeEventListener('keydown', handleEsc);
     }, []);
@@ -261,7 +151,11 @@ export default function AppHeader() {
             <header className='sticky-top'>
                 <nav className="navbar navbar-expand-lg px-3 px-lg-4 gamify-navbar">
                     <Link className="navbar-brand d-flex align-items-center gap-2 gamify-brand" to="/">
-                        <img className="gamify-logo" src="/img/gamify-logo-main.png" alt="Gamify Logo" />
+                        <img
+                            className="gamify-logo"
+                            src={isMobile ? '/img/gamify-logo-small.png' : '/img/gamify-logo-main.png'}
+                            alt="Gamify Logo"
+                        />
                     </Link>
 
                     <button
@@ -280,11 +174,7 @@ export default function AppHeader() {
                         <ul className="navbar-nav mx-auto gap-1 gamify-links">
                             {navLinks.map((link) => (
                                 <li key={link.text} className="nav-item">
-                                    <NavLink
-                                        className="nav-link"
-                                        to={link.path}
-                                        onClick={handleNavClick}
-                                    >
+                                    <NavLink className="nav-link" to={link.path} onClick={handleNavClick}>
                                         {link.text}
                                     </NavLink>
                                 </li>
@@ -297,16 +187,10 @@ export default function AppHeader() {
                                     <i className="bi bi-search"></i>
                                 </button>
                             </Link>
-                            <button
-                                className="gamify-icon-btn position-relative"
-                                aria-label="Cart"
-                                onClick={() => setCartOpen(true)}
-                            >
+                            <button className="gamify-icon-btn position-relative" aria-label="Cart" onClick={() => setCartOpen(true)}>
                                 <i className="bi bi-cart"></i>
                                 {cartCount > 0 && (
-                                    <span className="gamify-cart-badge">
-                                        {cartCount > 99 ? '99+' : cartCount}
-                                    </span>
+                                    <span className="gamify-cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>
                                 )}
                             </button>
                             <Link to="/wishlist">
@@ -326,9 +210,7 @@ export default function AppHeader() {
                                     Log In
                                     <i className={`bi bi-chevron-${authOpen ? 'up' : 'down'} gamify-btn-login-chevron`}></i>
                                 </button>
-                                {authOpen && (
-                                    <AuthDropdown onClose={() => setAuthOpen(false)} />
-                                )}
+                                {authOpen && <AuthDropdown onClose={() => setAuthOpen(false)} />}
                             </div>
                         </div>
                     </div>
