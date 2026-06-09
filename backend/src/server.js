@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const gamesRoute = require('./routes/games');
@@ -10,13 +11,13 @@ const supportRoutes = require('./routes/support');
 
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
-
-
 const app = express();
-const port = 3000;
+
+// Railway assegnerà una porta dinamica, altrimenti usa la 3000 in locale
+const port = process.env.PORT || 3000;
 
 app.use(express.static('public'));
-app.use(cors());
+app.use(cors()); // Già perfetto così per evitare errori CORS
 app.use(express.json());
 
 /* API ROUTES */
@@ -28,11 +29,8 @@ app.use('/api/coupons', couponsRoutes);
 app.use('/api/stock', stockRoute);
 app.use('/api/support', supportRoutes);
 
-
-
-
 app.get('/', (req, res) => {
-  res.send('Il mio server');
+  res.send('Il mio server è online!');
 });
 
 app.post('/try', (req, res) => {
@@ -40,9 +38,9 @@ app.post('/try', (req, res) => {
   res.status(200).json({ success: true, message: 'Funziono' });
 });
 
-app.use(notFound)
-app.use(errorHandler)
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`Il tuo server è sulla porta http://localhost:${port}`);
+  console.log(`Il tuo server è in esecuzione sulla porta: ${port}`);
 });
